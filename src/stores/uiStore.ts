@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 interface UIStore {
   sidebarCollapsed: boolean;
@@ -8,6 +9,8 @@ interface UIStore {
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
   closeMobileMenu: () => void;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useUIStore = create<UIStore>()(
@@ -21,9 +24,14 @@ export const useUIStore = create<UIStore>()(
       mobileMenuOpen: false,
       setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
       closeMobileMenu: () => set({ mobileMenuOpen: false }),
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
-      name: "ui-store",
+      name: STORAGE_KEYS.UI_STORE,
+      onRehydrateStorage: (state) => {
+        return () => state.setHasHydrated(true);
+      },
     },
   ),
 );

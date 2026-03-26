@@ -1,48 +1,47 @@
-// Backend API Routes
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+const API_ADMIN_BASE = "admin";
 
 export const API_ROUTES = {
   // Authentication
   AUTH: {
-    LOGIN: `${API_BASE_URL}/auth/login`,
-    LOGOUT: `${API_BASE_URL}/auth/logout`,
-    REFRESH: `${API_BASE_URL}/auth/refresh`,
-    PROFILE: `${API_BASE_URL}/auth/profile`,
+    LOGIN: `${API_ADMIN_BASE}/auth/login`,
+    LOGOUT: `${API_ADMIN_BASE}/auth/logout`,
+    REFRESH: `${API_ADMIN_BASE}/auth/refresh-token`,
+    PROFILE: `${API_ADMIN_BASE}/auth/profile`,
   },
 
   // Customers
   CUSTOMERS: {
-    LIST: `${API_BASE_URL}/customers`,
-    CREATE: `${API_BASE_URL}/customers`,
-    DETAIL: (id: string) => `${API_BASE_URL}/customers/${id}`,
-    UPDATE: (id: string) => `${API_BASE_URL}/customers/${id}`,
-    DELETE: (id: string) => `${API_BASE_URL}/customers/${id}`,
-    SEARCH: `${API_BASE_URL}/customers/search`,
+    LIST: `${API_ADMIN_BASE}/customer/get-all-customers`,
+    CREATE: `${API_ADMIN_BASE}/customer/create-customer`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/customer/get-customer/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/customer/update-customer/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/customer/delete-customer/${id}`,
+    SEARCH: `${API_ADMIN_BASE}/customer/search`,
   },
 
   // Orders
   ORDERS: {
-    LIST: `${API_BASE_URL}/orders`,
-    CREATE: `${API_BASE_URL}/orders`,
-    DETAIL: (id: string) => `${API_BASE_URL}/orders/${id}`,
-    UPDATE: (id: string) => `${API_BASE_URL}/orders/${id}`,
-    DELETE: (id: string) => `${API_BASE_URL}/orders/${id}`,
+    LIST: `${API_ADMIN_BASE}/orders`,
+    CREATE: `${API_ADMIN_BASE}/orders`, // Reserved for potential future use
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
+    UPDATE_STATUS: (id: string) => `${API_ADMIN_BASE}/orders/${id}/status`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
   },
 
   // Products
   PRODUCTS: {
-    LIST: `${API_BASE_URL}/products`,
-    CREATE: `${API_BASE_URL}/products`,
-    DETAIL: (id: string) => `${API_BASE_URL}/products/${id}`,
-    UPDATE: (id: string) => `${API_BASE_URL}/products/${id}`,
-    DELETE: (id: string) => `${API_BASE_URL}/products/${id}`,
+    LIST: `${API_ADMIN_BASE}/product`,
+    CREATE: `${API_ADMIN_BASE}/product/create`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
   },
 
   // Settings
   SETTINGS: {
-    PROFILE: `${API_BASE_URL}/settings/profile`,
-    UPDATE_PROFILE: `${API_BASE_URL}/settings/profile`,
-    CHANGE_PASSWORD: `${API_BASE_URL}/settings/password`,
+    PROFILE: `${API_ADMIN_BASE}/settings/profile`,
+    UPDATE_PROFILE: `${API_ADMIN_BASE}/settings/profile`,
+    CHANGE_PASSWORD: `${API_ADMIN_BASE}/settings/password`,
   },
 } as const;

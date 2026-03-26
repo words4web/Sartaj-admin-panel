@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
 import { loginSchema } from "@/schemas/auth/auth.schema";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default function LoginForm() {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
 
@@ -32,7 +33,7 @@ export default function LoginForm() {
         password: validatedData.password,
       });
       toast.success("Login successful!");
-      router.push("/dashboard");
+      router.push(ROUTES.DASHBOARD);
     } catch (err: any) {
       if (err.errors) {
         const newErrors: Record<string, string> = {};
@@ -52,10 +53,7 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-          <AlertCircle
-            className="text-red-600 flex-shrink-0 mt-0.5"
-            size={20}
-          />
+          <AlertCircle className="text-red-600 shrink-0 mt-0.5" size={20} />
           <p className="text-red-800 text-sm">{error}</p>
         </div>
       )}
@@ -93,8 +91,8 @@ export default function LoginForm() {
         <p className="text-sm text-blue-900 mb-2 font-medium">
           Demo Credentials:
         </p>
-        <p className="text-sm text-blue-800">Email: admin@example.com</p>
-        <p className="text-sm text-blue-800">Password: password123</p>
+        <p className="text-sm text-blue-800">Email: super@admin.com</p>
+        <p className="text-sm text-blue-800">Password: Admin@123</p>
       </div>
     </form>
   );

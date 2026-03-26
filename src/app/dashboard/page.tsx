@@ -2,6 +2,7 @@
 
 import { BarChart3, Users, Package, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { ROUTES } from "@/constants/routes";
 
 const STATS = [
   {
@@ -25,13 +26,6 @@ const STATS = [
     icon: TrendingUp,
     color: "bg-purple-100 text-purple-600",
   },
-  {
-    label: "Growth Rate",
-    value: "18.5%",
-    change: "+4.5%",
-    icon: BarChart3,
-    color: "bg-orange-100 text-orange-600",
-  },
 ];
 
 export default function DashboardPage() {
@@ -46,7 +40,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {STATS.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -59,9 +53,9 @@ export default function DashboardPage() {
                   <p className="text-2xl font-bold text-gray-900 mt-2">
                     {stat.value}
                   </p>
-                  <p className="text-green-600 text-sm font-medium mt-2">
+                  {/* <p className="text-green-600 text-sm font-medium mt-2">
                     {stat.change} from last month
-                  </p>
+                  </p> */}
                 </div>
                 <div className={`p-3 rounded-lg ${stat.color}`}>
                   <Icon size={24} />
@@ -101,24 +95,14 @@ export default function DashboardPage() {
           <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h2>
           <div className="space-y-3">
             <a
-              href="/dashboard/customers"
+              href={ROUTES.CUSTOMERS.LIST}
               className="block p-3 bg-blue-50 hover:bg-blue-100 rounded-lg text-blue-600 font-medium transition">
               Manage Customers
             </a>
             <a
-              href="/dashboard/products"
+              href={ROUTES.PRODUCTS.LIST}
               className="block p-3 bg-green-50 hover:bg-green-100 rounded-lg text-green-600 font-medium transition">
               View Products
-            </a>
-            <a
-              href="#"
-              className="block p-3 bg-purple-50 hover:bg-purple-100 rounded-lg text-purple-600 font-medium transition">
-              View Reports
-            </a>
-            <a
-              href="#"
-              className="block p-3 bg-orange-50 hover:bg-orange-100 rounded-lg text-orange-600 font-medium transition">
-              Settings
             </a>
           </div>
         </Card>
