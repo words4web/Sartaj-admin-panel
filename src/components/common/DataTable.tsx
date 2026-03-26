@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CommonLoader } from "@/components/ui/common-loader";
 
 export interface Column<T> {
   key: keyof T | "actions";
@@ -37,8 +38,8 @@ export function DataTable<T extends { id: string | number }>({
 
   if (isLoading) {
     return (
-      <div className="w-full bg-white rounded-lg border border-gray-200">
-        <div className="p-8 text-center text-gray-500">Loading...</div>
+      <div className="w-full bg-white rounded-lg border border-gray-200 min-h-[400px]">
+        <CommonLoader fullScreen={false} />
       </div>
     );
   }

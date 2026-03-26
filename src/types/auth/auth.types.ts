@@ -5,8 +5,8 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  token: string;
-  user: User;
+  accessToken: string;
+  admin: User;
 }
 
 export interface User {

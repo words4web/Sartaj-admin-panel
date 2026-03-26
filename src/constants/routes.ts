@@ -5,15 +5,27 @@ export const ROUTES = {
 
   // Dashboard routes
   DASHBOARD: "/dashboard",
-  CUSTOMERS: "/dashboard/customers",
-  CUSTOMER_DETAIL: (id: string) => `/dashboard/customers/${id}`,
-  SETTINGS: "/dashboard/settings",
-  SETTINGS_PROFILE: "/dashboard/settings/profile",
+
+  CUSTOMERS: {
+    LIST: "/dashboard/customers",
+    DETAIL: (id: string) => `/dashboard/customers/${id}`,
+  },
+
+  SETTINGS: {
+    ROOT: "/dashboard/settings",
+    PROFILE: "/dashboard/settings/profile",
+  },
 
   // Future module routes
-  ORDERS: "/dashboard/orders",
-  PRODUCTS: "/dashboard/products",
-  ANALYTICS: "/dashboard/analytics",
+  ORDERS: {
+    LIST: "/dashboard/orders",
+  },
+  PRODUCTS: {
+    LIST: "/dashboard/products",
+  },
+  ANALYTICS: {
+    ROOT: "/dashboard/analytics",
+  },
 } as const;
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];

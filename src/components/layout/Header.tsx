@@ -24,7 +24,7 @@ export default function Header() {
   };
 
   const handleSettings = () => {
-    router.push(ROUTES.SETTINGS_PROFILE);
+    router.push(ROUTES.SETTINGS.PROFILE);
   };
 
   return (

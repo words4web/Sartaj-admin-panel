@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -23,11 +24,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
   useEffect(() => {
     if (!mounted) return;
 
-    const publicPaths = ["/login"];
+    const publicPaths: string[] = [ROUTES.LOGIN];
     const isPublicPage = publicPaths.includes(pathname);
 
     if (!isAuthenticated && !isPublicPage) {
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
     }
   }, [isAuthenticated, pathname, router, mounted]);
 
@@ -35,7 +36,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
     return null;
   }
 
-  const publicPaths = ["/login"];
+  const publicPaths: string[] = [ROUTES.LOGIN];
   const isPublicPage = publicPaths.includes(pathname);
 
   if (isPublicPage) {

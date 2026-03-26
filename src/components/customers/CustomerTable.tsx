@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { MoreVertical, Edit2, Trash2, Eye } from "lucide-react";
 import { Customer } from "@/types/customer/customer.types";
-import { useCustomers, useDeleteCustomer } from "@/services/customerService";
 import { DataTable, Column } from "@/components/common/DataTable";
 import { Pagination } from "@/components/common/Pagination";
 import {
@@ -45,7 +44,7 @@ export default function CustomerTable({
       sortable: true,
       render: (value, customer) => (
         <button
-          onClick={() => router.push(ROUTES.CUSTOMER_DETAIL(customer.id))}
+          onClick={() => router.push(ROUTES.CUSTOMERS.DETAIL(customer.id))}
           className="font-medium text-blue-600 hover:text-blue-700 transition">
           {value}
         </button>
@@ -92,7 +91,9 @@ export default function CustomerTable({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem
-                onClick={() => router.push(ROUTES.CUSTOMER_DETAIL(customer.id))}
+                onClick={() =>
+                  router.push(ROUTES.CUSTOMERS.DETAIL(customer?.id))
+                }
                 className="flex items-center gap-2 cursor-pointer">
                 <Eye size={16} />
                 <span>View Details</span>

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
-import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 
 export default function DashboardLayout({
@@ -21,7 +21,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (mounted && !isAuthenticated) {
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
     }
   }, [isAuthenticated, router, mounted]);
 
@@ -30,10 +30,9 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="flex h-screen bg-linear-to-br from-gray-50 via-white to-gray-50">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* <Header /> */}
         <main className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
           <div className="min-h-full">{children}</div>
         </main>

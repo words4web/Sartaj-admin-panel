@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useCustomerStore } from "@/stores/customerStore";
 import { Customer } from "@/types/customer/customer.types";
-import { useCustomers } from "@/services/customerService";
 import CustomerTable from "@/components/customers/CustomerTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

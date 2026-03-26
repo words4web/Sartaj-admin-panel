@@ -1,26 +1,10 @@
-// API Endpoints
-export const API_ENDPOINTS = {
-  AUTH: {
-    LOGIN: "/auth/login",
-    LOGOUT: "/auth/logout",
-    REGISTER: "/auth/register",
-    REFRESH: "/auth/refresh",
-    PROFILE: "/auth/profile",
-  },
-  CUSTOMERS: {
-    LIST: "/customers",
-    CREATE: "/customers",
-    GET: (id: string) => `/customers/${id}`,
-    UPDATE: (id: string) => `/customers/${id}`,
-    DELETE: (id: string) => `/customers/${id}`,
-  },
-} as const;
-
 // Local Storage Keys
 export const STORAGE_KEYS = {
   AUTH_TOKEN: "sartaj_auth_token",
   USER_DATA: "sartaj_user_data",
   THEME: "sartaj_theme",
+  AUTH_STORE: "sartaj_auth_store",
+  UI_STORE: "sartaj_ui_store",
 } as const;
 
 // Pagination Defaults
