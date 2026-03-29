@@ -14,16 +14,14 @@ export const PAGINATION = {
   PAGE_SIZE_OPTIONS: [5, 10, 25, 50],
 } as const;
 
-// Customer Status
-export const CUSTOMER_STATUS = {
-  ACTIVE: "active",
-  INACTIVE: "inactive",
-  SUSPENDED: "suspended",
-} as const;
-
 // Sort Options
 export const SORT_OPTIONS = {
   NAME: "name",
   CREATED_AT: "createdAt",
   EMAIL: "email",
+} as const;
+
+export const SUPER_CATEGORIES = {
+  WHOLESALER: "Wholesaler",
+  RESTAURANT: "Restaurant",
 } as const;

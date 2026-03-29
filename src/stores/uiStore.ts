@@ -8,6 +8,7 @@ interface UIStore {
   setSidebarCollapsed: (collapsed: boolean) => void;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
+  toggleMobileMenu: () => void;
   closeMobileMenu: () => void;
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
@@ -23,6 +24,8 @@ export const useUIStore = create<UIStore>()(
 
       mobileMenuOpen: false,
       setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
+      toggleMobileMenu: () =>
+        set((state) => ({ mobileMenuOpen: !state.mobileMenuOpen })),
       closeMobileMenu: () => set({ mobileMenuOpen: false }),
       _hasHydrated: false,
       setHasHydrated: (state) => set({ _hasHydrated: state }),

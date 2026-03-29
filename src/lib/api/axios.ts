@@ -77,9 +77,12 @@ axiosInstance.interceptors.response.use(
       });
     }
 
-    // Globally unwrap the 'data' field if it exists in our standard response wrapper
+    // Globally unwrap the 'data' field if it exists in our standard response wrapper.
+    // For list endpoints where we need pagination meta, callers can opt-in by setting
+    // `_returnWrapper: true` in the request config.
     if (resData && typeof resData === "object" && "data" in resData) {
-      return resData.data;
+      const returnWrapper = (response.config as any)?._returnWrapper === true;
+      return returnWrapper ? resData : resData.data;
     }
 
     return response.data;
