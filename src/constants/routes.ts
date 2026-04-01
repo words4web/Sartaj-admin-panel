@@ -18,6 +18,18 @@ export const ROUTES = {
     EDIT: (id: string) => `/dashboard/categories/${id}/edit`,
     NEW: "/dashboard/categories/new",
   },
+  BANNERS: {
+    LIST: "/dashboard/banners",
+    DETAIL: (id: string) => `/dashboard/banners/${id}`,
+    EDIT: (id: string) => `/dashboard/banners/${id}/edit`,
+    NEW: "/dashboard/banners/new",
+  },
+  MANUFACTURERS: {
+    LIST: "/dashboard/manufacturers",
+    DETAIL: (id: string) => `/dashboard/manufacturers/${id}`,
+    EDIT: (id: string) => `/dashboard/manufacturers/${id}/edit`,
+    NEW: "/dashboard/manufacturers/new",
+  },
   SUBCATEGORIES: {
     LIST: "/dashboard/subcategories",
     DETAIL: (id: string) => `/dashboard/subcategories/${id}`,
