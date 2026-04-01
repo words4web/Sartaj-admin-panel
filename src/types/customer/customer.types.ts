@@ -1,35 +1,45 @@
-// Customer Types
-export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
+import { SUPER_CATEGORIES } from "@/lib/constants";
+
+// Japan-specific address
+export interface IAddress {
+  _id?: string;
+  fullName: string;
+  postalCode: string;
+  prefecture: string;
   city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  status: "active" | "inactive" | "suspended";
+  streetAddress: string;
+  building?: string;
+  phone: string;
+}
+
+export interface SuperCategory {
+  _id: string;
+  name: keyof typeof SUPER_CATEGORIES;
+  isActive: boolean;
+}
+
+export interface Customer {
+  _id: string;
+  fullName: string;
+  email: string;
+  mobileNumber: string;
+  addresses: IAddress[];
+  superCategory: SuperCategory | string;
+  isActive: boolean;
+  isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
-  notes?: string;
 }
 
 export interface CreateCustomerPayload {
-  name: string;
+  fullName: string;
   email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  notes?: string;
+  mobileNumber: string;
+  addresses: IAddress[];
+  superCategory: string;
 }
 
-export interface UpdateCustomerPayload extends Partial<CreateCustomerPayload> {
-  status?: "active" | "inactive" | "suspended";
-}
+export interface UpdateCustomerPayload extends Partial<CreateCustomerPayload> {}
 
 export interface CustomerListResponse {
   data: Customer[];
@@ -40,9 +50,34 @@ export interface CustomerListResponse {
 
 export interface CustomerFilters {
   search?: string;
-  status?: "active" | "inactive" | "suspended";
-  sortBy?: "name" | "createdAt" | "email";
+  superCategory?: string;
+  isActive?: boolean;
+  sortBy?: string;
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
 }
+
+export type CustomerFormValues = {
+  fullName: string;
+  email: string;
+  mobileNumber: string;
+  superCategory: string;
+  addresses: IAddress[];
+};
+
+// FORM PROPS TYPES
+
+export type ConfirmAction = {
+  type: "delete" | "toggle";
+  customer: Customer;
+} | null;
+export type StatusFilter = "all" | "active" | "inactive";
+
+export type CustomerFormProps = {
+  superCategories: SuperCategory[];
+  initialValues: CustomerFormValues;
+  isSubmitting?: boolean;
+  submitLabel?: string;
+  onSubmit: (values: CustomerFormValues) => void | Promise<void>;
+};

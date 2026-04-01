@@ -9,6 +9,20 @@ export const ROUTES = {
   CUSTOMERS: {
     LIST: "/dashboard/customers",
     DETAIL: (id: string) => `/dashboard/customers/${id}`,
+    EDIT: (id: string) => `/dashboard/customers/${id}/edit`,
+    NEW: "/dashboard/customers/new",
+  },
+  CATEGORIES: {
+    LIST: "/dashboard/categories",
+    DETAIL: (id: string) => `/dashboard/categories/${id}`,
+    EDIT: (id: string) => `/dashboard/categories/${id}/edit`,
+    NEW: "/dashboard/categories/new",
+  },
+  SUBCATEGORIES: {
+    LIST: "/dashboard/subcategories",
+    DETAIL: (id: string) => `/dashboard/subcategories/${id}`,
+    EDIT: (id: string) => `/dashboard/subcategories/${id}/edit`,
+    NEW: "/dashboard/subcategories/new",
   },
 
   SETTINGS: {
