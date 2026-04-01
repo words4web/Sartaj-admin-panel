@@ -12,6 +12,8 @@ import {
   PanelRight,
   LayoutGrid,
   ListTree,
+  Image as ImageIcon,
+  Factory,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/lib/utils";
@@ -43,6 +45,16 @@ const MENU_ITEMS = [
     icon: Package,
     label: "Products",
     href: ROUTES.PRODUCTS.LIST,
+  },
+  {
+    icon: ImageIcon,
+    label: "Banners",
+    href: ROUTES.BANNERS.LIST,
+  },
+  {
+    icon: Factory,
+    label: "Manufacturers",
+    href: ROUTES.MANUFACTURERS.LIST,
   },
 ];
 

@@ -66,6 +66,25 @@ export const API_ROUTES = {
     DELETE: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
   },
 
+  // Banners
+  BANNERS: {
+    LIST: `${API_ADMIN_BASE}/banner`,
+    CREATE: `${API_ADMIN_BASE}/banner/create`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/banner/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/banner/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/banner/${id}`,
+    TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/banner/${id}/status`,
+  },
+
+  // Manufacturers
+  MANUFACTURERS: {
+    LIST: `${API_ADMIN_BASE}/manufacturer`,
+    CREATE: `${API_ADMIN_BASE}/manufacturer/create`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/manufacturer/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/manufacturer/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/manufacturer/${id}`,
+  },
+
   // Settings
   SETTINGS: {
     PROFILE: `${API_ADMIN_BASE}/settings/profile`,
