@@ -4,9 +4,10 @@ import { ReactNode } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CommonLoader } from "@/components/ui/common-loader";
+import { CommonError } from "@/components/ui/common-error";
 
 export interface Column<T> {
-  key: keyof T | "actions";
+  key: keyof T | "actions" | string;
   label: string;
   render?: (value: any, row: T) => ReactNode;
   sortable?: boolean;
@@ -17,18 +18,26 @@ interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
   isLoading?: boolean;
+  isError?: boolean;
+  errorContent?: ReactNode;
+  onRetry?: () => void;
   onSort?: (key: string, order: "asc" | "desc") => void;
   sortKey?: string;
   sortOrder?: "asc" | "desc";
+  onRowClick?: (row: T) => void;
 }
 
 export function DataTable<T extends { id?: string | number; _id?: string }>({
   columns,
   data,
   isLoading = false,
+  isError = false,
+  errorContent,
+  onRetry,
   onSort,
   sortKey,
   sortOrder = "asc",
+  onRowClick,
 }: DataTableProps<T>) {
   const handleSort = (key: string) => {
     if (!onSort) return;
@@ -42,6 +51,19 @@ export function DataTable<T extends { id?: string | number; _id?: string }>({
     return (
       <div className="w-full bg-white rounded-lg border border-gray-200 min-h-[400px]">
         <CommonLoader fullScreen={false} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full bg-white rounded-lg border border-gray-200 min-h-[200px]">
+        {errorContent || (
+          <CommonError
+            message="Failed to load data. Please try again."
+            onRetry={onRetry}
+          />
+        )}
       </div>
     );
   }
@@ -92,9 +114,13 @@ export function DataTable<T extends { id?: string | number; _id?: string }>({
               return (
                 <tr
                   key={rowId}
+                  onClick={() => onRowClick?.(row)}
                   className={cn(
-                    "border-b border-gray-200 hover:bg-gray-50 transition-colors",
+                    "border-b border-gray-200 transition-colors",
                     idx === data.length - 1 && "border-b-0",
+                    onRowClick
+                      ? "cursor-pointer hover:bg-gray-50"
+                      : "hover:bg-gray-50",
                   )}>
                   {columns?.map((column) => (
                     <td
@@ -102,8 +128,11 @@ export function DataTable<T extends { id?: string | number; _id?: string }>({
                       className="px-4 py-3 text-sm text-gray-900"
                       style={{ width: column?.width }}>
                       {column?.render
-                        ? column?.render((row as any)[column?.key], row)
-                        : (row as any)[column?.key]}
+                        ? column?.render(
+                            (row as any)?.[column?.key as keyof typeof row],
+                            row,
+                          )
+                        : (row as any)?.[column?.key as keyof typeof row]}
                     </td>
                   ))}
                 </tr>

@@ -15,6 +15,7 @@ interface PageHeaderProps {
   onAdd?: () => void;
   onDelete?: () => void;
   addLabel?: string;
+  showBack?: boolean;
 }
 
 export function PageHeader({
@@ -28,6 +29,7 @@ export function PageHeader({
   onAdd,
   onDelete,
   addLabel = "Add",
+  showBack = true,
 }: PageHeaderProps) {
   const router = useRouter();
 
@@ -41,14 +43,16 @@ export function PageHeader({
 
   return (
     <div className="flex items-center gap-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleBack}
-        className="flex items-center gap-2">
-        <ArrowLeft size={16} />
-        Back
-      </Button>
+      {showBack && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleBack}
+          className="flex items-center gap-2">
+          <ArrowLeft size={16} />
+          Back
+        </Button>
+      )}
 
       <div className="flex-1">
         <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
