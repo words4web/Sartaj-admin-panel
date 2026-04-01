@@ -2,11 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { customerApi } from "./customer.api";
 import { customerKeys } from "./customer.queries";
-import {
-  Customer,
-  CreateCustomerPayload,
-  UpdateCustomerPayload,
-} from "@/types/customer/customer.types";
+import { CreateCustomerPayload, UpdateCustomerPayload } from "@/types/customer/customer.types";
 
 export const useCreateCustomer = () => {
   const queryClient = useQueryClient();
@@ -62,13 +58,12 @@ export const useUpdateCustomerStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: Customer["status"] }) =>
-      customerApi.updateStatus(id, status),
-    onSuccess: (_, variables) => {
+    mutationFn: (id: string) => customerApi.toggleStatus(id),
+    onSuccess: (_, id) => {
       toast.success("Status updated successfully");
       queryClient.invalidateQueries({ queryKey: customerKeys.lists() });
       queryClient.invalidateQueries({
-        queryKey: customerKeys.detail(variables.id),
+        queryKey: customerKeys.detail(id),
       });
     },
     onError: (error: any) => {

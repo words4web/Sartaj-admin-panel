@@ -12,60 +12,50 @@ export const customerApi = {
   getCustomers: async (
     filters?: CustomerFilters,
   ): Promise<CustomerListResponse> => {
-    const response = await axiosInstance.get<CustomerListResponse>(
+    // Need pagination meta, so request the full backend wrapper.
+    const response = await axiosInstance.get<any, any>(
       API_ROUTES.CUSTOMERS.LIST,
       {
         params: filters,
-      },
+        _returnWrapper: true,
+      } as any,
     );
-    return response.data;
+
+    return {
+      data: response?.data ?? [],
+      total: response?.meta?.total ?? 0,
+      page: response?.meta?.page ?? 1,
+      limit: response?.meta?.limit ?? 10,
+    };
   },
 
   getCustomerById: async (id: string): Promise<Customer> => {
-    const response = await axiosInstance.get<Customer>(
-      API_ROUTES.CUSTOMERS.DETAIL(id),
-    );
-    return response.data;
+    return axiosInstance.get<any, Customer>(API_ROUTES.CUSTOMERS.DETAIL(id));
   },
 
   createCustomer: async (data: CreateCustomerPayload): Promise<Customer> => {
-    const response = await axiosInstance.post<Customer>(
-      API_ROUTES.CUSTOMERS.CREATE,
-      data,
-    );
-    return response.data;
+    return axiosInstance.post<any, Customer>(API_ROUTES.CUSTOMERS.CREATE, data);
   },
 
   updateCustomer: async (
     id: string,
     data: UpdateCustomerPayload,
   ): Promise<Customer> => {
-    const response = await axiosInstance.put<Customer>(
+    return axiosInstance.put<any, Customer>(
       API_ROUTES.CUSTOMERS.UPDATE(id),
       data,
     );
-    return response.data;
   },
 
   deleteCustomer: async (id: string): Promise<void> => {
-    await axiosInstance.delete(API_ROUTES.CUSTOMERS.DELETE(id));
+    await axiosInstance.delete<any, void>(API_ROUTES.CUSTOMERS.DELETE(id));
   },
 
-  updateStatus: async (
-    id: string,
-    status: Customer["status"],
-  ): Promise<Customer> => {
-    const response = await axiosInstance.patch<Customer>(
-      API_ROUTES.CUSTOMERS.UPDATE(id),
-      { status },
-    );
-    return response.data;
-  },
-
-  batchDelete: async (ids: string[]): Promise<void> => {
-    await axiosInstance.post(
-      `${API_ROUTES.CUSTOMERS.LIST.replace("/get-all-customers", "/batch-delete")}`,
-      { ids },
+  toggleStatus: async (id: string): Promise<Customer> => {
+    // Backend toggles internally; body is unused by controller validation.
+    return axiosInstance.patch<any, Customer>(
+      API_ROUTES.CUSTOMERS.TOGGLE_STATUS(id),
+      {},
     );
   },
 };
