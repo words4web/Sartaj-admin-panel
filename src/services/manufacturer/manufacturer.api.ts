@@ -36,10 +36,10 @@ export const manufacturerApi = {
     );
 
     return {
-      manufacturers: response?.data ?? [],
-      total: response?.meta?.total ?? 0,
-      page: response?.meta?.page ?? 1,
-      limit: response?.meta?.limit ?? 10,
+      manufacturers: response?.data?.manufacturers ?? [],
+      total: response?.data?.total ?? 0,
+      page: response?.data?.page ?? 1,
+      limit: response?.data?.limit ?? 10,
     } satisfies ManufacturerListUnwrappedResponse;
   },
 

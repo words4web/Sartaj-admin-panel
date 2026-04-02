@@ -3,11 +3,11 @@
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
-  useBanners,
-  useDeleteBanner,
-  useToggleBannerStatus,
-} from "@/services/banner/banner.hooks";
-import { IBanner } from "@/types/banner/banner.types";
+  useCoupons,
+  useDeleteCoupon,
+  useToggleCouponStatus,
+} from "@/services/coupon/coupon.hooks";
+import { ICoupon, EDiscountType } from "@/types/coupon/coupon.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,7 @@ import {
   Power,
   Trash2,
   RotateCcw,
+  Ticket,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
@@ -38,10 +39,10 @@ import { dateUtils } from "@/lib/utils";
 
 type ConfirmAction = {
   type: "delete" | "toggle";
-  banner: IBanner;
+  coupon: ICoupon;
 } | null;
 
-export default function BannersPage() {
+export default function CouponsPage() {
   const router = useRouter();
   const limit = 10;
   const [search, setSearch] = useState("");
@@ -50,30 +51,30 @@ export default function BannersPage() {
 
   const debouncedSearch = useDebounce(search, 400);
 
-  const { data, isLoading, isError, refetch } = useBanners({
+  const { data, isLoading, isError, refetch } = useCoupons({
     search: debouncedSearch || undefined,
     page,
     limit,
   });
 
-  const deleteMutation = useDeleteBanner();
-  const toggleMutation = useToggleBannerStatus();
+  const deleteMutation = useDeleteCoupon();
+  const toggleMutation = useToggleCouponStatus();
 
-  const banners = (data as any)?.banners ?? [];
+  const coupons = (data as any)?.coupons ?? [];
   const total = (data as any)?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   const handleConfirm = useCallback(() => {
     if (!confirmAction) return;
     if (confirmAction?.type === "delete") {
-      deleteMutation.mutate(confirmAction?.banner?._id, {
+      deleteMutation.mutate(confirmAction?.coupon?._id, {
         onSettled: () => setConfirmAction(null),
       });
     } else {
       toggleMutation.mutate(
         {
-          id: confirmAction?.banner?._id,
-          isActive: !confirmAction?.banner?.isActive,
+          id: confirmAction?.coupon?._id,
+          isActive: !confirmAction?.coupon?.isActive,
         },
         { onSettled: () => setConfirmAction(null) },
       );
@@ -85,56 +86,53 @@ export default function BannersPage() {
     setPage(1);
   }, []);
 
-  const columns: Column<IBanner>[] = useMemo(
+  const columns: Column<ICoupon>[] = useMemo(
     () => [
       {
-        key: "image",
-        label: "Image",
-        width: "120px",
-        render: (_: any, row: IBanner) => (
-          <div className="w-20 h-10 rounded overflow-hidden bg-gray-100 border">
-            <img
-              src={row?.image}
-              alt={row?.title || "Banner"}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = "https://placehold.co/200x100?text=Banner";
-              }}
-            />
+        key: "code",
+        label: "Coupon Code",
+        render: (_: any, row: ICoupon) => (
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+              <Ticket size={16} />
+            </div>
+            <span className="font-bold text-gray-900 tracking-tight">{row?.code}</span>
           </div>
         ),
       },
       {
         key: "title",
         label: "Title",
-        render: (_: any, row: IBanner) => (
-          <span className="font-medium">{row?.title || "—"}</span>
+        render: (_: any, row: ICoupon) => (
+          <span className="font-medium text-gray-700">{row?.title || "—"}</span>
         ),
       },
       {
-        key: "link",
-        label: "Link",
-        render: (_: any, row: IBanner) => (
-          <span className="text-gray-500 truncate max-w-[200px] overflow-hidden whitespace-nowrap inline-block align-bottom">
-            {row?.link || "—"}
+        key: "discount",
+        label: "Discount",
+        render: (_: any, row: ICoupon) => (
+          <span className="font-semibold text-green-600">
+            {row?.discountType === EDiscountType.PERCENT 
+              ? `${row?.discountAmount}% OFF` 
+              : `$${row?.discountAmount} OFF`}
           </span>
         ),
       },
       {
         key: "isActive",
         label: "Status",
-        render: (_: any, row: IBanner) => (
+        render: (_: any, row: ICoupon) => (
           <Badge variant={row?.isActive ? "success" : "secondary"}>
             {row?.isActive ? "Active" : "Inactive"}
           </Badge>
         ),
       },
       {
-        key: "createdAt",
-        label: "Created",
-        render: (_: any, row: IBanner) => (
-          <span className="text-gray-500">
-            {dateUtils.format(row?.createdAt)}
+        key: "expiryDate",
+        label: "Expires",
+        render: (_: any, row: ICoupon) => (
+          <span className="text-gray-500 text-sm">
+            {row?.expiryDate ? dateUtils?.format(row?.expiryDate) : "—"}
           </span>
         ),
       },
@@ -142,7 +140,7 @@ export default function BannersPage() {
         key: "actions",
         label: "Actions",
         width: "100px",
-        render: (_: any, row: IBanner) => (
+        render: (_: any, row: ICoupon) => (
           <div
             className="flex justify-end"
             onClick={(e) => e.stopPropagation()}>
@@ -154,13 +152,13 @@ export default function BannersPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.BANNERS?.EDIT(row?._id))}>
+                  onClick={() => router?.push(ROUTES?.COUPONS?.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
-                    setConfirmAction({ type: "toggle", banner: row })
+                    setConfirmAction({ type: "toggle", coupon: row })
                   }>
                   <Power size={14} className="mr-2 hover:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
@@ -168,7 +166,7 @@ export default function BannersPage() {
                 <DropdownMenuItem
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() =>
-                    setConfirmAction({ type: "delete", banner: row })
+                    setConfirmAction({ type: "delete", coupon: row })
                   }>
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
@@ -184,10 +182,10 @@ export default function BannersPage() {
   return (
     <div className="space-y-6 p-4">
       <PageHeader
-        title="Banners"
-        description="Manage app banners and promotions"
-        addRoute={ROUTES?.BANNERS?.NEW}
-        addLabel="Add Banner"
+        title="Coupons"
+        description="Manage promotional codes and discounts"
+        addRoute={ROUTES?.COUPONS?.NEW}
+        addLabel="Add Coupon"
         showBack={false}
       />
 
@@ -202,7 +200,7 @@ export default function BannersPage() {
               size={18}
             />
             <Input
-              placeholder="Search banners..."
+              placeholder="Search coupons..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -232,11 +230,11 @@ export default function BannersPage() {
         ) : (
           <DataTable
             columns={columns}
-            data={banners}
+            data={coupons}
             isLoading={isLoading}
             isError={isError}
             onRetry={refetch}
-            onRowClick={(row) => router?.push(ROUTES?.BANNERS?.DETAIL(row?._id))}
+            onRowClick={(row) => router?.push(ROUTES?.COUPONS?.DETAIL(row?._id))}
           />
         )}
       </div>
@@ -244,8 +242,8 @@ export default function BannersPage() {
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
           <p className="text-sm text-gray-500 text-center sm:text-left">
-            Showing <span className="font-medium">{banners?.length}</span> of
-            <span className="font-medium">{total}</span> banners
+            Showing <span className="font-medium">{coupons?.length}</span> of
+            <span className="font-medium">{total}</span> coupons
           </p>
           <Pagination
             currentPage={page}
@@ -260,15 +258,15 @@ export default function BannersPage() {
         open={!!confirmAction}
         title={
           confirmAction?.type === "delete"
-            ? `Delete Banner?`
-            : `${confirmAction?.banner?.isActive ? "Deactivate" : "Activate"} Banner?`
+            ? `Delete Coupon?`
+            : `${confirmAction?.coupon?.isActive ? "Deactivate" : "Activate"} Coupon?`
         }
         description={
           confirmAction?.type === "delete"
-            ? "This will permanently delete the banner. This action cannot be undone."
-            : confirmAction?.banner?.isActive
-              ? "This will deactivate the banner and hide it from the app."
-              : "This will activate the banner and show it on the app."
+            ? "This will permanently delete the coupon. This action cannot be undone."
+            : confirmAction?.coupon?.isActive
+              ? "This will deactivate the coupon and it will no longer be usable by customers."
+              : "This will activate the coupon and make it available for customers."
         }
         destructive={confirmAction?.type === "delete"}
         confirmLabel={confirmAction?.type === "delete" ? "Delete" : "Confirm"}

@@ -30,6 +30,12 @@ export const ROUTES = {
     EDIT: (id: string) => `/dashboard/manufacturers/${id}/edit`,
     NEW: "/dashboard/manufacturers/new",
   },
+  COUPONS: {
+    LIST: "/dashboard/coupons",
+    DETAIL: (id: string) => `/dashboard/coupons/${id}`,
+    EDIT: (id: string) => `/dashboard/coupons/${id}/edit`,
+    NEW: "/dashboard/coupons/new",
+  },
   SUBCATEGORIES: {
     LIST: "/dashboard/subcategories",
     DETAIL: (id: string) => `/dashboard/subcategories/${id}`,

@@ -14,6 +14,7 @@ import {
   ListTree,
   Image as ImageIcon,
   Factory,
+  Ticket,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/lib/utils";
@@ -55,6 +56,11 @@ const MENU_ITEMS = [
     icon: Factory,
     label: "Manufacturers",
     href: ROUTES.MANUFACTURERS.LIST,
+  },
+  {
+    icon: Ticket,
+    label: "Coupons",
+    href: ROUTES.COUPONS.LIST,
   },
 ];
 

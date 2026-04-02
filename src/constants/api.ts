@@ -85,6 +85,16 @@ export const API_ROUTES = {
     DELETE: (id: string) => `${API_ADMIN_BASE}/manufacturer/${id}`,
   },
 
+  // Coupons
+  COUPONS: {
+    LIST: `${API_ADMIN_BASE}/coupon`,
+    CREATE: `${API_ADMIN_BASE}/coupon/create`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/coupon/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/coupon/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/coupon/${id}`,
+    TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/coupon/${id}/status`,
+  },
+
   // Settings
   SETTINGS: {
     PROFILE: `${API_ADMIN_BASE}/settings/profile`,
