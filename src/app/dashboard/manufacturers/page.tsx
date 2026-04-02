@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
+import { CommonLoader } from "@/components/ui/common-loader";
+import { CommonError } from "@/components/ui/common-error";
 import {
   Search,
   MoreHorizontal,
@@ -179,16 +181,22 @@ export default function ManufacturersPage() {
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <DataTable
-          columns={columns}
-          data={manufacturers}
-          isLoading={isLoading}
-          isError={isError}
-          onRetry={refetch}
-          onRowClick={(row) =>
-            router?.push(ROUTES?.MANUFACTURERS?.DETAIL(row?._id))
-          }
-        />
+        {isLoading ? (
+          <CommonLoader fullScreen={false} />
+        ) : isError ? (
+          <CommonError onRetry={refetch} />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={manufacturers}
+            isLoading={isLoading}
+            isError={isError}
+            onRetry={refetch}
+            onRowClick={(row) =>
+              router?.push(ROUTES?.MANUFACTURERS?.DETAIL(row?._id))
+            }
+          />
+        )}
       </div>
 
       {totalPages > 1 && (

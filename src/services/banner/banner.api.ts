@@ -39,10 +39,10 @@ export const bannerApi = {
     );
 
     return {
-      banners: response?.data ?? [],
-      total: response?.meta?.total ?? 0,
-      page: response?.meta?.page ?? 1,
-      limit: response?.meta?.limit ?? 10,
+      banners: response?.data?.banners ?? [],
+      total: response?.data?.total ?? 0,
+      page: response?.data?.page ?? 1,
+      limit: response?.data?.limit ?? 10,
     } satisfies BannerListUnwrappedResponse;
   },
 
