@@ -42,6 +42,12 @@ export const ROUTES = {
     EDIT: (id: string) => `/dashboard/subcategories/${id}/edit`,
     NEW: "/dashboard/subcategories/new",
   },
+  CMS: {
+    LIST: "/dashboard/cms",
+    DETAIL: (id: string) => `/dashboard/cms/${id}`,
+    EDIT: (id: string) => `/dashboard/cms/${id}/edit`,
+    NEW: "/dashboard/cms/new",
+  },
 
   SETTINGS: {
     ROOT: "/dashboard/settings",

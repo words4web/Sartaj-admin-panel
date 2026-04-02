@@ -95,6 +95,15 @@ export const API_ROUTES = {
     TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/coupon/${id}/status`,
   },
 
+  // CMS
+  CMS: {
+    LIST: `${API_ADMIN_BASE}/cms`,
+    CREATE: `${API_ADMIN_BASE}/cms`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/cms/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/cms/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/cms/${id}`,
+  },
+
   // Settings
   SETTINGS: {
     PROFILE: `${API_ADMIN_BASE}/settings/profile`,

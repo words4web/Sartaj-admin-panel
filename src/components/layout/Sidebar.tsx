@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   Factory,
   Ticket,
+  FileText,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,11 @@ const MENU_ITEMS = [
     icon: Ticket,
     label: "Coupons",
     href: ROUTES.COUPONS.LIST,
+  },
+  {
+    icon: FileText,
+    label: "Pages (CMS)",
+    href: ROUTES.CMS.LIST,
   },
 ];
 
