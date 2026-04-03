@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bannerApi } from "./banner.api";
-import { BannerFilters, CreateBannerPayload, UpdateBannerPayload } from "@/types/banner/banner.types";
+import {
+  BannerFilters,
+  CreateBannerPayload,
+  UpdateBannerPayload,
+} from "@/types/banner/banner.types";
 import { toast } from "sonner";
 
 export const BANNER_KEYS = {

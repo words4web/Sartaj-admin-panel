@@ -15,7 +15,7 @@ export interface CreateManufacturerPayload {
 export interface UpdateManufacturerPayload extends Partial<CreateManufacturerPayload> {}
 
 export interface ManufacturerListResponse {
-  data: IManufacturer[];
+  manufacturers: IManufacturer[];
   total: number;
   page: number;
   limit: number;

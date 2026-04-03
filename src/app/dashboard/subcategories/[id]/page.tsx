@@ -25,9 +25,9 @@ export default function SubCategoryDetailsPage() {
   const parentName =
     (subCategory?.parent as ICategory)?.name ||
     (typeof subCategory?.parent === "string"
-      ? subCategory.parent
+      ? subCategory?.parent
       : undefined) ||
-    "—";
+    "N/A";
 
   return (
     <div className="space-y-6 p-6">
@@ -62,20 +62,6 @@ export default function SubCategoryDetailsPage() {
               <div>
                 <p className="text-sm text-gray-500">Parent Category</p>
                 <p className="font-medium text-gray-900">{parentName}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Created</p>
-                <p className="font-medium text-gray-900">
-                  {subCategory?.createdAt &&
-                    dateUtils.formatDateTime(subCategory?.createdAt)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Updated</p>
-                <p className="font-medium text-gray-900">
-                  {subCategory?.updatedAt &&
-                    dateUtils.formatDateTime(subCategory?.updatedAt)}
-                </p>
               </div>
             </div>
           </div>

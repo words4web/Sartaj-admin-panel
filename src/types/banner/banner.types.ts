@@ -19,7 +19,7 @@ export interface CreateBannerPayload {
 export interface UpdateBannerPayload extends Partial<CreateBannerPayload> {}
 
 export interface BannerListResponse {
-  data: IBanner[];
+  banners: IBanner[];
   total: number;
   page: number;
   limit: number;

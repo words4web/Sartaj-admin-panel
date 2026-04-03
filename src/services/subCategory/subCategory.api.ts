@@ -5,17 +5,13 @@ import {
   CreateSubCategoryPayload,
   UpdateSubCategoryPayload,
   SubCategoryFilters,
+  SubCategoryListResponse,
 } from "@/types/subCategory/subCategory.types";
 
-interface SubCategoryListUnwrappedResponse {
-  subCategories: ISubCategory[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
 export const subCategoryApi = {
-  getSubCategories: async (filters?: SubCategoryFilters) => {
+  getSubCategories: async (
+    filters?: SubCategoryFilters,
+  ): Promise<SubCategoryListResponse> => {
     const response = await axiosInstance.get<any, any>(
       API_ROUTES.SUBCATEGORIES.LIST,
       { params: filters, _returnWrapper: true } as any,
@@ -26,7 +22,7 @@ export const subCategoryApi = {
       total: response?.meta?.total ?? 0,
       page: response?.meta?.page ?? 1,
       limit: response?.meta?.limit ?? 10,
-    } satisfies SubCategoryListUnwrappedResponse;
+    };
   },
 
   getSubCategoryById: async (id: string): Promise<ISubCategory> => {

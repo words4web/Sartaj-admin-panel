@@ -59,8 +59,8 @@ export default function BannersPage() {
   const deleteMutation = useDeleteBanner();
   const toggleMutation = useToggleBannerStatus();
 
-  const banners = (data as any)?.banners ?? [];
-  const total = (data as any)?.total ?? 0;
+  const banners = data?.banners ?? [];
+  const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   const handleConfirm = useCallback(() => {
@@ -98,7 +98,8 @@ export default function BannersPage() {
               alt={row?.title || "Banner"}
               className="w-full h-full object-cover"
               onError={(e) => {
-                e.currentTarget.src = "https://placehold.co/200x100?text=Banner";
+                e.currentTarget.src =
+                  "https://placehold.co/200x100?text=Banner";
               }}
             />
           </div>
@@ -154,7 +155,7 @@ export default function BannersPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.BANNERS?.EDIT(row?._id))}>
+                  onClick={() => router?.push(ROUTES.BANNERS.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -186,7 +187,7 @@ export default function BannersPage() {
       <PageHeader
         title="Banners"
         description="Manage app banners and promotions"
-        addRoute={ROUTES?.BANNERS?.NEW}
+        addRoute={ROUTES.BANNERS.NEW}
         addLabel="Add Banner"
         showBack={false}
       />
@@ -236,7 +237,7 @@ export default function BannersPage() {
             isLoading={isLoading}
             isError={isError}
             onRetry={refetch}
-            onRowClick={(row) => router?.push(ROUTES?.BANNERS?.DETAIL(row?._id))}
+            onRowClick={(row) => router?.push(ROUTES.BANNERS.DETAIL(row?._id))}
           />
         )}
       </div>

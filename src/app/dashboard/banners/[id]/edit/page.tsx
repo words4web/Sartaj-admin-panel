@@ -29,11 +29,10 @@ export default function EditBannerPage() {
           isActive: values?.isActive,
         },
       });
-      toast?.success("Banner updated successfully");
-      router?.push(ROUTES?.BANNERS?.LIST);
+      toast.success("Banner updated successfully");
+      router.push(ROUTES.BANNERS.LIST);
     } catch (error) {
-      toast?.error("Failed to update banner");
-      console?.error(error);
+      toast.error("Failed to update banner");
     }
   };
 
@@ -43,7 +42,7 @@ export default function EditBannerPage() {
         title="Edit Banner"
         description="Update banner details and image"
         showBack={true}
-        backRoute={ROUTES?.BANNERS?.DETAIL(id)}
+        backRoute={ROUTES.BANNERS.DETAIL(id)}
       />
 
       <Card className="p-6">
@@ -62,7 +61,7 @@ export default function EditBannerPage() {
               isActive: banner?.isActive ?? true,
               existingImage: banner?.image,
             }}
-            isSubmitting={updateMutation?.isPending}
+            isSubmitting={updateMutation.isPending}
             onSubmit={handleSubmit}
           />
         )}

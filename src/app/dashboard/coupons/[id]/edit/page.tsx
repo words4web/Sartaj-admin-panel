@@ -20,17 +20,16 @@ export default function EditCouponPage() {
 
   const handleSubmit = async (values: any) => {
     try {
-      await updateMutation?.mutateAsync?.({
+      await updateMutation.mutateAsync({
         id,
         data: {
           ...values,
         },
       });
       toast.success("Coupon updated successfully");
-      router?.push?.(ROUTES?.COUPONS?.LIST);
+      router.push(ROUTES.COUPONS.LIST);
     } catch (error) {
       toast.error("Failed to update coupon");
-      console.error(error);
     }
   };
 
@@ -40,7 +39,7 @@ export default function EditCouponPage() {
         title="Edit Coupon"
         description="Update coupon code or discount details"
         showBack={true}
-        backRoute={id ? ROUTES?.COUPONS?.DETAIL?.(id) : ROUTES?.COUPONS?.LIST}
+        backRoute={ROUTES.COUPONS.LIST}
       />
 
       <Card className="p-6">
@@ -62,11 +61,15 @@ export default function EditCouponPage() {
               discountAmount: coupon?.discountAmount || 0,
               minPurchase: coupon?.minPurchase || 0,
               maxDiscount: coupon?.maxDiscount || 0,
-              startDate: coupon?.startDate ? new Date(coupon?.startDate)?.toISOString()?.split('T')?.[0] : "",
-              expiryDate: coupon?.expiryDate ? new Date(coupon?.expiryDate)?.toISOString()?.split('T')?.[0] : "",
+              startDate: coupon?.startDate
+                ? new Date(coupon?.startDate)?.toISOString()?.split("T")?.[0]
+                : "",
+              expiryDate: coupon?.expiryDate
+                ? new Date(coupon?.expiryDate)?.toISOString()?.split("T")?.[0]
+                : "",
               isActive: coupon?.isActive ?? true,
             }}
-            isSubmitting={updateMutation?.isPending}
+            isSubmitting={updateMutation.isPending}
             onSubmit={handleSubmit}
           />
         )}

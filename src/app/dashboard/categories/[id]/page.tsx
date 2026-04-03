@@ -11,6 +11,7 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import Image from "next/image";
 
 export default function CategoryDetailsPage() {
   const params = useParams();
@@ -40,41 +41,50 @@ export default function CategoryDetailsPage() {
         }
       />
 
-      <Card className="p-6">
-        {isCategoryLoading ? (
-          <CommonLoader fullScreen={false} />
-        ) : isCategoryError || !category ? (
-          <CommonError
-            message="Failed to load category details. Please check your connection."
-            onRetry={refetchCategories}
-          />
-        ) : (
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <h2 className="text-xl font-semibold">{category.name}</h2>
-              <Badge variant={category.isActive ? "default" : "secondary"}>
-                {category.isActive ? "Active" : "Inactive"}
-              </Badge>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 p-6 h-fit">
+          {isCategoryLoading ? (
+            <CommonLoader fullScreen={false} />
+          ) : isCategoryError || !category ? (
+            <CommonError
+              message="Failed to load category details. Please check your connection."
+              onRetry={refetchCategories}
+            />
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="text-xl font-semibold">{category?.name}</h2>
+                <Badge variant={category?.isActive ? "default" : "secondary"}>
+                  {category?.isActive ? "Active" : "Inactive"}
+                </Badge>
+              </div>
+              <p className="text-gray-700">
+                {category?.description || "Description is not available"}
+              </p>
             </div>
-            <p className="text-gray-700">{category.description || "—"}</p>
+          )}
+        </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-              <div>
-                <p className="text-sm text-gray-500">Created</p>
-                <p className="font-medium text-gray-900">
-                  {new Date(category.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Updated</p>
-                <p className="font-medium text-gray-900">
-                  {new Date(category.updatedAt).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
+        {/* Category Image */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Category Image</h3>
+          <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
+            {category?.image && (
+              <Image
+                src={category?.image}
+                alt={category?.name}
+                width={50}
+                height={50}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://placehold.co/400x400/e2e8f0/64748b?text=Broken+Image";
+                }}
+              />
+            )}
           </div>
-        )}
-      </Card>
+        </Card>
+      </div>
 
       <Card className="p-6">
         {isSubcategoriesLoading ? (
@@ -102,12 +112,12 @@ export default function CategoryDetailsPage() {
             <div className="mt-4 space-y-3">
               {subcategories?.map((s) => (
                 <div
-                  key={s._id}
+                  key={s?._id}
                   className="flex items-center justify-between gap-4 p-3 border border-gray-200 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900">{s?.name}</p>
                     <p className="text-sm text-gray-500">
-                      {s?.description || "—"}
+                      {s?.description || "N/A"}
                     </p>
                   </div>
                   <Badge variant={s?.isActive ? "default" : "secondary"}>

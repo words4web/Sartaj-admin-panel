@@ -37,6 +37,7 @@ import {
   subCategoryConfirmAction,
 } from "@/types/subCategory/subCategory.types";
 import { ROUTES } from "@/constants/routes";
+import { ICategory } from "@/types/category/category.types";
 
 export default function SubCategoriesPage() {
   const router = useRouter();
@@ -70,7 +71,7 @@ export default function SubCategoriesPage() {
     if (!confirmAction) return;
 
     if (confirmAction.type === "delete") {
-      deleteMutation.mutate(confirmAction.subCategory._id, {
+      deleteMutation.mutate(confirmAction.subCategory?._id, {
         onSettled: () => setConfirmAction(null),
       });
       return;
@@ -78,8 +79,8 @@ export default function SubCategoriesPage() {
 
     toggleMutation.mutate(
       {
-        id: confirmAction.subCategory._id,
-        isActive: !confirmAction.subCategory.isActive,
+        id: confirmAction.subCategory?._id,
+        isActive: !confirmAction.subCategory?.isActive,
       },
       { onSettled: () => setConfirmAction(null) },
     );
@@ -99,7 +100,7 @@ export default function SubCategoriesPage() {
         label: "Parent",
         render: (_: any, row: ISubCategory) => (
           <span className="text-gray-500 truncate max-w-[200px] overflow-hidden whitespace-nowrap inline-block align-bottom">
-            {(row?.parent as any)?.name || (row?.parent as string) || "—"}
+            {(row?.parent as ICategory)?.name || "N/A"}
           </span>
         ),
       },
@@ -110,15 +111,6 @@ export default function SubCategoriesPage() {
           <Badge variant={row?.isActive ? "default" : "secondary"}>
             {row?.isActive ? "Active" : "Inactive"}
           </Badge>
-        ),
-      },
-      {
-        key: "createdAt",
-        label: "Created",
-        render: (_: any, row: ISubCategory) => (
-          <span className="text-gray-500">
-            {new Date(row?.createdAt).toLocaleDateString()}
-          </span>
         ),
       },
       {
@@ -136,12 +128,6 @@ export default function SubCategoriesPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() =>
-                    router.push(ROUTES.SUBCATEGORIES.DETAIL(row?._id))
-                  }>
-                  <Eye size={14} className="mr-2" /> View Details
-                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() =>
                     router.push(ROUTES.SUBCATEGORIES.EDIT(row?._id))
@@ -232,8 +218,7 @@ export default function SubCategoriesPage() {
               setParentId("");
               setPage(1);
             }}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer"
-          >
+            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
             <RotateCcw size={16} />
             <span className="text-sm font-medium">Reset</span>
           </Button>

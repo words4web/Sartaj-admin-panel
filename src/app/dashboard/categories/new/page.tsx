@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import CategoryForm from "../_components/CategoryForm";
@@ -7,10 +8,16 @@ import { useCreateCategory } from "@/services/category/category.hooks";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ROUTES } from "@/constants/routes";
 import { CategoryFormValues } from "@/types/category/category.types";
+import { CATEGORY_DEFAULT_VALUES } from "@/schemas/category/category.default";
 
 export default function CategoryCreatePage() {
   const router = useRouter();
   const createMutation = useCreateCategory();
+
+  const initialValues = useMemo<CategoryFormValues>(
+    () => CATEGORY_DEFAULT_VALUES,
+    [],
+  );
 
   const handleSubmit = (values: CategoryFormValues) => {
     createMutation.mutate(
@@ -35,7 +42,7 @@ export default function CategoryCreatePage() {
 
       <Card className="p-6">
         <CategoryForm
-          initialValues={{ name: "", description: "", image: null }}
+          initialValues={initialValues}
           isSubmitting={createMutation.isPending}
           submitLabel="Create Category"
           requireImage={true}

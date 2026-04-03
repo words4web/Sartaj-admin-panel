@@ -106,8 +106,7 @@ export default function CmsPage() {
         render: (_: any, row: ICMS) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e?.stopPropagation?.()}
-          >
+            onClick={(e) => e?.stopPropagation?.()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -116,16 +115,15 @@ export default function CmsPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.CMS?.EDIT(row?._id))}
-                >
+                  onClick={() => router?.push(ROUTES?.CMS?.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() => setConfirmDelete(row)}
                 >
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -169,8 +167,7 @@ export default function CmsPage() {
           <Button
             size="sm"
             onClick={resetFilters}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer"
-          >
+            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
             <RotateCcw size={16} />
             <span className="text-sm font-medium">Reset</span>
           </Button>

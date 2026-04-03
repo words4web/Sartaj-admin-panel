@@ -5,17 +5,11 @@ import {
   CreateCouponPayload,
   UpdateCouponPayload,
   CouponFilters,
+  CouponListResponse,
 } from "@/types/coupon/coupon.types";
 
-interface CouponListUnwrappedResponse {
-  coupons: ICoupon[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
 export const couponApi = {
-  getCoupons: async (filters?: CouponFilters) => {
+  getCoupons: async (filters?: CouponFilters): Promise<CouponListResponse> => {
     const response = await axiosInstance.get<any, any>(
       API_ROUTES.COUPONS.LIST,
       {
@@ -25,17 +19,15 @@ export const couponApi = {
     );
 
     return {
-      coupons: response?.data?.coupons ?? [],
-      total: response?.data?.total ?? 0,
-      page: response?.data?.page ?? 1,
-      limit: response?.data?.limit ?? 10,
-    } satisfies CouponListUnwrappedResponse;
+      coupons: response?.data ?? [],
+      total: response?.meta?.total,
+      page: response?.meta?.page,
+      limit: response?.meta?.limit,
+    };
   },
 
   getCouponById: async (id: string): Promise<ICoupon> => {
-    return await axiosInstance.get<any, ICoupon>(
-      API_ROUTES.COUPONS.DETAIL(id),
-    );
+    return await axiosInstance.get<any, ICoupon>(API_ROUTES.COUPONS.DETAIL(id));
   },
 
   createCoupon: async (data: CreateCouponPayload): Promise<ICoupon> => {

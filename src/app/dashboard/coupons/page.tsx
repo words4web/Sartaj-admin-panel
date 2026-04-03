@@ -60,8 +60,8 @@ export default function CouponsPage() {
   const deleteMutation = useDeleteCoupon();
   const toggleMutation = useToggleCouponStatus();
 
-  const coupons = (data as any)?.coupons ?? [];
-  const total = (data as any)?.total ?? 0;
+  const coupons = data?.coupons ?? [];
+  const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   const handleConfirm = useCallback(() => {
@@ -96,7 +96,9 @@ export default function CouponsPage() {
             <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
               <Ticket size={16} />
             </div>
-            <span className="font-bold text-gray-900 tracking-tight">{row?.code}</span>
+            <span className="font-bold text-gray-900 tracking-tight">
+              {row?.code}
+            </span>
           </div>
         ),
       },
@@ -112,8 +114,8 @@ export default function CouponsPage() {
         label: "Discount",
         render: (_: any, row: ICoupon) => (
           <span className="font-semibold text-green-600">
-            {row?.discountType === EDiscountType.PERCENT 
-              ? `${row?.discountAmount}% OFF` 
+            {row?.discountType === EDiscountType.PERCENT
+              ? `${row?.discountAmount}% OFF`
               : `$${row?.discountAmount} OFF`}
           </span>
         ),
@@ -184,7 +186,7 @@ export default function CouponsPage() {
       <PageHeader
         title="Coupons"
         description="Manage promotional codes and discounts"
-        addRoute={ROUTES?.COUPONS?.NEW}
+        addRoute={ROUTES.COUPONS.NEW}
         addLabel="Add Coupon"
         showBack={false}
       />
@@ -234,7 +236,9 @@ export default function CouponsPage() {
             isLoading={isLoading}
             isError={isError}
             onRetry={refetch}
-            onRowClick={(row) => router?.push(ROUTES?.COUPONS?.DETAIL(row?._id))}
+            onRowClick={(row) =>
+              router?.push(ROUTES?.COUPONS?.DETAIL(row?._id))
+            }
           />
         )}
       </div>
