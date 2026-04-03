@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { subCategoryApi } from "./subCategory.api";
+import { categoryKeys } from "../category/category.hooks";
 import {
   CreateSubCategoryPayload,
   UpdateSubCategoryPayload,
@@ -38,6 +39,7 @@ export const useCreateSubCategory = () => {
       subCategoryApi.createSubCategory(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: subCategoryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.all });
       toast.success("SubCategory created successfully");
     },
     onError: (error: any) => {
@@ -54,6 +56,7 @@ export const useUpdateSubCategory = (id: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: subCategoryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: subCategoryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.all });
       toast.success("SubCategory updated successfully");
     },
     onError: (error: any) => {
@@ -69,6 +72,7 @@ export const useToggleSubCategoryStatus = () => {
       subCategoryApi.toggleStatus(id, isActive),
     onSuccess: (_, { isActive }) => {
       queryClient.invalidateQueries({ queryKey: subCategoryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.all });
       toast.success(
         `SubCategory ${isActive ? "activated" : "deactivated"} (cascaded to products)`,
       );
@@ -85,6 +89,7 @@ export const useDeleteSubCategory = () => {
     mutationFn: (id: string) => subCategoryApi.deleteSubCategory(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: subCategoryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.all });
       toast.success("SubCategory and its products deleted successfully");
     },
     onError: (error: any) => {

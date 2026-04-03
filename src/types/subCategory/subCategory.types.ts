@@ -23,7 +23,7 @@ export interface CreateSubCategoryPayload {
 export interface UpdateSubCategoryPayload extends Partial<CreateSubCategoryPayload> {}
 
 export interface SubCategoryListResponse {
-  data: ISubCategory[];
+  subCategories: ISubCategory[];
   total: number;
   page: number;
   limit: number;

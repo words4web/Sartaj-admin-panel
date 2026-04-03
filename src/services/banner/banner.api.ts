@@ -5,18 +5,10 @@ import {
   CreateBannerPayload,
   UpdateBannerPayload,
   BannerFilters,
+  BannerListResponse,
 } from "@/types/banner/banner.types";
 
-interface BannerListUnwrappedResponse {
-  banners: IBanner[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
-const buildBannerFormData = (
-  data: Partial<CreateBannerPayload>,
-): FormData => {
+const buildBannerFormData = (data: Partial<CreateBannerPayload>): FormData => {
   const formData = new FormData();
   if (data.title !== undefined) formData.append("title", data.title);
   if (data.link !== undefined) formData.append("link", data.link);
@@ -29,7 +21,7 @@ const buildBannerFormData = (
 };
 
 export const bannerApi = {
-  getBanners: async (filters?: BannerFilters) => {
+  getBanners: async (filters?: BannerFilters): Promise<BannerListResponse> => {
     const response = await axiosInstance.get<any, any>(
       API_ROUTES.BANNERS.LIST,
       {
@@ -37,19 +29,16 @@ export const bannerApi = {
         _returnWrapper: true,
       } as any,
     );
-
     return {
-      banners: response?.data?.banners ?? [],
-      total: response?.data?.total ?? 0,
-      page: response?.data?.page ?? 1,
-      limit: response?.data?.limit ?? 10,
-    } satisfies BannerListUnwrappedResponse;
+      banners: response?.data ?? [],
+      total: response?.meta?.total,
+      page: response?.meta?.page,
+      limit: response?.meta?.limit,
+    };
   },
 
   getBannerById: async (id: string): Promise<IBanner> => {
-    return await axiosInstance.get<any, IBanner>(
-      API_ROUTES.BANNERS.DETAIL(id),
-    );
+    return await axiosInstance.get<any, IBanner>(API_ROUTES.BANNERS.DETAIL(id));
   },
 
   createBanner: async (data: CreateBannerPayload): Promise<IBanner> => {

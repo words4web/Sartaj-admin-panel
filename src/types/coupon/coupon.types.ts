@@ -42,6 +42,13 @@ export interface CreateCouponPayload {
 
 export interface UpdateCouponPayload extends Partial<CreateCouponPayload> {}
 
+export interface CouponListResponse {
+  coupons: ICoupon[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface CouponFilters {
   search?: string;
   page?: number;

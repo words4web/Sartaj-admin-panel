@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Users,
@@ -79,6 +79,7 @@ const FOOTER_ITEMS = [
 ];
 
 export default function Sidebar() {
+  const router = useRouter();
   const pathname = usePathname();
   const {
     sidebarCollapsed,
@@ -117,8 +118,9 @@ export default function Sidebar() {
               width={160}
               height={50}
               priority
-              className="rounded-lg object-contain"
+              className="rounded-lg object-contain cursor-pointer"
               style={{ width: "160px", height: "auto" }}
+              onClick={() => router.push(ROUTES.DASHBOARD)}
             />
           </div>
         </div>

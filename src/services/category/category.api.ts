@@ -5,14 +5,8 @@ import {
   CreateCategoryPayload,
   UpdateCategoryPayload,
   CategoryFilters,
+  CategoryListResponse,
 } from "@/types/category/category.types";
-
-interface CategoryListUnwrappedResponse {
-  categories: ICategory[];
-  total: number;
-  page: number;
-  limit: number;
-}
 
 const buildCategoryFormData = (
   data: Partial<CreateCategoryPayload>,
@@ -30,7 +24,9 @@ const buildCategoryFormData = (
 };
 
 export const categoryApi = {
-  getCategories: async (filters?: CategoryFilters) => {
+  getCategories: async (
+    filters?: CategoryFilters,
+  ): Promise<CategoryListResponse> => {
     const response = await axiosInstance.get<any, any>(
       API_ROUTES.CATEGORIES.LIST,
       {
@@ -39,14 +35,12 @@ export const categoryApi = {
       } as any,
     );
 
-    // When `_returnWrapper` is true the axios interceptor returns the backend wrapper:
-    // { success, message, data, meta }
     return {
       categories: response?.data ?? [],
       total: response?.meta?.total ?? 0,
       page: response?.meta?.page ?? 1,
       limit: response?.meta?.limit ?? 10,
-    } satisfies CategoryListUnwrappedResponse;
+    };
   },
 
   getCategoryById: async (id: string): Promise<ICategory> => {

@@ -5,14 +5,8 @@ import {
   CreateManufacturerPayload,
   UpdateManufacturerPayload,
   ManufacturerFilters,
+  ManufacturerListResponse,
 } from "@/types/manufacturer/manufacturer.types";
-
-interface ManufacturerListUnwrappedResponse {
-  manufacturers: IManufacturer[];
-  total: number;
-  page: number;
-  limit: number;
-}
 
 const buildManufacturerFormData = (
   data: Partial<CreateManufacturerPayload>,
@@ -26,7 +20,9 @@ const buildManufacturerFormData = (
 };
 
 export const manufacturerApi = {
-  getManufacturers: async (filters?: ManufacturerFilters) => {
+  getManufacturers: async (
+    filters?: ManufacturerFilters,
+  ): Promise<ManufacturerListResponse> => {
     const response = await axiosInstance.get<any, any>(
       API_ROUTES.MANUFACTURERS.LIST,
       {
@@ -36,11 +32,11 @@ export const manufacturerApi = {
     );
 
     return {
-      manufacturers: response?.data?.manufacturers ?? [],
-      total: response?.data?.total ?? 0,
-      page: response?.data?.page ?? 1,
-      limit: response?.data?.limit ?? 10,
-    } satisfies ManufacturerListUnwrappedResponse;
+      manufacturers: response?.data ?? [],
+      total: response?.meta?.total ?? 0,
+      page: response?.meta?.page ?? 1,
+      limit: response?.meta?.limit ?? 10,
+    };
   },
 
   getManufacturerById: async (id: string): Promise<IManufacturer> => {
@@ -49,7 +45,9 @@ export const manufacturerApi = {
     );
   },
 
-  createManufacturer: async (data: CreateManufacturerPayload): Promise<IManufacturer> => {
+  createManufacturer: async (
+    data: CreateManufacturerPayload,
+  ): Promise<IManufacturer> => {
     return await axiosInstance.post<any, IManufacturer>(
       API_ROUTES.MANUFACTURERS.CREATE,
       buildManufacturerFormData(data),

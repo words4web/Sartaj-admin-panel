@@ -1,8 +1,7 @@
 "use client";
 
-import { BarChart3, Users, Package, TrendingUp } from "lucide-react";
+import { Users, Package, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ROUTES } from "@/constants/routes";
 
 const STATS = [
   {
@@ -67,46 +66,25 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">
-            Recent Orders
-          </h2>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition">
-                <div>
-                  <p className="font-medium text-gray-900">Order #{1000 + i}</p>
-                  <p className="text-sm text-gray-600">Customer {i}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium text-gray-900">₹{1000 * i}</p>
-                  <p className="text-xs text-gray-500">Today</p>
-                </div>
+      <Card className="lg:col-span-2 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Orders</h2>
+        <div className="space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition">
+              <div>
+                <p className="font-medium text-gray-900">Order #{1000 + i}</p>
+                <p className="text-sm text-gray-600">Customer {i}</p>
               </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Quick Links */}
-        <Card className="p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h2>
-          <div className="space-y-3">
-            <a
-              href={ROUTES.CUSTOMERS.LIST}
-              className="block p-3 bg-blue-50 hover:bg-blue-100 rounded-lg text-blue-600 font-medium transition">
-              Manage Customers
-            </a>
-            <a
-              href={ROUTES.PRODUCTS.LIST}
-              className="block p-3 bg-green-50 hover:bg-green-100 rounded-lg text-green-600 font-medium transition">
-              View Products
-            </a>
-          </div>
-        </Card>
-      </div>
+              <div className="text-right">
+                <p className="font-medium text-gray-900">₹{1000 * i}</p>
+                <p className="text-xs text-gray-500">Today</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }

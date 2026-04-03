@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
+import Image from "next/image";
 
 type ConfirmAction = {
   type: "delete" | "toggle";
@@ -83,7 +84,7 @@ export default function CategoriesPage() {
         key: "name",
         label: "Name",
         render: (_: any, row: ICategory) => (
-          <span className="font-medium">{row?.name}</span>
+          <span className="font-medium truncate">{row?.name}</span>
         ),
       },
       {
@@ -91,7 +92,24 @@ export default function CategoriesPage() {
         label: "Description",
         render: (_: any, row: ICategory) => (
           <span className="text-gray-500 truncate max-w-[250px] overflow-hidden whitespace-nowrap inline-block align-bottom">
-            {row?.description || "—"}
+            {row?.description || "N/A"}
+          </span>
+        ),
+      },
+      {
+        key: "image",
+        label: "Image",
+        render: (_: any, row: ICategory) => (
+          <span className="text-gray-500">
+            {row?.image && (
+              <Image
+                src={row?.image}
+                alt={row?.name}
+                width={50}
+                height={50}
+                className="rounded-full h-14 w-14 object-cover"
+              />
+            )}
           </span>
         ),
       },
@@ -102,15 +120,6 @@ export default function CategoriesPage() {
           <Badge variant={row?.isActive ? "default" : "secondary"}>
             {row?.isActive ? "Active" : "Inactive"}
           </Badge>
-        ),
-      },
-      {
-        key: "createdAt",
-        label: "Created",
-        render: (_: any, row: ICategory) => (
-          <span className="text-gray-500">
-            {new Date(row?.createdAt).toLocaleDateString()}
-          </span>
         ),
       },
       {

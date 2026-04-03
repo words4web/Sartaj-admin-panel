@@ -58,7 +58,7 @@ export default function CategoryForm({
       nextErrors.image = "Category image is required.";
     }
 
-    if (Object.keys(nextErrors).length) {
+    if (Object.keys(nextErrors)?.length) {
       setErrors(nextErrors);
       return;
     }
@@ -79,8 +79,8 @@ export default function CategoryForm({
         required
         value={values.name}
         onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
-        placeholder="e.g. Restaurant"
-        error={errors.name}
+        placeholder="e.g. Spices"
+        error={errors?.name}
       />
 
       <FormTextarea
@@ -146,7 +146,7 @@ export default function CategoryForm({
               <br /> Formats: JPG, PNG, WebP.
             </p>
             {errors.image && (
-              <p className="text-red-600 text-sm mt-1">{errors.image}</p>
+              <p className="text-red-600 text-sm mt-1">{errors?.image}</p>
             )}
           </div>
         </div>

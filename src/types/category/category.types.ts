@@ -21,7 +21,7 @@ export interface CreateCategoryPayload {
 export interface UpdateCategoryPayload extends Partial<CreateCategoryPayload> {}
 
 export interface CategoryListResponse {
-  data: ICategory[];
+  categories: ICategory[];
   total: number;
   page: number;
   limit: number;

@@ -28,18 +28,17 @@ export default function EditManufacturerPage() {
 
   const handleSubmit = async (values: any) => {
     try {
-      await updateMutation?.mutateAsync({
+      await updateMutation.mutateAsync({
         id,
         data: {
           name: values?.name,
           image: values?.image,
         },
       });
-      toast?.success("Manufacturer updated successfully");
-      router?.push(ROUTES?.MANUFACTURERS?.LIST);
+      toast.success("Manufacturer updated successfully");
+      router.push(ROUTES.MANUFACTURERS.LIST);
     } catch (error) {
-      toast?.error("Failed to update manufacturer");
-      console?.error(error);
+      toast.error("Failed to update manufacturer");
     }
   };
 
@@ -49,7 +48,7 @@ export default function EditManufacturerPage() {
         title="Edit Manufacturer"
         description="Update manufacturer name or logo"
         showBack={true}
-        backRoute={ROUTES?.MANUFACTURERS?.DETAIL(id)}
+        backRoute={ROUTES.MANUFACTURERS.DETAIL(id)}
       />
 
       <Card className="p-6">
@@ -67,7 +66,7 @@ export default function EditManufacturerPage() {
               image: null,
               existingImage: manufacturer?.image,
             }}
-            isSubmitting={updateMutation?.isPending}
+            isSubmitting={updateMutation.isPending}
             onSubmit={handleSubmit}
           />
         )}
