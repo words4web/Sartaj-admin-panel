@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ImageIcon, X } from "lucide-react";
 import {
-  BannerFormProps,
-  BannerFormValues,
-} from "@/types/banner/banner.types";
+  TranslationInput,
+  LangCode,
+} from "@/components/common/TranslationInput";
+import { BannerFormProps, BannerFormValues } from "@/types/banner/banner.types";
 
 export default function BannerForm({
   initialValues,
@@ -40,13 +41,31 @@ export default function BannerForm({
     }
   };
 
+  const handleTranslationChange = (
+    field: string,
+    lang: LangCode,
+    value: string,
+  ) => {
+    setValues((prev) => ({
+      ...prev,
+      [field]: {
+        ...((prev as any)[field] || {}),
+        [lang]: value,
+      },
+    }));
+  };
+
   const isValid = useMemo(() => {
-    return !!imagePreview;
-  }, [imagePreview]);
+    return !!imagePreview && !!values.title?.en;
+  }, [imagePreview, values.title?.en]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e?.preventDefault?.();
     const nextErrors: { title?: string; image?: string } = {};
+
+    if (!values.title?.en) {
+      nextErrors.title = "English title is required.";
+    }
 
     if (!imagePreview) {
       nextErrors.image = "Banner image is required.";
@@ -61,13 +80,21 @@ export default function BannerForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <FormInput
-        label="Banner Title"
-        value={values?.title || ""}
-        onChange={(e) => setValues((v) => ({ ...v, title: e?.target?.value }))}
-        placeholder="e.g. Summer Sale"
-        error={errors?.title}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <TranslationInput
+        title="Banner Title"
+        description="Enter the banner title in all supported languages."
+        fields={[
+          {
+            key: "title",
+            label: "Title",
+            required: true,
+            placeholder: "e.g. Summer Sale",
+          },
+        ]}
+        values={{ title: values.title }}
+        onChange={handleTranslationChange}
+        errors={errors}
       />
 
       <FormInput
@@ -134,12 +161,14 @@ export default function BannerForm({
                 setImagePreview(null);
                 setValues((v) => ({ ...v, image: null, existingImage: null }));
               }}
-              disabled={!imagePreview || isSubmitting}>
+              disabled={!imagePreview || isSubmitting}
+            >
               <X className="w-4 h-4 mr-2" />
               Remove Image
             </Button>
             <p className="text-xs text-gray-500 max-w-[200px] leading-relaxed">
-              Recommended size: 1200x400px (3:1 ratio). <br /> Max file size: 5MB.
+              Recommended size: 1200x400px (3:1 ratio). <br /> Max file size:
+              5MB.
               <br /> Formats: JPG, PNG, WebP.
             </p>
             {errors?.image && (

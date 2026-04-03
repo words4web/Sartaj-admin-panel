@@ -95,7 +95,7 @@ export default function BannersPage() {
           <div className="w-20 h-10 rounded overflow-hidden bg-gray-100 border">
             <img
               src={row?.image}
-              alt={row?.title || "Banner"}
+              alt={row?.title?.en || "Banner"}
               className="w-full h-full object-cover"
               onError={(e) => {
                 e.currentTarget.src =
@@ -109,7 +109,7 @@ export default function BannersPage() {
         key: "title",
         label: "Title",
         render: (_: any, row: IBanner) => (
-          <span className="font-medium">{row?.title || "—"}</span>
+          <span className="font-medium">{row?.title?.en || "—"}</span>
         ),
       },
       {
@@ -262,8 +262,9 @@ export default function BannersPage() {
         title={
           confirmAction?.type === "delete"
             ? `Delete Banner?`
-            : `${confirmAction?.banner?.isActive ? "Deactivate" : "Activate"} Banner?`
+            : `${confirmAction?.banner?.isActive ? "Deactivate" : "Activate"} Banner "${confirmAction?.banner?.title?.en}"?`
         }
+
         description={
           confirmAction?.type === "delete"
             ? "This will permanently delete the banner. This action cannot be undone."

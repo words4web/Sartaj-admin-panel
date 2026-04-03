@@ -75,7 +75,7 @@ export default function ManufacturersPage() {
           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border p-1">
             <img
               src={row?.image}
-              alt={row?.name}
+              alt={row?.name?.en}
               className="w-full h-full object-contain"
               onError={(e) => {
                 if (e?.currentTarget) {
@@ -83,6 +83,7 @@ export default function ManufacturersPage() {
                 }
               }}
             />
+
           </div>
         ),
       },
@@ -90,9 +91,10 @@ export default function ManufacturersPage() {
         key: "name",
         label: "Manufacturer Name",
         render: (_: any, row: IManufacturer) => (
-          <span className="font-medium text-gray-900">{row?.name}</span>
+          <span className="font-medium text-gray-900">{row?.name?.en}</span>
         ),
       },
+
       {
         key: "createdAt",
         label: "Created Date",
@@ -216,7 +218,8 @@ export default function ManufacturersPage() {
 
       <ConfirmModal
         open={!!confirmDelete}
-        title={`Delete "${confirmDelete?.name}"?`}
+        title={`Delete "${confirmDelete?.name?.en}"?`}
+
         description="This will permanently delete this manufacturer. This action cannot be undone."
         destructive={true}
         confirmLabel="Delete"

@@ -12,7 +12,7 @@ const buildManufacturerFormData = (
   data: Partial<CreateManufacturerPayload>,
 ): FormData => {
   const formData = new FormData();
-  if (data.name !== undefined) formData.append("name", data.name);
+  if (data.name !== undefined) formData.append("name", JSON.stringify(data.name));
   if (data.image) {
     formData.append("image", data.image);
   }
