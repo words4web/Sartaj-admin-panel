@@ -92,7 +92,7 @@ export default function SubCategoriesPage() {
         key: "name",
         label: "Name",
         render: (_: any, row: ISubCategory) => (
-          <span className="font-medium">{row?.name}</span>
+          <span className="font-medium">{row?.name?.en}</span>
         ),
       },
       {
@@ -100,7 +100,7 @@ export default function SubCategoriesPage() {
         label: "Parent",
         render: (_: any, row: ISubCategory) => (
           <span className="text-gray-500 truncate max-w-[200px] overflow-hidden whitespace-nowrap inline-block align-bottom">
-            {(row?.parent as ICategory)?.name || "N/A"}
+            {(row?.parent as ICategory)?.name?.en || "N/A"}
           </span>
         ),
       },
@@ -204,7 +204,7 @@ export default function SubCategoriesPage() {
             <option value="">All Categories</option>
             {topLevelCategories?.map((c: any) => (
               <option key={c?._id} value={c?._id}>
-                {c?.name}
+                {c?.name?.en}
               </option>
             ))}
           </select>
@@ -256,8 +256,8 @@ export default function SubCategoriesPage() {
         open={!!confirmAction}
         title={
           confirmAction?.type === "delete"
-            ? `Delete "${confirmAction?.subCategory.name}"?`
-            : `${confirmAction?.subCategory.isActive ? "Deactivate" : "Activate"} "${confirmAction?.subCategory.name}"?`
+            ? `Delete "${confirmAction?.subCategory?.name?.en}"?`
+            : `${confirmAction?.subCategory?.isActive ? "Deactivate" : "Activate"} "${confirmAction?.subCategory?.name?.en}"?`
         }
         description={
           confirmAction?.type === "delete"

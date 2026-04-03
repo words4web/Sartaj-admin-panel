@@ -14,6 +14,7 @@ import SubCategoryForm from "../../_components/SubCategoryForm";
 import { SubCategoryFormValues } from "@/types/subCategory/subCategory.types";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function SubCategoryEditPage() {
   const router = useRouter();
@@ -45,8 +46,8 @@ export default function SubCategoryEditPage() {
 
   const initialValues: SubCategoryFormValues = useMemo(
     () => ({
-      name: subCategory?.name ?? "",
-      description: subCategory?.description ?? "",
+      name: subCategory?.name ?? EMPTY_TRANSLATION,
+      description: subCategory?.description ?? EMPTY_TRANSLATION,
       parent: parentId,
     }),
     [subCategory, parentId],

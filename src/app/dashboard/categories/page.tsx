@@ -84,7 +84,7 @@ export default function CategoriesPage() {
         key: "name",
         label: "Name",
         render: (_: any, row: ICategory) => (
-          <span className="font-medium truncate">{row?.name}</span>
+          <span className="font-medium truncate">{row?.name?.en}</span>
         ),
       },
       {
@@ -92,7 +92,7 @@ export default function CategoriesPage() {
         label: "Description",
         render: (_: any, row: ICategory) => (
           <span className="text-gray-500 truncate max-w-[250px] overflow-hidden whitespace-nowrap inline-block align-bottom">
-            {row?.description || "N/A"}
+            {row?.description?.en || "N/A"}
           </span>
         ),
       },
@@ -104,7 +104,7 @@ export default function CategoriesPage() {
             {row?.image && (
               <Image
                 src={row?.image}
-                alt={row?.name}
+                alt={row?.name?.en || "product image"}
                 width={50}
                 height={50}
                 className="rounded-full h-14 w-14 object-cover"
@@ -228,8 +228,8 @@ export default function CategoriesPage() {
         open={!!confirmAction}
         title={
           confirmAction?.type === "delete"
-            ? `Delete "${confirmAction?.category.name}"?`
-            : `${confirmAction?.category.isActive ? "Deactivate" : "Activate"} "${confirmAction?.category.name}"?`
+            ? `Delete "${confirmAction?.category.name?.en}"?`
+            : `${confirmAction?.category.isActive ? "Deactivate" : "Activate"} "${confirmAction?.category.name?.en}"?`
         }
         description={
           confirmAction?.type === "delete"

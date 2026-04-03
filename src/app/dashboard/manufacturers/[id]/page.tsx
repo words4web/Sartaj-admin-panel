@@ -47,9 +47,6 @@ export default function ManufacturerDetailsPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-xl font-semibold">{manufacturer?.name}</h2>
-              <p className="text-sm text-gray-500 mt-1">
-                Manufacturer ID: {manufacturer?._id}
-              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
@@ -78,9 +75,7 @@ export default function ManufacturerDetailsPage() {
             </div>
 
             <div className="pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-semibold mb-4">
-                Manufacturer Logo
-              </h3>
+              <h3 className="text-lg font-semibold mb-4">Manufacturer Logo</h3>
               <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
                 <div className="w-64 h-64 bg-white rounded-xl shadow-md overflow-hidden p-4 flex items-center justify-center border">
                   <img

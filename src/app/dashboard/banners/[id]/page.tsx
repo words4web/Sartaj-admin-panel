@@ -46,10 +46,6 @@ export default function BannerDetailsPage() {
               </Badge>
             </div>
 
-            <p className="text-sm text-gray-500 pt-2 border-t border-gray-200">
-              Banner ID: {banner?._id}
-            </p>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
               <div>
                 <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold text-xs text-gray-400">
