@@ -46,7 +46,9 @@ export default function CmsDetailsPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <h2 className="text-3xl font-bold tracking-tight text-gray-900 capitalize break-words">
-                    {pageData?.title}
+                    {typeof pageData?.title === "string"
+                      ? pageData?.title
+                      : pageData?.title?.en || "Untitled Page"}
                   </h2>
                   <div className="flex items-center gap-2 text-gray-500 mt-1.5 overflow-hidden">
                     <LinkIcon size={16} className="text-gray-400 shrink-0" />
@@ -69,7 +71,10 @@ export default function CmsDetailsPage() {
                 <div
                   className="bg-white border border-gray-100 rounded-xl p-8 min-h-[400px] shadow-inner text-gray-700 leading-relaxed overflow-x-auto break-words"
                   dangerouslySetInnerHTML={{
-                    __html: pageData?.content || "No content provided.",
+                    __html:
+                      (typeof pageData?.content === "string"
+                        ? pageData?.content
+                        : pageData?.content?.en) || "No content provided.",
                   }}
                 />
               </div>

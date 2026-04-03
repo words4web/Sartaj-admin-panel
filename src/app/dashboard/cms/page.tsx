@@ -6,7 +6,6 @@ import { useCmsList, useDeleteCms } from "@/services/cms/cms.hooks";
 import { ICMS } from "@/types/cms/cms.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/common/Pagination";
 import {
   DropdownMenu,
@@ -18,14 +17,7 @@ import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import {
-  Search,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  RotateCcw,
-  FileText,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, FileText } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import { dateUtils } from "@/lib/utils";
@@ -52,16 +44,10 @@ export default function CmsPage() {
 
   const handleConfirmDelete = useCallback(() => {
     if (!confirmDelete) return;
-    console.log("confirmDelete", confirmDelete);
     deleteMutation?.mutate(confirmDelete?._id, {
       onSettled: () => setConfirmDelete(null),
     });
   }, [confirmDelete, deleteMutation]);
-
-  const resetFilters = useCallback(() => {
-    setSearch("");
-    setPage(1);
-  }, []);
 
   const columns: Column<ICMS>[] = useMemo(
     () => [
@@ -74,7 +60,9 @@ export default function CmsPage() {
               <FileText size={18} />
             </div>
             <span className="font-bold text-gray-900 tracking-tight capitalize truncate">
-              {row?.title}
+              {typeof row?.title === "string" 
+                ? row?.title 
+                : row?.title?.en || "Untitled Page"}
             </span>
           </div>
         ),
@@ -106,7 +94,8 @@ export default function CmsPage() {
         render: (_: any, row: ICMS) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e?.stopPropagation?.()}>
+            onClick={(e) => e?.stopPropagation?.()}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -115,7 +104,8 @@ export default function CmsPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.CMS?.EDIT(row?._id))}>
+                  onClick={() => router?.push(ROUTES?.CMS?.EDIT(row?._id))}
+                >
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 {/* <DropdownMenuItem
@@ -140,39 +130,6 @@ export default function CmsPage() {
         description="Manage dynamic content pages like Privacy Policy and Terms"
         showBack={false}
       />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Search
-          </label>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              placeholder="Search by title or slug..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e?.target?.value);
-                setPage(1);
-              }}
-              className="pl-10 h-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center h-10">
-          <Button
-            size="sm"
-            onClick={resetFilters}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
-            <RotateCcw size={16} />
-            <span className="text-sm font-medium">Reset</span>
-          </Button>
-        </div>
-      </div>
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {isLoading ? (
