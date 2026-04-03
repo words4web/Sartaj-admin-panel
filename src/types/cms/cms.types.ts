@@ -1,8 +1,10 @@
+import { ITranslationMap } from "../api.types";
+
 export interface ICMS {
   _id: string;
   slug: string;
-  title: string;
-  content: string;
+  title: ITranslationMap;
+  content: ITranslationMap;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,14 +18,14 @@ export interface CMSListResponse {
 
 export interface CreateCMSPayload {
   slug: string;
-  title: string;
-  content: string;
+  title: ITranslationMap;
+  content: ITranslationMap;
 }
 
 export interface UpdateCMSPayload {
   slug?: string;
-  title?: string;
-  content?: string;
+  title?: ITranslationMap;
+  content?: ITranslationMap;
 }
 
 export interface CMSFilters {

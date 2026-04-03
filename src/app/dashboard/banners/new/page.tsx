@@ -7,6 +7,7 @@ import { ROUTES } from "@/constants/routes";
 import { BannerFormValues } from "@/types/banner/banner.types";
 import BannerForm from "../_components/BannerForm";
 import { Card } from "@/components/ui/card";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function NewBannerPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function NewBannerPage() {
       <Card className="p-6">
         <BannerForm
           initialValues={{
-            title: "",
+            title: EMPTY_TRANSLATION,
             link: "",
             isActive: true,
             image: null,

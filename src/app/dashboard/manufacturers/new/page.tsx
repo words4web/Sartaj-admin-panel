@@ -7,6 +7,7 @@ import { ROUTES } from "@/constants/routes";
 import { ManufacturerFormValues } from "@/types/manufacturer/manufacturer.types";
 import ManufacturerForm from "../_components/ManufacturerForm";
 import { Card } from "@/components/ui/card";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function NewManufacturerPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function NewManufacturerPage() {
       <Card className="p-6">
         <ManufacturerForm
           initialValues={{
-            name: "",
+            name: EMPTY_TRANSLATION,
             image: null,
           }}
           isSubmitting={createMutation?.isPending}

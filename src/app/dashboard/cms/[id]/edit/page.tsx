@@ -9,6 +9,7 @@ import { ROUTES } from "@/constants/routes";
 import { toast } from "sonner";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function EditCmsPage() {
   const params = useParams();
@@ -52,9 +53,9 @@ export default function EditCmsPage() {
         ) : (
           <CmsForm
             initialValues={{
-              title: pageData?.title || "",
+              title: pageData?.title || EMPTY_TRANSLATION,
               slug: pageData?.slug || "",
-              content: pageData?.content || "",
+              content: pageData?.content || EMPTY_TRANSLATION,
             }}
             isSubmitting={updateMutation?.isPending}
             onSubmit={handleSubmit}

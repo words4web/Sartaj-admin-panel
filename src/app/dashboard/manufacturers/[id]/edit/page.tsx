@@ -12,6 +12,7 @@ import { ROUTES } from "@/constants/routes";
 import { toast } from "sonner";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function EditManufacturerPage() {
   const params = useParams();
@@ -62,7 +63,7 @@ export default function EditManufacturerPage() {
         ) : (
           <ManufacturerForm
             initialValues={{
-              name: manufacturer?.name || "",
+              name: manufacturer?.name || EMPTY_TRANSLATION,
               image: null,
               existingImage: manufacturer?.image,
             }}

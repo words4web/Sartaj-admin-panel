@@ -9,6 +9,7 @@ import { ROUTES } from "@/constants/routes";
 import { toast } from "sonner";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function EditBannerPage() {
   const params = useParams();
@@ -56,7 +57,7 @@ export default function EditBannerPage() {
         ) : (
           <BannerForm
             initialValues={{
-              title: banner?.title || "",
+              title: banner?.title || EMPTY_TRANSLATION,
               link: banner?.link || "",
               isActive: banner?.isActive ?? true,
               existingImage: banner?.image,
