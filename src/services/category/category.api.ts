@@ -12,12 +12,13 @@ const buildCategoryFormData = (
   data: Partial<CreateCategoryPayload>,
 ): FormData => {
   const formData = new FormData();
-  if (data.name !== undefined) formData.append("name", data.name);
-  if (data.description !== undefined)
-    formData.append("description", data.description);
-  if (data.isActive !== undefined)
+  if (data?.name !== undefined)
+    formData.append("name", JSON.stringify(data.name));
+  if (data?.description !== undefined)
+    formData.append("description", JSON.stringify(data.description));
+  if (data?.isActive !== undefined)
     formData.append("isActive", String(data.isActive));
-  if (data.image) {
+  if (data?.image) {
     formData.append("image", data.image);
   }
   return formData;

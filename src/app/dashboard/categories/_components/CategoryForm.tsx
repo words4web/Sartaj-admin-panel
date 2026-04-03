@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { FormInput } from "@/components/common/FormInput";
-import { FormTextarea } from "@/components/common/FormTextarea";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ImageIcon, X } from "lucide-react";
@@ -10,6 +8,34 @@ import {
   CategoryFormProps,
   CategoryFormValues,
 } from "@/types/category/category.types";
+import { ITranslationMap } from "@/types/api.types";
+import {
+  TranslationInput,
+  LANG_CODES,
+  EMPTY_TRANSLATION,
+} from "@/components/common/TranslationInput";
+
+const TRANSLATION_FIELDS = [
+  { key: "name", label: "Category Name", required: true },
+  {
+    key: "description",
+    label: "Description",
+    required: true,
+    multiline: true,
+    rows: 4,
+  },
+] as const;
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+function normalizeTranslation(value: unknown): ITranslationMap {
+  const empty = { ...EMPTY_TRANSLATION };
+  if (!value) return empty;
+  if (typeof value === "string") return { ...empty, en: value };
+  return { ...empty, ...(value as ITranslationMap) };
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CategoryForm({
   initialValues,
@@ -18,81 +44,126 @@ export default function CategoryForm({
   requireImage = false,
   onSubmit,
 }: CategoryFormProps) {
-  const [values, setValues] = useState<CategoryFormValues>(initialValues);
-  const [errors, setErrors] = useState<{ name?: string; image?: string }>({});
+  const [values, setValues] = useState<CategoryFormValues>(() => ({
+    ...initialValues,
+    name: normalizeTranslation(initialValues.name),
+    description: normalizeTranslation(initialValues.description),
+  }));
+  const [errors, setErrors] = useState<{
+    name?: string;
+    description?: string;
+    image?: string;
+  }>({});
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialValues.existingImage || null,
   );
 
+  // Sync when initialValues change (e.g. edit page data loads)
   useEffect(() => {
-    setValues(initialValues);
+    setValues({
+      ...initialValues,
+      name: normalizeTranslation(initialValues.name),
+      description: normalizeTranslation(initialValues.description),
+    });
     setErrors({});
     setImagePreview(initialValues.existingImage || null);
   }, [initialValues]);
+
+  // ─── Handlers ──────────────────────────────────────────────────────────────
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setValues((prev) => ({ ...prev, image: file }));
       setImagePreview(URL.createObjectURL(file));
-      e.target.value = ""; // Reset input
+      e.target.value = "";
     }
   };
 
+  const handleTranslationChange = useCallback(
+    (field: string, lang: string, value: string) => {
+      setValues((v) => ({
+        ...v,
+        [field]: { ...(v[field as keyof CategoryFormValues] as ITranslationMap), [lang]: value },
+      }));
+    },
+    [],
+  );
+
+  // ─── Validation ────────────────────────────────────────────────────────────
+
   const isValid = useMemo(() => {
-    const isNameValid = values.name?.trim()?.length >= 1;
-    const isImageValid = requireImage ? !!imagePreview : true;
-    return isNameValid && isImageValid;
-  }, [values.name, imagePreview, requireImage]);
+    const nameOk = LANG_CODES.every((l) => !!(values.name as ITranslationMap)?.[l]?.trim());
+    const descOk = LANG_CODES.every(
+      (l) => !!(values.description as ITranslationMap)?.[l]?.trim(),
+    );
+    const imageOk = requireImage ? !!imagePreview : true;
+    return nameOk && descOk && imageOk;
+  }, [values.name, values.description, imagePreview, requireImage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const nextErrors: { name?: string; image?: string } = {};
-    const trimmed = values.name?.trim();
+    const nextErrors: typeof errors = {};
 
-    if (!trimmed) {
-      nextErrors.name = "Category name is required";
-    }
+    const nameMissing = LANG_CODES.some(
+      (l) => !(values.name as ITranslationMap)?.[l]?.trim(),
+    );
+    const descMissing = LANG_CODES.some(
+      (l) => !(values.description as ITranslationMap)?.[l]?.trim(),
+    );
 
-    if (requireImage && !imagePreview) {
-      nextErrors.image = "Category image is required.";
-    }
+    if (nameMissing) nextErrors.name = "Category name is required in all languages";
+    if (descMissing) nextErrors.description = "Description is required in all languages";
+    if (requireImage && !imagePreview) nextErrors.image = "Category image is required.";
 
-    if (Object.keys(nextErrors)?.length) {
+    if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
       return;
     }
 
-    const submitValues = {
-      ...values,
-      name: trimmed,
-      description: values.description?.trim() || undefined,
-    };
+    const name = values.name as ITranslationMap;
+    const description = values.description as ITranslationMap;
 
-    await onSubmit(submitValues as any);
+    await onSubmit({
+      ...values,
+      name: {
+        en: name.en?.trim() ?? "",
+        hi: name.hi?.trim() ?? "",
+        ne: name.ne?.trim() ?? "",
+        ja: name.ja?.trim() ?? "",
+        bn: name.bn?.trim() ?? "",
+      },
+      description: {
+        en: description.en?.trim() ?? "",
+        hi: description.hi?.trim() ?? "",
+        ne: description.ne?.trim() ?? "",
+        ja: description.ja?.trim() ?? "",
+        bn: description.bn?.trim() ?? "",
+      },
+    } as CategoryFormValues);
   };
 
+  // ─── Render ────────────────────────────────────────────────────────────────
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <FormInput
-        label="Category Name"
-        required
-        value={values.name}
-        onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
-        placeholder="e.g. Spices"
-        error={errors?.name}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Translation Tabs */}
+      <TranslationInput
+        title="Localization"
+        description="Provide category name and description for all supported languages."
+        fields={TRANSLATION_FIELDS as any}
+        values={{
+          name: values.name as ITranslationMap,
+          description: values.description as ITranslationMap,
+        }}
+        onChange={handleTranslationChange}
+        errors={{
+          name: errors.name,
+          description: errors.description,
+        }}
       />
 
-      <FormTextarea
-        label="Description"
-        value={values.description || ""}
-        onChange={(e) =>
-          setValues((v) => ({ ...v, description: e.target.value }))
-        }
-        placeholder="Optional description"
-        rows={4}
-      />
-
+      {/* Image Upload */}
       <div className="space-y-3">
         <Label>
           Category Image
@@ -116,8 +187,6 @@ export default function CategoryForm({
                 <span className="text-xs font-medium">Upload Image</span>
               </div>
             )}
-
-            {/* Overlay Input */}
             <input
               type="file"
               accept="image/*"
@@ -137,7 +206,8 @@ export default function CategoryForm({
                 setImagePreview(null);
                 setValues((v) => ({ ...v, image: null, existingImage: null }));
               }}
-              disabled={!imagePreview || isSubmitting}>
+              disabled={!imagePreview || isSubmitting}
+            >
               <X className="w-4 h-4 mr-2" />
               Remove Cover
             </Button>
@@ -146,12 +216,13 @@ export default function CategoryForm({
               <br /> Formats: JPG, PNG, WebP.
             </p>
             {errors.image && (
-              <p className="text-red-600 text-sm mt-1">{errors?.image}</p>
+              <p className="text-red-600 text-sm mt-1">{errors.image}</p>
             )}
           </div>
         </div>
       </div>
 
+      {/* Submit */}
       <div className="flex items-center gap-3 pt-4">
         <Button type="submit" disabled={!isValid || isSubmitting}>
           {isSubmitting ? "Saving..." : submitLabel}

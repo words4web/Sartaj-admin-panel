@@ -22,3 +22,11 @@ export interface ApiError {
   statusCode: number;
   details?: Record<string, string>;
 }
+
+export interface ITranslationMap {
+  en: string;
+  hi: string;
+  ne: string;
+  ja: string;
+  bn: string;
+}

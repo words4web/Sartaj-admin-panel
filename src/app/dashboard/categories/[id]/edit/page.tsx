@@ -12,6 +12,7 @@ import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { CategoryFormValues } from "@/types/category/category.types";
+import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
 
 export default function CategoryEditPage() {
   const router = useRouter();
@@ -27,8 +28,8 @@ export default function CategoryEditPage() {
   const updateMutation = useUpdateCategory(id);
 
   const initialValues: CategoryFormValues = {
-    name: category?.name ?? "",
-    description: category?.description ?? "",
+    name: category?.name ?? EMPTY_TRANSLATION,
+    description: category?.description ?? EMPTY_TRANSLATION,
     existingImage: category?.image ?? null,
   };
 

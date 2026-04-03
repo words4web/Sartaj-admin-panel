@@ -1,9 +1,10 @@
+import { ITranslationMap } from "../api.types";
 import { ICategory } from "../category/category.types";
 
 export interface ISubCategory {
   _id: string;
-  name: string;
-  description?: string;
+  name: ITranslationMap;
+  description: ITranslationMap;
   media?: string;
   parent: ICategory | string; // required for subcategory
   isActive: boolean;
@@ -13,8 +14,8 @@ export interface ISubCategory {
 }
 
 export interface CreateSubCategoryPayload {
-  name: string;
-  description?: string;
+  name: ITranslationMap;
+  description: ITranslationMap;
   media?: string;
   parent: string; // ObjectId
   isActive?: boolean;
@@ -38,8 +39,8 @@ export interface SubCategoryFilters {
 
 // FORM PROPS TYPES
 export type SubCategoryFormValues = {
-  name: string;
-  description?: string;
+  name: ITranslationMap;
+  description: ITranslationMap;
   parent: string;
 };
 

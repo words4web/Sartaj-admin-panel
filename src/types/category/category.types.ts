@@ -1,7 +1,9 @@
+import { ITranslationMap } from "../api.types";
+
 export interface ICategory {
   _id: string;
-  name: string;
-  description?: string;
+  name: ITranslationMap;
+  description?: ITranslationMap;
   image?: string;
   parent?: ICategory | string | null;
   isActive: boolean;
@@ -12,8 +14,8 @@ export interface ICategory {
 }
 
 export interface CreateCategoryPayload {
-  name: string;
-  description?: string;
+  name: ITranslationMap;
+  description?: ITranslationMap;
   image?: File | null;
   isActive?: boolean;
 }
@@ -35,8 +37,8 @@ export interface CategoryFilters {
 
 // FORM PROPS TYPES
 export type CategoryFormValues = {
-  name: string;
-  description?: string;
+  name: ITranslationMap;
+  description?: ITranslationMap;
   image?: File | null;
   existingImage?: string | null;
 };
