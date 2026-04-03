@@ -1,6 +1,8 @@
+import { ITranslationMap } from "../api.types";
+
 export interface IManufacturer {
   _id: string;
-  name: string;
+  name: ITranslationMap;
   image: string;
   isDeleted: boolean;
   createdAt: string;
@@ -8,11 +10,13 @@ export interface IManufacturer {
 }
 
 export interface CreateManufacturerPayload {
-  name: string;
+  name: ITranslationMap;
   image: File | null;
 }
 
-export interface UpdateManufacturerPayload extends Partial<CreateManufacturerPayload> {}
+export interface UpdateManufacturerPayload extends Partial<CreateManufacturerPayload> {
+  existingImage?: string;
+}
 
 export interface ManufacturerListResponse {
   manufacturers: IManufacturer[];
@@ -28,7 +32,7 @@ export interface ManufacturerFilters {
 }
 
 export type ManufacturerFormValues = {
-  name: string;
+  name: ITranslationMap;
   image?: File | null;
   existingImage?: string | null;
 };

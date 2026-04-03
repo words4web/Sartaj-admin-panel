@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FormInput } from "@/components/common/FormInput";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ImageIcon, X } from "lucide-react";
+import {
+  TranslationInput,
+  LangCode,
+} from "@/components/common/TranslationInput";
 import {
   ManufacturerFormProps,
   ManufacturerFormValues,
@@ -39,16 +42,30 @@ export default function ManufacturerForm({
     }
   };
 
+  const handleTranslationChange = (
+    field: string,
+    lang: LangCode,
+    value: string,
+  ) => {
+    setValues((prev) => ({
+      ...prev,
+      [field]: {
+        ...((prev as any)[field] || {}),
+        [lang]: value,
+      },
+    }));
+  };
+
   const isValid = useMemo(() => {
-    return !!values?.name?.trim() && !!imagePreview;
-  }, [values?.name, imagePreview]);
+    return !!values?.name?.en?.trim() && !!imagePreview;
+  }, [values?.name?.en, imagePreview]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e?.preventDefault?.();
     const nextErrors: { name?: string; image?: string } = {};
 
-    if (!values?.name?.trim()) {
-      nextErrors.name = "Manufacturer name is required.";
+    if (!values?.name?.en?.trim()) {
+      nextErrors.name = "English name is required.";
     }
 
     if (!imagePreview) {
@@ -64,14 +81,21 @@ export default function ManufacturerForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <FormInput
-        label="Manufacturer Name"
-        required
-        value={values?.name}
-        onChange={(e) => setValues((v) => ({ ...v, name: e?.target?.value }))}
-        placeholder="e.g. Nike, Apple"
-        error={errors?.name}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <TranslationInput
+        title="Manufacturer Name"
+        description="Enter the manufacturer name in all supported languages."
+        fields={[
+          {
+            key: "name",
+            label: "Name",
+            required: true,
+            placeholder: "e.g. Nike, Apple",
+          },
+        ]}
+        values={{ name: values.name }}
+        onChange={handleTranslationChange}
+        errors={errors}
       />
 
       <div className="space-y-3">
@@ -120,7 +144,8 @@ export default function ManufacturerForm({
                 setImagePreview(null);
                 setValues((v) => ({ ...v, image: null, existingImage: null }));
               }}
-              disabled={!imagePreview || isSubmitting}>
+              disabled={!imagePreview || isSubmitting}
+            >
               <X className="w-4 h-4 mr-2" />
               Remove Image
             </Button>

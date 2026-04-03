@@ -8,6 +8,7 @@ import { useBanner } from "@/services/banner/banner.hooks";
 import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { TranslationDisplay } from "@/components/common/TranslationDisplay";
 import { dateUtils } from "@/lib/utils";
 
 export default function BannerDetailsPage() {
@@ -36,68 +37,62 @@ export default function BannerDetailsPage() {
             onRetry={refetch}
           />
         ) : (
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-3">
-              <h2 className="text-xl font-semibold">
-                {banner?.title || "Untitled Banner"}
-              </h2>
+          <div className="space-y-8">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-gray-100">
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {banner?.title?.en || "Untitled Banner"}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Preview and translations
+                </p>
+              </div>
               <Badge variant={banner?.isActive ? "success" : "secondary"}>
                 {banner?.isActive ? "Active" : "Inactive"}
               </Badge>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-              <div>
-                <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold text-xs text-gray-400">
-                  Target Link
-                </p>
-                <p className="font-medium text-blue-600 break-all">
-                  {banner?.link || "No link provided"}
-                </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <TranslationDisplay
+                  title="Banner Title Translations"
+                  fields={[{ key: "title", label: "Title" }]}
+                  values={{ title: banner.title }}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-100">
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2">
+                      Target Link
+                    </p>
+                    <p className="text-sm font-medium text-blue-600 break-all bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
+                      {banner?.link || "No link provided"}
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-xs">
-                <div>
-                  <p className="text-gray-500 uppercase tracking-wider font-semibold text-gray-400">
-                    Created At
-                  </p>
-                  <p className="font-medium text-gray-700 text-sm">
-                    {banner?.createdAt
-                      ? dateUtils?.format(banner?.createdAt)
-                      : "—"}
-                  </p>
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
+                  Banner Preview
+                </h3>
+                <div className="bg-gray-50 rounded-2xl border border-dashed border-gray-200 overflow-hidden p-6 aspect-[3/1] flex items-center justify-center">
+                  <div className="relative w-full h-full shadow-2xl rounded-xl overflow-hidden ring-1 ring-gray-100">
+                    <img
+                      src={banner?.image}
+                      alt={banner?.title?.en || "Banner Preview"}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "https://placehold.co/1200x400/e2e8f0/64748b?text=Banner+Image+Not+Found";
+                      }}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-500 uppercase tracking-wider font-semibold text-gray-400">
-                    Last Updated
-                  </p>
-                  <p className="font-medium text-gray-700 text-sm">
-                    {banner?.updatedAt
-                      ? dateUtils?.format(banner?.updatedAt)
-                      : "—"}
-                  </p>
-                </div>
+                <p className="text-xs text-center text-gray-400 italic">
+                  Visual representation of the banner as seen on the mobile app.
+                </p>
               </div>
-            </div>
-
-            <div className="pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-semibold mb-4">Banner Preview</h3>
-              <div className="bg-gray-50 rounded-xl border border-dashed border-gray-200 overflow-hidden flex items-center justify-center p-4">
-                <div className="relative w-full max-w-4xl shadow-lg rounded-lg overflow-hidden h-[300px]">
-                  <img
-                    src={banner?.image}
-                    alt={banner?.title || "Banner Preview"}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://placehold.co/1200x400/e2e8f0/64748b?text=Banner+Image+Not+Found";
-                    }}
-                  />
-                </div>
-              </div>
-              <p className="text-xs text-center text-gray-400 mt-4 italic">
-                This is how the banner will appear in the mobile application.
-              </p>
             </div>
           </div>
         )}

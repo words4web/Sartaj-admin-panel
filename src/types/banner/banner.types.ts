@@ -1,6 +1,8 @@
+import { ITranslationMap } from "../api.types";
+
 export interface IBanner {
   _id: string;
-  title?: string;
+  title: ITranslationMap;
   image: string;
   link?: string;
   isActive: boolean;
@@ -10,13 +12,15 @@ export interface IBanner {
 }
 
 export interface CreateBannerPayload {
-  title?: string;
+  title: ITranslationMap;
   image: File | null;
   link?: string;
   isActive?: boolean;
 }
 
-export interface UpdateBannerPayload extends Partial<CreateBannerPayload> {}
+export interface UpdateBannerPayload extends Partial<CreateBannerPayload> {
+  existingImage?: string;
+}
 
 export interface BannerListResponse {
   banners: IBanner[];
@@ -32,7 +36,7 @@ export interface BannerFilters {
 }
 
 export type BannerFormValues = {
-  title?: string;
+  title: ITranslationMap;
   link?: string;
   image?: File | null;
   existingImage?: string | null;
