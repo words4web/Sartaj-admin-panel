@@ -32,7 +32,7 @@ export function CommonError({
         <Button
           onClick={onRetry}
           variant="outline"
-          className="flex items-center gap-2">
+          className="flex items-center gap-2 cursor-pointer">
           <RefreshCcw className="h-4 w-4" />
           Try Again
         </Button>

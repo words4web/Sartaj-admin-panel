@@ -15,8 +15,10 @@ export function LoadingOverlay() {
           <Image
             src="/sartaj_logo.png"
             alt="Loading..."
-            fill
+            width={160}
+            height={50}
             className="object-contain"
+            style={{ width: "auto", height: "auto" }}
             priority
           />
         </div>

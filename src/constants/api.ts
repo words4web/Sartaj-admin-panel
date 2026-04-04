@@ -104,10 +104,16 @@ export const API_ROUTES = {
     DELETE: (id: string) => `${API_ADMIN_BASE}/cms/${id}`,
   },
 
-  // Settings
+  // Settings (Profile)
   SETTINGS: {
     PROFILE: `${API_ADMIN_BASE}/settings/profile`,
     UPDATE_PROFILE: `${API_ADMIN_BASE}/settings/profile`,
     CHANGE_PASSWORD: `${API_ADMIN_BASE}/settings/password`,
+  },
+
+  // App Configuration
+  APP_CONFIG: {
+    GET: `${API_ADMIN_BASE}/config`,
+    UPDATE: `${API_ADMIN_BASE}/config`,
   },
 } as const;

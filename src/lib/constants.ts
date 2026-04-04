@@ -24,4 +24,5 @@ export const SORT_OPTIONS = {
 export const SUPER_CATEGORIES = {
   WHOLESALER: "Wholesaler",
   RESTAURANT: "Restaurant",
+  RETAILER: "Retailer",
 } as const;

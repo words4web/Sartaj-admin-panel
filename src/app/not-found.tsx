@@ -19,7 +19,7 @@ export default function NotFound() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Countdown Timer Logic
     const timer = setInterval(() => {
       setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
@@ -56,6 +56,7 @@ export default function NotFound() {
               height={64}
               priority
               className="h-16 w-auto object-contain hover:opacity-80 transition-opacity"
+              style={{ width: "auto", height: "auto" }}
             />
           </Link>
         </div>
@@ -73,10 +74,16 @@ export default function NotFound() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-800">You've landed on the wrong page</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            You've landed on the wrong page
+          </h2>
           <div className="flex flex-col items-center gap-3">
-             <p className="text-gray-600 max-w-sm mx-auto leading-relaxed">
-              Redirecting you to safety in <span className="font-bold text-blue-600 text-xl">{countdown}</span> seconds...
+            <p className="text-gray-600 max-w-sm mx-auto leading-relaxed">
+              Redirecting you to safety in
+              <span className="font-bold text-blue-600 text-xl">
+                {countdown}
+              </span>
+              seconds...
             </p>
             <div className="w-12 h-12 border-4 border-blue-50 border-t-blue-600 rounded-full animate-spin" />
           </div>
@@ -88,9 +95,7 @@ export default function NotFound() {
             asChild
             variant="ghost"
             className="text-gray-400 hover:text-blue-600 transition-colors">
-            <Link href={homeRoute}>
-              Skip wait and go now
-            </Link>
+            <Link href={homeRoute}>Skip wait and go now</Link>
           </Button>
         </div>
 

@@ -10,9 +10,7 @@ export const authService = {
   logout: async (): Promise<void> => {
     try {
       await axiosInstance.post(API_ROUTES.AUTH.LOGOUT);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    } catch (error) {}
   },
 
   register: async (data: Record<string, any>): Promise<AuthResponse> => {
