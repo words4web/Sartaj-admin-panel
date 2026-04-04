@@ -2,17 +2,8 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Pencil,
-  Power,
-  Trash2,
-  RotateCcw,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -32,11 +23,10 @@ import {
 } from "@/services/customer/customer.mutations";
 import { Customer } from "@/types/customer/customer.types";
 import { useCustomers as useCustomersQuery } from "@/services/customer/customer.queries";
-import { CommonLoader } from "@/components/ui/common-loader";
-import { CommonError } from "@/components/ui/common-error";
 import { Pagination } from "@/components/common/Pagination";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmAction, StatusFilter } from "@/types/customer/customer.types";
+import { FilterBar } from "@/components/common/FilterBar";
 
 export default function CustomersPage() {
   const router = useRouter();
@@ -147,7 +137,8 @@ export default function CustomersPage() {
         render: (_: any, row: Customer) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => e.stopPropagation()}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -156,14 +147,16 @@ export default function CustomersPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router.push(ROUTES.CUSTOMERS.EDIT(row?._id))}>
+                  onClick={() => router.push(ROUTES.CUSTOMERS.EDIT(row?._id))}
+                >
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", customer: row })
-                  }>
+                  }
+                >
                   <Power size={14} className="mr-2 hover:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -171,7 +164,8 @@ export default function CustomersPage() {
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() =>
                     setConfirmAction({ type: "delete", customer: row })
-                  }>
+                  }
+                >
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -193,76 +187,47 @@ export default function CustomersPage() {
         showBack={false}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Search
-          </label>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              placeholder="Email or phone or name"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="pl-10 h-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Super Category
-          </label>
-          <select
-            value={superCategoryId}
-            disabled={isSuperCategoriesLoading}
-            onChange={(e) => {
-              setSuperCategoryId(e.target.value);
+      <FilterBar
+        search={{
+          value: search,
+          onChange: (val) => {
+            setSearch(val);
+            setPage(1);
+          },
+          placeholder: "Email or phone or name",
+        }}
+        filters={[
+          {
+            key: "superCategory",
+            label: "Super Category",
+            value: superCategoryId,
+            onChange: (val) => {
+              setSuperCategoryId(val);
               setPage(1);
-            }}
-            className="h-10 border border-gray-200 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500/30 text-sm">
-            <option value="">All Categories</option>
-            {superCategories?.map((sc: any) => (
-              <option key={sc?._id} value={sc?._id}>
-                {sc?.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Status
-          </label>
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value as StatusFilter);
+            },
+            options: superCategories.map((sc: any) => ({
+              label: sc?.name,
+              value: sc?._id,
+            })),
+            isSearchable: true,
+            disabled: isSuperCategoriesLoading,
+          },
+          {
+            key: "status",
+            label: "Status",
+            value: statusFilter,
+            onChange: (val) => {
+              setStatusFilter(val as StatusFilter);
               setPage(1);
-            }}
-            className="h-10 border border-gray-200 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500/30 text-sm cursor-pointer">
-            <option value="all">All Status</option>
-            <option value="active">Active Only</option>
-            <option value="inactive">Inactive Only</option>
-          </select>
-        </div>
-
-        <div className="flex items-center h-10">
-          <Button
-            size="sm"
-            onClick={resetFilters}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
-            <RotateCcw size={16} />
-            <span className="text-sm font-medium">Reset</span>
-          </Button>
-        </div>
-      </div>
+            },
+            options: [
+              { label: "Active Only", value: "active" },
+              { label: "Inactive Only", value: "inactive" },
+            ],
+          },
+        ]}
+        onReset={resetFilters}
+      />
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <DataTable

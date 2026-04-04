@@ -9,7 +9,6 @@ import {
 import { IManufacturer } from "@/types/manufacturer/manufacturer.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/common/Pagination";
 import {
   DropdownMenu,
@@ -21,23 +20,20 @@ import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import {
-  Search,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  RotateCcw,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import { dateUtils } from "@/lib/utils";
+import { FilterBar } from "@/components/common/FilterBar";
 
 export default function ManufacturersPage() {
   const router = useRouter();
   const limit = 10;
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [confirmDelete, setConfirmDelete] = useState<IManufacturer | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<IManufacturer | null>(
+    null,
+  );
 
   const debouncedSearch = useDebounce(search, 400);
 
@@ -79,11 +75,11 @@ export default function ManufacturersPage() {
               className="w-full h-full object-contain"
               onError={(e) => {
                 if (e?.currentTarget) {
-                  e.currentTarget.src = "https://placehold.co/100x100?text=Logo";
+                  e.currentTarget.src =
+                    "https://placehold.co/100x100?text=Logo";
                 }
               }}
             />
-
           </div>
         ),
       },
@@ -111,7 +107,8 @@ export default function ManufacturersPage() {
         render: (_: any, row: IManufacturer) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e?.stopPropagation?.()}>
+            onClick={(e) => e?.stopPropagation?.()}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -122,12 +119,14 @@ export default function ManufacturersPage() {
                 <DropdownMenuItem
                   onClick={() =>
                     router?.push(ROUTES?.MANUFACTURERS?.EDIT(row?._id))
-                  }>
+                  }
+                >
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-red-600 focus:text-red-600 hover:text-white!"
-                  onClick={() => setConfirmDelete(row)}>
+                  onClick={() => setConfirmDelete(row)}
+                >
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -149,38 +148,17 @@ export default function ManufacturersPage() {
         showBack={false}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Search
-          </label>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              placeholder="Search manufacturers..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e?.target?.value);
-                setPage(1);
-              }}
-              className="pl-10 h-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center h-10">
-          <Button
-            size="sm"
-            onClick={resetFilters}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
-            <RotateCcw size={16} />
-            <span className="text-sm font-medium">Reset</span>
-          </Button>
-        </div>
-      </div>
+      <FilterBar
+        search={{
+          value: search,
+          onChange: (val) => {
+            setSearch(val);
+            setPage(1);
+          },
+          placeholder: "Search manufacturers...",
+        }}
+        onReset={resetFilters}
+      />
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {isLoading ? (
@@ -219,7 +197,6 @@ export default function ManufacturersPage() {
       <ConfirmModal
         open={!!confirmDelete}
         title={`Delete "${confirmDelete?.name?.en}"?`}
-
         description="This will permanently delete this manufacturer. This action cannot be undone."
         destructive={true}
         confirmLabel="Delete"
