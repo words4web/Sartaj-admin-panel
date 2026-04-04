@@ -1,54 +1,59 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { MoveLeft, Home, SearchX } from "lucide-react";
+import { useEffect, useState } from "react";
 import { ROUTES } from "@/constants/routes";
+import { useRouter } from "next/navigation";
+import { SearchX } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-/**
- * Dashboard-specific 404 page.
- * This ensures that when a user hits a non-existent dashboard route,
- * the Sidebar and Header remain visible, providing a better user experience.
- */
 export default function DashboardNotFound() {
+  const router = useRouter();
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Safe Redirection Logic
+  useEffect(() => {
+    if (countdown === 0) {
+      router.replace(ROUTES.DASHBOARD);
+    }
+  }, [countdown, router]);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center animate-in fade-in zoom-in duration-500">
-      <div className="bg-blue-50/50 p-8 rounded-full mb-6 border border-blue-100/50">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-4 text-center animate-in fade-in zoom-in duration-500">
+      <div className="bg-blue-50/50 p-8 rounded-full mb-6 border border-blue-100/50 relative">
         <SearchX className="h-16 w-16 text-blue-600/30" />
+        <div className="absolute inset-0 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
       </div>
 
       <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
-        Resource Not Found
+        Wait! You've landed on the wrong page
       </h1>
-      <p className="text-gray-600 max-w-md mx-auto mb-10 leading-relaxed text-lg">
-        The feature or data you're looking for doesn't exist within the admin
-        dashboard. It might have been moved or you might not have permission to
-        view it.
+      <p className="text-gray-600 max-w-md mx-auto mb-6 leading-relaxed text-lg">
+        Redirecting you to the dashboard home in{" "}
+        <span className="font-bold text-blue-600 text-xl">{countdown}</span>{" "}
+        seconds...
       </p>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Button
-          variant="outline"
-          size="lg"
-          className="px-8 border-gray-200 hover:bg-gray-50 transition-colors hover:text-black cursor-pointer"
-          onClick={() => window.history.back()}>
-          <MoveLeft className="mr-2 h-4 w-4" />
-          Go Back
-        </Button>
+      <div className="flex flex-col items-center gap-4">
         <Button
           asChild
-          size="lg"
-          className="px-8 bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-200 transition-all active:scale-95">
-          <Link href={ROUTES.DASHBOARD}>
-            <Home className="mr-2 h-4 w-4" />
-            Dashboard Home
-          </Link>
+          variant="ghost"
+          className="text-gray-400 hover:text-blue-600 transition-colors">
+          <Link href={ROUTES.DASHBOARD}>Skip wait and go now</Link>
         </Button>
       </div>
 
-      <div className="mt-20 opacity-0 animate-in fade-in duration-1000 delay-500">
-        <p className="text-sm font-medium text-gray-400">
-          Technical Error Code: 404_DASHBOARD_MISSING
+      <div className="mt-12 opacity-0 animate-in fade-in duration-1000 delay-500">
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">
+          Sartaj Foods Admin System
         </p>
       </div>
     </div>

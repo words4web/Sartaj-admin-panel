@@ -28,7 +28,11 @@ export default function DashboardLayout({
     }
   }, [isAuthenticated, router, mounted, _hasHydrated]);
 
-  if (!mounted || !_hasHydrated || !isAuthenticated) {
+  if (!mounted) {
+    return <CommonLoader />;
+  }
+
+  if (!_hasHydrated || !isAuthenticated) {
     return <CommonLoader />;
   }
 
@@ -37,10 +41,9 @@ export default function DashboardLayout({
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main 
+        <main
           key={pathname}
-          className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent animate-in fade-in duration-500"
-        >
+          className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent animate-in fade-in duration-500">
           <div className="min-h-full pb-20">{children}</div>
         </main>
       </div>

@@ -9,32 +9,31 @@ import { useAuthStore } from "@/stores/authStore";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-/**
- * Custom 404 Not Found Page
- * Matches the premium aesthetic of the Sartaj Foods Admin Panel.
- */
 export default function NotFound() {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, _hasHydrated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const homeRoute = isAuthenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN;
 
   useEffect(() => {
     setMounted(true);
+    
+    // Countdown Timer Logic
+    const timer = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
-  // Smart Redirection: If authenticated and hits a top-level 404 (typo),
-  // redirect into the dashboard context so the Sidebar/Header are visible.
+  // Safe Redirection Logic (Separated from state update)
   useEffect(() => {
-    if (
-      mounted &&
-      _hasHydrated &&
-      isAuthenticated &&
-      !pathname.startsWith("/dashboard/")
-    ) {
-      router.replace("/dashboard/404");
+    if (mounted && countdown === 0) {
+      router.replace(homeRoute);
     }
-  }, [mounted, _hasHydrated, isAuthenticated, pathname, router]);
+  }, [mounted, countdown, router, homeRoute]);
 
   if (!mounted) {
     return (
@@ -44,11 +43,9 @@ export default function NotFound() {
     );
   }
 
-  const homeRoute = isAuthenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN;
-
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 flex items-center justify-center p-6">
-      <div className="max-w-md w-full text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 flex items-center justify-center p-6 text-center">
+      <div className="max-w-md w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Brand Logo */}
         <div className="flex justify-center">
           <Link href={homeRoute}>
@@ -71,33 +68,28 @@ export default function NotFound() {
             </h1>
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="text-4xl font-extrabold text-gray-900">
-                Oops!
+                Wait!
               </span>
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-800">Page Not Found</h2>
-          <p className="text-gray-600 max-w-sm mx-auto leading-relaxed">
-            The page you're looking for doesn't exist or has been moved.
-          </p>
+          <h2 className="text-2xl font-bold text-gray-800">You've landed on the wrong page</h2>
+          <div className="flex flex-col items-center gap-3">
+             <p className="text-gray-600 max-w-sm mx-auto leading-relaxed">
+              Redirecting you to safety in <span className="font-bold text-blue-600 text-xl">{countdown}</span> seconds...
+            </p>
+            <div className="w-12 h-12 border-4 border-blue-50 border-t-blue-600 rounded-full animate-spin" />
+          </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-          <Button
-            variant="outline"
-            className="h-11 px-6 group font-medium"
-            onClick={() => window.history.back()}>
-            <MoveLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Go Back
-          </Button>
-
+        {/* Manual Action */}
+        <div className="pt-4">
           <Button
             asChild
-            className="h-11 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200/50 font-medium">
+            variant="ghost"
+            className="text-gray-400 hover:text-blue-600 transition-colors">
             <Link href={homeRoute}>
-              <Home className="mr-2 h-4 w-4" />
-              {isAuthenticated ? "Dashboard" : "Login Page"}
+              Skip wait and go now
             </Link>
           </Button>
         </div>

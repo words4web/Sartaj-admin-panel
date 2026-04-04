@@ -110,10 +110,10 @@ export const useAuthStore = create<AuthStore>()(
   ),
 );
 
-// Listen to auth events from axios interceptor seamlessly
 if (typeof window !== "undefined") {
   window.addEventListener("auth:logout", () => {
     useAuthStore.getState().logout();
+    window.location.href = "/login";
   });
   window.addEventListener("auth:refresh", (e: any) => {
     if (e.detail?.token) {
