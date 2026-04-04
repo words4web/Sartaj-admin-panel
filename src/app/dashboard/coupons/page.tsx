@@ -10,7 +10,6 @@ import {
 import { ICoupon, EDiscountType } from "@/types/coupon/coupon.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/common/Pagination";
 import {
@@ -24,18 +23,11 @@ import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import {
-  Search,
-  MoreHorizontal,
-  Pencil,
-  Power,
-  Trash2,
-  RotateCcw,
-  Ticket,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Power, Trash2, Ticket } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import { dateUtils } from "@/lib/utils";
+import { FilterBar } from "@/components/common/FilterBar";
 
 type ConfirmAction = {
   type: "delete" | "toggle";
@@ -145,7 +137,8 @@ export default function CouponsPage() {
         render: (_: any, row: ICoupon) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => e.stopPropagation()}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -154,14 +147,16 @@ export default function CouponsPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.COUPONS?.EDIT(row?._id))}>
+                  onClick={() => router?.push(ROUTES?.COUPONS?.EDIT(row?._id))}
+                >
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", coupon: row })
-                  }>
+                  }
+                >
                   <Power size={14} className="mr-2 hover:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -169,7 +164,8 @@ export default function CouponsPage() {
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() =>
                     setConfirmAction({ type: "delete", coupon: row })
-                  }>
+                  }
+                >
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -191,38 +187,17 @@ export default function CouponsPage() {
         showBack={false}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Search
-          </label>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              placeholder="Search coupons..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="pl-10 h-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center h-10">
-          <Button
-            size="sm"
-            onClick={resetFilters}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
-            <RotateCcw size={16} />
-            <span className="text-sm font-medium">Reset</span>
-          </Button>
-        </div>
-      </div>
+      <FilterBar
+        search={{
+          value: search,
+          onChange: (val) => {
+            setSearch(val);
+            setPage(1);
+          },
+          placeholder: "Search coupons...",
+        }}
+        onReset={resetFilters}
+      />
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {isLoading ? (

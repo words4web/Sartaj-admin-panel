@@ -10,7 +10,6 @@ import {
 import { ICategory } from "@/types/category/category.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/common/Pagination";
 import {
@@ -22,18 +21,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Eye,
-  Pencil,
-  Power,
-  Trash2,
-} from "lucide-react";
+import { MoreHorizontal, Eye, Pencil, Power, Trash2 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import Image from "next/image";
+import { FilterBar } from "@/components/common/FilterBar";
 
 type ConfirmAction = {
   type: "delete" | "toggle";
@@ -60,6 +52,11 @@ export default function CategoriesPage() {
   const categories: ICategory[] = (data as any)?.categories ?? [];
   const total: number = (data as any)?.total ?? 0;
   const totalPages = Math.ceil(total / 10);
+
+  const resetFilters = useCallback(() => {
+    setSearch("");
+    setPage(1);
+  }, []);
 
   const handleConfirm = useCallback(() => {
     if (!confirmAction) return;
@@ -129,7 +126,8 @@ export default function CategoriesPage() {
         render: (_: any, row: ICategory) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => e.stopPropagation()}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -140,18 +138,21 @@ export default function CategoriesPage() {
                 <DropdownMenuItem
                   onClick={() =>
                     router.push(ROUTES.CATEGORIES.DETAIL(row?._id))
-                  }>
+                  }
+                >
                   <Eye size={14} className="mr-2" /> View Details
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => router.push(ROUTES.CATEGORIES.EDIT(row?._id))}>
+                  onClick={() => router.push(ROUTES.CATEGORIES.EDIT(row?._id))}
+                >
                   <Pencil size={14} className="mr-2" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", category: row })
-                  }>
+                  }
+                >
                   <Power size={14} className="mr-2" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -159,7 +160,8 @@ export default function CategoriesPage() {
                   className="text-red-600 focus:text-red-600"
                   onClick={() =>
                     setConfirmAction({ type: "delete", category: row })
-                  }>
+                  }
+                >
                   <Trash2 size={14} className="mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -182,19 +184,17 @@ export default function CategoriesPage() {
         showBack={false}
       />
 
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-        <Input
-          placeholder="Search categories..."
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
+      <FilterBar
+        search={{
+          value: search,
+          onChange: (val) => {
+            setSearch(val);
             setPage(1);
-          }}
-          className="pl-9"
-        />
-      </div>
+          },
+          placeholder: "Search categories...",
+        }}
+        onReset={resetFilters}
+      />
 
       {/* Table */}
       <div className="bg-white rounded-lg overflow-hidden">

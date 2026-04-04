@@ -2,17 +2,8 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Search,
-  MoreHorizontal,
-  Eye,
-  Pencil,
-  Power,
-  Trash2,
-  RotateCcw,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/common/Pagination";
 import {
@@ -38,6 +29,7 @@ import {
 } from "@/types/subCategory/subCategory.types";
 import { ROUTES } from "@/constants/routes";
 import { ICategory } from "@/types/category/category.types";
+import { FilterBar } from "@/components/common/FilterBar";
 
 export default function SubCategoriesPage() {
   const router = useRouter();
@@ -120,7 +112,8 @@ export default function SubCategoriesPage() {
         render: (_: any, row: ISubCategory) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}>
+            onClick={(e) => e.stopPropagation()}
+          >
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -131,14 +124,16 @@ export default function SubCategoriesPage() {
                 <DropdownMenuItem
                   onClick={() =>
                     router.push(ROUTES.SUBCATEGORIES.EDIT(row?._id))
-                  }>
+                  }
+                >
                   <Pencil size={14} className="mr-2" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", subCategory: row })
-                  }>
+                  }
+                >
                   <Power size={14} className="mr-2" />
                   {row.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -146,7 +141,8 @@ export default function SubCategoriesPage() {
                   className="text-red-600 focus:text-red-600"
                   onClick={() =>
                     setConfirmAction({ type: "delete", subCategory: row })
-                  }>
+                  }
+                >
                   <Trash2 size={14} className="mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -168,62 +164,37 @@ export default function SubCategoriesPage() {
         showBack={false}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Search
-          </label>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              placeholder="Search subcategories..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="pl-10 h-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5 flex-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
-            Parent Category
-          </label>
-          <select
-            value={parentId}
-            onChange={(e) => {
-              setParentId(e.target.value);
+      <FilterBar
+        search={{
+          value: search,
+          onChange: (val) => {
+            setSearch(val);
+            setPage(1);
+          },
+          placeholder: "Search subcategories...",
+        }}
+        filters={[
+          {
+            key: "parentCategory",
+            label: "Parent Category",
+            value: parentId,
+            onChange: (val) => {
+              setParentId(val);
               setPage(1);
-            }}
-            className="h-10 border border-gray-200 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500/30 text-sm">
-            <option value="">All Categories</option>
-            {topLevelCategories?.map((c: any) => (
-              <option key={c?._id} value={c?._id}>
-                {c?.name?.en}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex items-center h-10">
-          <Button
-            size="sm"
-            onClick={() => {
-              setSearch("");
-              setParentId("");
-              setPage(1);
-            }}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-color cursor-pointer">
-            <RotateCcw size={16} />
-            <span className="text-sm font-medium">Reset</span>
-          </Button>
-        </div>
-      </div>
+            },
+            options: topLevelCategories.map((c: any) => ({
+              label: c?.name?.en,
+              value: c?._id,
+            })),
+            isSearchable: true,
+          },
+        ]}
+        onReset={() => {
+          setSearch("");
+          setParentId("");
+          setPage(1);
+        }}
+      />
 
       <div className="bg-white rounded-lg overflow-hidden">
         <DataTable
