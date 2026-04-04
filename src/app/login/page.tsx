@@ -20,7 +20,7 @@ export default function LoginPage() {
               height={70}
               priority
               className="rounded-lg object-contain"
-              style={{ height: "auto" }}
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
 

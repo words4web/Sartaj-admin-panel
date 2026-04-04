@@ -50,7 +50,6 @@ axiosInstance.interceptors.request.use(
             delete config.headers.Authorization;
           }
         } catch (e) {
-          console.error("Failed to parse auth store token", e);
           delete config.headers.Authorization;
         }
       } else {

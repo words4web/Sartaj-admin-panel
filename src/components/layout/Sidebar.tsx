@@ -16,6 +16,7 @@ import {
   Factory,
   Ticket,
   FileText,
+  Truck,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/lib/utils";
@@ -64,6 +65,11 @@ const MENU_ITEMS = [
     href: ROUTES.COUPONS.LIST,
   },
   {
+    icon: Truck,
+    label: "Order Config",
+    href: ROUTES.ORDER_CONFIG,
+  },
+  {
     icon: FileText,
     label: "Pages (CMS)",
     href: ROUTES.CMS.LIST,
@@ -104,7 +110,7 @@ export default function Sidebar() {
           "px-4 border-b border-gray-200 lg:border-b-0 flex items-center justify-between overflow-hidden transition-all duration-300 ease-in-out",
           isCollapsed ? "h-0 opacity-0" : "h-16 opacity-100 my-2",
         )}>
-        <div className="flex items-center gap-3">
+        <div>
           <div
             className={cn(
               "flex items-center justify-center shrink-0 transition-all duration-300 ease-in-out",
@@ -119,7 +125,7 @@ export default function Sidebar() {
               height={50}
               priority
               className="rounded-lg object-contain cursor-pointer"
-              style={{ width: "160px", height: "auto" }}
+              style={{ width: "auto", height: "auto" }}
               onClick={() => router.push(ROUTES.DASHBOARD)}
             />
           </div>

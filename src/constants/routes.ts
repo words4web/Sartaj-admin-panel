@@ -64,6 +64,7 @@ export const ROUTES = {
   ANALYTICS: {
     ROOT: "/dashboard/analytics",
   },
+  ORDER_CONFIG: "/dashboard/order-config",
 } as const;
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];

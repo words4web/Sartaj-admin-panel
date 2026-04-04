@@ -46,17 +46,11 @@ export default function SettingsPage() {
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-500">
       {/* Header */}
-      <PageHeader
-        title="Settings"
-        description="Manage your account and preferences"
-      />
+      <PageHeader title="Settings" description="Account Information" />
 
       {/* Profile Details (structured info) */}
       <Card className="p-6 shadow-sm border">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Account Details
-        </h2>
-
+        <h2 className="text-lg font-semibold text-gray-900">Account Details</h2>
         <div className="space-y-4">
           <InfoRow icon={User} label="Full Name" value={user?.name} />
           <InfoRow icon={Mail} label="Email Address" value={user?.email} />

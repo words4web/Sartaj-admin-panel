@@ -11,6 +11,7 @@ import {
 } from "@/types/customer/customer.types";
 import { createCustomerSchema } from "@/schemas/customer/customer.schema";
 import { toast } from "sonner";
+import { SUPER_CATEGORIES } from "@/lib/constants";
 
 export default function CustomerForm({
   superCategories,
@@ -171,7 +172,7 @@ export default function CustomerForm({
             </label>
             <select
               value={values.superCategory}
-              disabled={isSubmitting || superCategories.length === 0}
+              disabled={isSubmitting || superCategories?.length === 0}
               onChange={(e) =>
                 setValues((v) => ({ ...v, superCategory: e.target.value }))
               }
@@ -181,11 +182,13 @@ export default function CustomerForm({
               <option value="" disabled>
                 Select Super Category
               </option>
-              {superCategories?.map((sc) => (
-                <option key={sc?._id} value={sc?._id}>
-                  {sc?.name}
-                </option>
-              ))}
+              {superCategories
+                ?.filter((sc) => String(sc?.name) !== SUPER_CATEGORIES.RETAILER)
+                ?.map((sc) => (
+                  <option key={sc?._id} value={sc?._id}>
+                    {sc?.name}
+                  </option>
+                ))}
             </select>
             {errors?.superCategory && (
               <p className="mt-1 text-xs text-red-600">

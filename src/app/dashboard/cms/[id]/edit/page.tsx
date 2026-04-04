@@ -25,9 +25,7 @@ export default function EditCmsPage() {
         data: values,
       });
       router.push(ROUTES.CMS.LIST);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
 
   return (
