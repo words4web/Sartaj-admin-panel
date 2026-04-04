@@ -20,8 +20,8 @@ export default function CmsDetailsPage() {
       <PageHeader
         title="Page Details"
         description="Preview of the CMS page content"
-        backRoute={ROUTES?.CMS?.LIST}
-        editRoute={pageData?._id ? ROUTES?.CMS?.EDIT(pageData?._id) : undefined}
+        backRoute={ROUTES.CMS.LIST}
+        editRoute={pageData?._id ? ROUTES.CMS.EDIT(pageData?._id) : undefined}
       />
 
       {isLoading ? (

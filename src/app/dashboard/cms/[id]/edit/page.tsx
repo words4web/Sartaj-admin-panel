@@ -6,7 +6,6 @@ import { PageHeader } from "@/components/common/PageHeader";
 import CmsForm from "../../_components/CmsForm";
 import { useCmsDetail, useUpdateCms } from "@/services/cms/cms.hooks";
 import { ROUTES } from "@/constants/routes";
-import { toast } from "sonner";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
@@ -25,10 +24,8 @@ export default function EditCmsPage() {
         id,
         data: values,
       });
-      toast.success("Page updated successfully");
-      router?.push?.(ROUTES?.CMS?.LIST);
+      router.push(ROUTES.CMS.LIST);
     } catch (error) {
-      toast.error("Failed to update page");
       console.error(error);
     }
   };
@@ -39,7 +36,7 @@ export default function EditCmsPage() {
         title="Edit Content Page"
         description="Update the slug, title, or HTML content of this page"
         showBack={true}
-        backRoute={id ? ROUTES?.CMS?.DETAIL?.(id) : ROUTES?.CMS?.LIST}
+        backRoute={ROUTES.CMS.LIST}
       />
 
       <Card className="p-6">

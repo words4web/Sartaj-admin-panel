@@ -11,15 +11,22 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { authService } from "@/services/auth/auth.service";
 
 export default function SettingsPage() {
   const { user, logout, getProfile, isLoading, error } = useAuthStore();
   const router = useRouter();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    router.push(ROUTES.LOGIN);
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await authService.logout();
+    } finally {
+      logout();
+      router.push(ROUTES.LOGIN);
+    }
   };
 
   if (isLoading && !user) {
@@ -69,9 +76,10 @@ export default function SettingsPage() {
           <Button
             variant="destructive"
             onClick={() => setIsLogoutModalOpen(true)}
+            disabled={isLoggingOut}
             className="w-full md:w-32 gap-2">
             <LogOut className="w-4 h-4" />
-            Logout
+            {isLoggingOut ? "Logging out..." : "Logout"}
           </Button>
         </div>
       </Card>
