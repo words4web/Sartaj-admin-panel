@@ -6,6 +6,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Format amounts as Japanese yen
+export function formatYen(amount: number): string {
+  if (!Number.isFinite(amount)) return "—";
+  return `¥${amount?.toLocaleString("ja-JP", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
 // Date formatting utilities
 export const dateUtils = {
   format: (date: string | Date, format = "MMM DD, YYYY") => {
