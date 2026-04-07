@@ -8,7 +8,7 @@ import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { TranslationDisplay } from "@/components/common/TranslationDisplay";
-import { dateUtils } from "@/lib/utils";
+import { dateUtils } from "@/utils/common.utils";
 
 export default function ManufacturerDetailsPage() {
   const params = useParams();

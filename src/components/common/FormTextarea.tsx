@@ -6,6 +6,7 @@ interface FormTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> 
   error?: string;
   helperText?: string;
   required?: boolean;
+  resizeVertical?: boolean;
 }
 
 export function FormTextarea({
@@ -13,6 +14,7 @@ export function FormTextarea({
   error,
   helperText,
   required,
+  resizeVertical,
   className,
   ...props
 }: FormTextareaProps) {
@@ -33,7 +35,7 @@ export function FormTextarea({
           placeholder:text-gray-400
           transition-colors duration-200
           disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
-          resize-none
+          ${resizeVertical ? "resize-y min-h-[10rem]" : "resize-none"}
           ${error ? "border-red-500 focus:ring-red-500" : ""}
           ${className || ""}
         `}

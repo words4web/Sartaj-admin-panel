@@ -22,6 +22,11 @@ interface TranslationDisplayProps {
   primaryLang?: LangCode;
   /** If true, show the primary language row separately at the top */
   showPrimary?: boolean;
+  /**
+   * Field keys that may contain long text — scrollable blocks, pre-wrap,
+   * no line clamp (e.g. product name & description).
+   */
+  longContentKeys?: string[];
 }
 
 /**
@@ -40,13 +45,35 @@ interface TranslationDisplayProps {
  *   values={{ name: category.name, description: category.description }}
  * />
  */
+const longTextPrimaryBox =
+  "text-gray-800 bg-gray-50 px-4 py-3 rounded-xl border border-gray-100 text-sm leading-relaxed whitespace-pre-wrap break-words overflow-y-auto overscroll-contain";
+const longTextPrimaryName = `${longTextPrimaryBox} max-h-[min(28vh,14rem)]`;
+const longTextPrimaryDescription = `${longTextPrimaryBox} max-h-[min(55vh,36rem)]`;
+const shortTextPrimaryBox =
+  "text-gray-800 bg-gray-50 px-4 py-3 rounded-xl border border-gray-100 text-sm leading-relaxed break-words";
+
 export function TranslationDisplay({
   title = "Global Translations",
   fields,
   values,
   primaryLang = "en",
   showPrimary = true,
+  longContentKeys,
 }: TranslationDisplayProps) {
+  const isLong = (key: string) => Boolean(longContentKeys?.includes(key));
+
+  const primaryBoxClass = (fieldKey: string) => {
+    if (!isLong(fieldKey)) return shortTextPrimaryBox;
+    return fieldKey === "description"
+      ? longTextPrimaryDescription
+      : longTextPrimaryName;
+  };
+
+  const gridTextClass = (fieldKey: string) =>
+    isLong(fieldKey)
+      ? "text-sm text-gray-800 whitespace-pre-wrap break-words max-h-48 overflow-y-auto overscroll-contain pr-1 leading-relaxed"
+      : "text-sm text-gray-800 line-clamp-2";
+
   const otherLangs = SUPPORTED_LANGUAGES.filter((l) => l.id !== primaryLang);
   const primaryLangDef = SUPPORTED_LANGUAGES.find((l) => l.id === primaryLang);
 
@@ -65,17 +92,17 @@ export function TranslationDisplay({
           </div>
           <div className="space-y-2">
             {fields?.map((field) => {
-              const val = values[field.key]?.[primaryLang] ?? "";
+              const val = values[field?.key]?.[primaryLang] ?? "";
               return (
-                <div key={field.key}>
+                <div key={field?.key}>
                   <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">
-                    {field.label}
+                    {field?.label}
                   </p>
-                  <p className="text-gray-800 bg-gray-50 px-4 py-3 rounded-xl border border-gray-100 text-sm leading-relaxed">
+                  <div className={primaryBoxClass(field?.key)}>
                     {val || (
                       <span className="text-gray-400 italic">Not provided</span>
                     )}
-                  </p>
+                  </div>
                 </div>
               );
             })}
@@ -106,15 +133,15 @@ export function TranslationDisplay({
 
               <div className="space-y-2">
                 {fields?.map((field) => {
-                  const val = values[field.key]?.[lang?.id as LangCode] ?? "";
+                  const val = values[field?.key]?.[lang?.id as LangCode] ?? "";
                   return (
                     <div key={field?.key}>
                       <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">
                         {field?.label}
                       </p>
                       <p
-                        className="text-sm text-gray-800 line-clamp-2"
-                        title={val}>
+                        className={gridTextClass(field?.key)}
+                        title={isLong(field?.key) ? undefined : val}>
                         {val || (
                           <span className="text-gray-300 italic text-xs">
                             —

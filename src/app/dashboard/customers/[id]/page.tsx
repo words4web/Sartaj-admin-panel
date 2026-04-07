@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { useCustomer } from "@/services/customer/customer.queries";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { dateUtils } from "@/lib/utils";
+import { dateUtils } from "@/utils/common.utils";
 import { ROUTES } from "@/constants/routes";
 
 export default function CustomerDetailPage() {

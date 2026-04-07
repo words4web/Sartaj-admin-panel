@@ -117,9 +117,12 @@ export default function CouponForm({
         </div>
 
         <FormInput
-          label={`Discount ${values?.discountType === EDiscountType.PERCENT ? "(%)" : "($)"}`}
+          label={`Discount ${values?.discountType === EDiscountType.PERCENT ? "(%)" : "(¥)"}`}
           type="number"
           required
+          prefix={
+            values?.discountType === EDiscountType.AMOUNT ? "¥" : undefined
+          }
           value={values?.discountAmount}
           onChange={(e) => setValues((v) => ({ ...v, discountAmount: Number(e?.target?.value) }))}
           error={errors?.discountAmount}
@@ -137,6 +140,7 @@ export default function CouponForm({
         <FormInput
           label="Min Purchase Amount"
           type="number"
+          prefix="¥"
           value={values?.minPurchase}
           onChange={(e) => setValues((v) => ({ ...v, minPurchase: Number(e?.target?.value) }))}
         />
@@ -144,6 +148,7 @@ export default function CouponForm({
         <FormInput
           label="Max Discount Amount"
           type="number"
+          prefix="¥"
           value={values?.maxDiscount}
           onChange={(e) => setValues((v) => ({ ...v, maxDiscount: Number(e?.target?.value) }))}
           disabled={values?.discountType === EDiscountType.AMOUNT}

@@ -26,7 +26,7 @@ import { CommonError } from "@/components/ui/common-error";
 import { MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
-import { dateUtils } from "@/lib/utils";
+import { dateUtils } from "@/utils/common.utils";
 import { FilterBar } from "@/components/common/FilterBar";
 
 type ConfirmAction = {
@@ -139,8 +139,7 @@ export default function BannersPage() {
         render: (_: any, row: IBanner) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}
-          >
+            onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -149,16 +148,14 @@ export default function BannersPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES.BANNERS.EDIT(row?._id))}
-                >
+                  onClick={() => router?.push(ROUTES.BANNERS.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", banner: row })
-                  }
-                >
+                  }>
                   <Power size={14} className="mr-2 hover:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -166,8 +163,7 @@ export default function BannersPage() {
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() =>
                     setConfirmAction({ type: "delete", banner: row })
-                  }
-                >
+                  }>
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

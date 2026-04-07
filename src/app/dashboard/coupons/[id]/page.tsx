@@ -8,7 +8,7 @@ import { useCoupon } from "@/services/coupon/coupon.hooks";
 import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { dateUtils } from "@/lib/utils";
+import { dateUtils, formatYen } from "@/utils/common.utils";
 import { EDiscountType } from "@/types/coupon/coupon.types";
 import { Ticket, Calendar, Calculator, Settings } from "lucide-react";
 
@@ -50,7 +50,9 @@ export default function CouponDetailsPage() {
                 <h2 className="text-2xl font-bold tracking-tight text-gray-900">
                   {coupon?.code}
                 </h2>
-                <Badge variant={coupon?.isActive ? "success" : "secondary"} className="ml-2">
+                <Badge
+                  variant={coupon?.isActive ? "success" : "secondary"}
+                  className="ml-2">
                   {coupon?.isActive ? "Active" : "Inactive"}
                 </Badge>
               </div>
@@ -67,20 +69,24 @@ export default function CouponDetailsPage() {
                   <div>
                     <p className="text-sm text-gray-500">Discount Value</p>
                     <p className="text-xl font-bold text-green-600">
-                      {coupon?.discountType === EDiscountType.PERCENT 
-                        ? `${coupon?.discountAmount}% OFF` 
-                        : `$${coupon?.discountAmount} OFF`}
+                      {coupon?.discountType === EDiscountType.PERCENT
+                        ? `${coupon?.discountAmount}% OFF`
+                        : `${formatYen(Number(coupon?.discountAmount) || 0)} OFF`}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Minimum Purchase</p>
-                    <p className="font-semibold text-gray-900">${coupon?.minPurchase || 0}</p>
+                    <p className="font-semibold text-gray-900">
+                      {formatYen(Number(coupon?.minPurchase) || 0)}
+                    </p>
                   </div>
                   {coupon?.discountType === EDiscountType.PERCENT && (
                     <div>
                       <p className="text-sm text-gray-500">Maximum Discount</p>
                       <p className="font-semibold text-gray-900">
-                        {coupon?.maxDiscount > 0 ? `$${coupon?.maxDiscount}` : "Unlimited"}
+                        {coupon?.maxDiscount > 0
+                          ? formatYen(Number(coupon?.maxDiscount) || 0)
+                          : "Unlimited"}
                       </p>
                     </div>
                   )}
@@ -96,13 +102,17 @@ export default function CouponDetailsPage() {
                   <div>
                     <p className="text-sm text-gray-500">Start Date</p>
                     <p className="font-semibold text-gray-900">
-                      {coupon?.startDate ? dateUtils?.format(coupon.startDate) : "—"}
+                      {coupon?.startDate
+                        ? dateUtils?.format(coupon.startDate)
+                        : "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Expiry Date</p>
                     <p className="font-semibold text-red-600">
-                      {coupon?.expiryDate ? dateUtils?.format(coupon.expiryDate) : "—"}
+                      {coupon?.expiryDate
+                        ? dateUtils?.format(coupon.expiryDate)
+                        : "—"}
                     </p>
                   </div>
                 </div>
@@ -123,15 +133,25 @@ export default function CouponDetailsPage() {
                   <p className="font-medium text-gray-900">{coupon?.type}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase">Usage Limit Per User</p>
-                  <p className="font-medium text-gray-900">{coupon?.limitPerUser} Times</p>
+                  <p className="text-xs text-gray-500 uppercase">
+                    Usage Limit Per User
+                  </p>
+                  <p className="font-medium text-gray-900">
+                    {coupon?.limitPerUser} Times
+                  </p>
                 </div>
                 <div className="pt-4 border-t border-gray-100">
                   <p className="text-[10px] text-gray-400">
-                    Created: {coupon?.createdAt ? dateUtils?.format(coupon.createdAt) : "—"}
+                    Created:{" "}
+                    {coupon?.createdAt
+                      ? dateUtils?.format(coupon.createdAt)
+                      : "—"}
                   </p>
                   <p className="text-[10px] text-gray-400">
-                    Modified: {coupon?.updatedAt ? dateUtils?.format(coupon.updatedAt) : "—"}
+                    Modified:{" "}
+                    {coupon?.updatedAt
+                      ? dateUtils?.format(coupon.updatedAt)
+                      : "—"}
                   </p>
                 </div>
               </div>
