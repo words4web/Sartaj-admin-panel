@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Search, RotateCcw, Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/common.utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -64,8 +64,7 @@ export function FilterBar({
       className={cn(
         "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 items-end",
         className,
-      )}
-    >
+      )}>
       {/* Search Input */}
       {search && (
         <div className="flex flex-col gap-1.5">
@@ -110,8 +109,7 @@ export function FilterBar({
                 onValueChange={(val) =>
                   filter?.onChange(val === "all" ? "" : val)
                 }
-                disabled={filter?.disabled}
-              >
+                disabled={filter?.disabled}>
                 <SelectTrigger className="h-10 w-full focus:ring-2 focus:ring-blue-500/30 text-sm">
                   <SelectValue placeholder={filter?.placeholder || "All"} />
                 </SelectTrigger>
@@ -135,8 +133,7 @@ export function FilterBar({
             // variant="primary"
             size="sm"
             onClick={onReset}
-            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-colors cursor-pointer"
-          >
+            className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-colors cursor-pointer">
             <RotateCcw size={16} />
             <span className="text-sm font-medium">Reset</span>
           </Button>
@@ -173,16 +170,14 @@ function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
-          className="h-10 w-full justify-between font-normal border-gray-200 hover:bg-white hover:text-black text-sm"
-        >
+          className="h-10 w-full justify-between font-normal border-gray-200 hover:bg-white hover:text-black text-sm">
           {selectedOption ? selectedOption.label : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
         className="w-[var(--radix-popover-trigger-width)] p-0"
-        align="start"
-      >
+        align="start">
         <Command>
           <CommandInput
             placeholder={`Search ${placeholder.toLowerCase()}...`}
@@ -195,8 +190,7 @@ function SearchableSelect({
                 onSelect={() => {
                   onChange("");
                   setOpen(false);
-                }}
-              >
+                }}>
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
@@ -213,8 +207,7 @@ function SearchableSelect({
                     onSelect={() => {
                       onChange(option?.value);
                       setOpen(false);
-                    }}
-                  >
+                    }}>
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
