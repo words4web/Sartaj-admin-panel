@@ -23,7 +23,7 @@ import { CommonError } from "@/components/ui/common-error";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
-import { dateUtils } from "@/lib/utils";
+import { dateUtils } from "@/utils/common.utils";
 import { FilterBar } from "@/components/common/FilterBar";
 
 export default function ManufacturersPage() {
@@ -107,8 +107,7 @@ export default function ManufacturersPage() {
         render: (_: any, row: IManufacturer) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e?.stopPropagation?.()}
-          >
+            onClick={(e) => e?.stopPropagation?.()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -119,14 +118,12 @@ export default function ManufacturersPage() {
                 <DropdownMenuItem
                   onClick={() =>
                     router?.push(ROUTES?.MANUFACTURERS?.EDIT(row?._id))
-                  }
-                >
+                  }>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-red-600 focus:text-red-600 hover:text-white!"
-                  onClick={() => setConfirmDelete(row)}
-                >
+                  onClick={() => setConfirmDelete(row)}>
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

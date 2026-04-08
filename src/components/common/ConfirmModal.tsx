@@ -10,8 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface ConfirmModalProps {
   open: boolean;
@@ -37,7 +37,9 @@ export function ConfirmModal({
   onCancel,
 }: ConfirmModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={(v) => !v && onCancel()}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(v) => !v && !isLoading && onCancel()}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -49,14 +51,24 @@ export function ConfirmModal({
           <AlertDialogCancel onClick={onCancel} disabled={isLoading}>
             {cancelLabel}
           </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
+          <Button
+            type="button"
+            variant={destructive ? "destructive" : "default"}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={isLoading}
-            className={cn(
-              destructive && buttonVariants({ variant: "destructive" }),
-            )}>
-            {isLoading ? "Processing..." : confirmLabel}
-          </AlertDialogAction>
+            className="min-w-[100px]">
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              confirmLabel
+            )}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

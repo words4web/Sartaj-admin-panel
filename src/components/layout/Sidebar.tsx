@@ -17,9 +17,10 @@ import {
   Ticket,
   FileText,
   Truck,
+  ListOrdered,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/common.utils";
 import { ROUTES } from "@/constants/routes";
 
 const MENU_ITEMS = [
@@ -63,6 +64,11 @@ const MENU_ITEMS = [
     icon: Ticket,
     label: "Coupons",
     href: ROUTES.COUPONS.LIST,
+  },
+  {
+    icon: ListOrdered,
+    label: "Price lists",
+    href: ROUTES.PRICE_LISTS.LIST,
   },
   {
     icon: Truck,

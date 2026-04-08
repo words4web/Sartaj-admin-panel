@@ -36,6 +36,11 @@ export const ROUTES = {
     EDIT: (id: string) => `/dashboard/coupons/${id}/edit`,
     NEW: "/dashboard/coupons/new",
   },
+  PRICE_LISTS: {
+    LIST: "/dashboard/price-lists",
+    EDIT: (id: string) => `/dashboard/price-lists/${id}/edit`,
+    NEW: "/dashboard/price-lists/new",
+  },
   SUBCATEGORIES: {
     LIST: "/dashboard/subcategories",
     DETAIL: (id: string) => `/dashboard/subcategories/${id}`,
@@ -60,6 +65,9 @@ export const ROUTES = {
   },
   PRODUCTS: {
     LIST: "/dashboard/products",
+    NEW: "/dashboard/products/new",
+    DETAIL: (id: string) => `/dashboard/products/${id}`,
+    EDIT: (id: string) => `/dashboard/products/${id}/edit`,
   },
   ANALYTICS: {
     ROOT: "/dashboard/analytics",

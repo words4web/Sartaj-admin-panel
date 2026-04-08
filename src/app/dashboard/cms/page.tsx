@@ -20,7 +20,7 @@ import { CommonError } from "@/components/ui/common-error";
 import { MoreHorizontal, Pencil, FileText } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
-import { dateUtils } from "@/lib/utils";
+import { dateUtils } from "@/utils/common.utils";
 
 export default function CmsPage() {
   const router = useRouter();
@@ -60,8 +60,8 @@ export default function CmsPage() {
               <FileText size={18} />
             </div>
             <span className="font-bold text-gray-900 tracking-tight capitalize truncate">
-              {typeof row?.title === "string" 
-                ? row?.title 
+              {typeof row?.title === "string"
+                ? row?.title
                 : row?.title?.en || "Untitled Page"}
             </span>
           </div>
@@ -94,8 +94,7 @@ export default function CmsPage() {
         render: (_: any, row: ICMS) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e?.stopPropagation?.()}
-          >
+            onClick={(e) => e?.stopPropagation?.()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -104,8 +103,7 @@ export default function CmsPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.CMS?.EDIT(row?._id))}
-                >
+                  onClick={() => router?.push(ROUTES?.CMS?.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 {/* <DropdownMenuItem

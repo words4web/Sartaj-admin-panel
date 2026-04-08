@@ -18,6 +18,12 @@ export interface SuperCategory {
   isActive: boolean;
 }
 
+interface CustomerPriceListRef {
+  _id: string;
+  name: string;
+  superCategory?: string | { _id: string };
+}
+
 export interface Customer {
   _id: string;
   fullName: string;
@@ -25,6 +31,7 @@ export interface Customer {
   mobileNumber: string;
   addresses: IAddress[];
   superCategory: SuperCategory | string;
+  priceList?: CustomerPriceListRef | string | null;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: string;
@@ -37,6 +44,7 @@ export interface CreateCustomerPayload {
   mobileNumber: string;
   addresses: IAddress[];
   superCategory: string;
+  priceList?: string | null;
 }
 
 export interface UpdateCustomerPayload extends Partial<CreateCustomerPayload> {}
@@ -63,6 +71,7 @@ export type CustomerFormValues = {
   email: string;
   mobileNumber: string;
   superCategory: string;
+  priceList: string;
   addresses: IAddress[];
 };
 

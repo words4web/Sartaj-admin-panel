@@ -64,6 +64,7 @@ export const API_ROUTES = {
     DETAIL: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
     UPDATE: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
     DELETE: (id: string) => `${API_ADMIN_BASE}/product/${id}`,
+    TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/product/${id}/status`,
   },
 
   // Banners
@@ -93,6 +94,15 @@ export const API_ROUTES = {
     UPDATE: (id: string) => `${API_ADMIN_BASE}/coupon/${id}`,
     DELETE: (id: string) => `${API_ADMIN_BASE}/coupon/${id}`,
     TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/coupon/${id}/status`,
+  },
+
+  // Price lists (customer-specific product overrides)
+  PRICE_LIST: {
+    LIST: `${API_ADMIN_BASE}/price-list`,
+    CREATE: `${API_ADMIN_BASE}/price-list/create`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/price-list/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/price-list/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/price-list/${id}`,
   },
 
   // CMS

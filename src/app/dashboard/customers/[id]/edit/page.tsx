@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/common/PageHeader";
+import { extractId } from "@/utils/common.utils";
 import { useSuperCategories } from "@/services/superCategory/superCategory.hooks";
 import { useCustomer } from "@/services/customer/customer.queries";
 import { useUpdateCustomer } from "@/services/customer/customer.mutations";
@@ -33,21 +34,21 @@ export default function CustomerEditPage() {
 
   useEffect(() => {
     if (!superCategory && customerData?.superCategory) {
-      const sc: any = customerData?.superCategory;
-      setSuperCategory(typeof sc === "string" ? sc : (sc?._id ?? ""));
+      setSuperCategory(extractId(customerData?.superCategory));
     }
   }, [customerData, superCategory]);
 
-  const initialValues: CustomerFormValues = useMemo(
-    () => ({
+  const initialValues: CustomerFormValues = useMemo(() => {
+    const priceListId = extractId(customerData?.priceList);
+    return {
       fullName: customerData?.fullName ?? "",
       email: customerData?.email ?? "",
       mobileNumber: customerData?.mobileNumber ?? "",
       superCategory: superCategory,
+      priceList: priceListId,
       addresses: customerData?.addresses ?? [defaultAddress],
-    }),
-    [customerData, superCategory],
-  );
+    };
+  }, [customerData, superCategory]);
 
   const handleSubmit = (values: CustomerFormValues) => {
     updateMutation.mutate(
@@ -59,6 +60,7 @@ export default function CustomerEditPage() {
           mobileNumber: values.mobileNumber,
           superCategory: values.superCategory,
           addresses: values.addresses,
+          priceList: values.priceList?.trim() ? values.priceList : null,
         },
       },
       {

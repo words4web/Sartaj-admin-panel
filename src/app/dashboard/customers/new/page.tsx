@@ -34,6 +34,7 @@ export default function CustomerCreatePage() {
       email: "",
       mobileNumber: "",
       superCategory,
+      priceList: "",
       addresses: [defaultAddress],
     }),
     [superCategory],
@@ -47,6 +48,7 @@ export default function CustomerCreatePage() {
         mobileNumber: values.mobileNumber,
         superCategory: values.superCategory,
         addresses: values.addresses,
+        ...(values.priceList ? { priceList: values.priceList } : {}),
       },
       {
         onSuccess: () => router.push(ROUTES.CUSTOMERS.LIST),

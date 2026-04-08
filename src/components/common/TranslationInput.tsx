@@ -7,8 +7,6 @@ import { FormInput } from "@/components/common/FormInput";
 import { FormTextarea } from "@/components/common/FormTextarea";
 import { ITranslationMap } from "@/types/api.types";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 export const LANG_CODES = ["en", "hi", "ne", "ja", "bn"] as const;
 export type LangCode = (typeof LANG_CODES)[number];
 
@@ -32,7 +30,7 @@ export const EMPTY_TRANSLATION: ITranslationMap = {
   bn: "",
 };
 
-// ─── Field Definitions ────────────────────────────────────────────────────────
+// ─── Field Definitions
 
 export interface TranslationField {
   /** The key in the form values object */
@@ -43,13 +41,15 @@ export interface TranslationField {
   multiline?: boolean;
   /** Row count for a textarea */
   rows?: number;
+  /** Taller textarea with vertical resize (long descriptions) */
+  resizeVertical?: boolean;
   /** If true, shown with a required asterisk */
   required?: boolean;
   /** Placeholder for the field */
   placeholder?: string;
 }
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+// ─── Props
 
 interface TranslationInputProps {
   /** Title shown at the top of the card */
@@ -66,7 +66,7 @@ interface TranslationInputProps {
   errors?: Record<string, string | undefined>;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Component
 
 /**
  * A reusable tabbed form component for entering translations.
@@ -102,7 +102,7 @@ export function TranslationInput({
   const hasErrors = Object.values(errors).some(Boolean);
 
   return (
-    <div className="space-y-4 p-5 border border-gray-200 rounded-xl bg-white shadow-sm">
+    <div className="space-y-4 px-5 py-2 bg-white">
       {/* Header */}
       <div className="flex flex-col gap-1 mb-2">
         <Label className="text-base font-semibold text-gray-900">{title}</Label>
@@ -160,22 +160,23 @@ export function TranslationInput({
             </div>
 
             {fields?.map((field) => {
-              const val = values[field.key]?.[lang.id] ?? "";
+              const val = values[field?.key]?.[lang?.id] ?? "";
               const placeholder =
-                field.placeholder ?? `${field.label} in ${lang.label}`;
+                field?.placeholder ?? `${field?.label} in ${lang?.label}`;
 
-              if (field.multiline) {
+              if (field?.multiline) {
                 return (
                   <FormTextarea
-                    key={field.key}
-                    label={field.label}
-                    required={field.required}
+                    key={field?.key}
+                    label={field?.label}
+                    required={field?.required}
                     value={val}
                     onChange={(e) =>
                       handleChange(field.key, lang.id, e.target.value)
                     }
                     placeholder={placeholder}
                     rows={field.rows ?? 4}
+                    resizeVertical={field.resizeVertical}
                   />
                 );
               }
