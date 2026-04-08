@@ -40,10 +40,20 @@ export const dateUtils = {
 // Error handling
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
-    return error.message;
+    return error?.message;
   }
   if (typeof error === "string") {
     return error;
   }
   return "An unexpected error occurred";
 };
+
+/**
+ * Safely extracts an _id from a value which could be a populated object or a string.
+ */
+export function extractId(val: any): string {
+  if (typeof val === "object" && val && "_id" in val) {
+    return String(val?._id);
+  }
+  return String(val ?? "");
+}

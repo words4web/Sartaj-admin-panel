@@ -6,6 +6,7 @@ import {
   IProductBasePrice,
   UpdateProductPayload,
 } from "@/types/product/product.types";
+import { extractId } from "./common.utils";
 
 const appendIfDefined = (fd: FormData, key: string, value: unknown) => {
   if (value === undefined || value === null) return;
@@ -51,14 +52,6 @@ export const buildProductFormData = (
   return fd;
 };
 
-export const refId = (
-  ref: string | { _id?: string } | null | undefined,
-): string => {
-  if (!ref) return "";
-  if (typeof ref === "string") return ref;
-  return ref?._id ?? "";
-};
-
 export function normalizeTranslation(v: unknown): ITranslationMap {
   if (!v) return { ...EMPTY_TRANSLATION };
   if (typeof v === "string") return { ...EMPTY_TRANSLATION, en: v };
@@ -78,8 +71,8 @@ export function localizedName(
 }
 
 export function subcategoryDisplay(product: IProduct): string {
-  const catId = refId(product?.category);
-  const subId = refId(product?.subcategory);
+  const catId = extractId(product?.category);
+  const subId = extractId(product?.subcategory);
   if (!subId || subId === catId) return "No sub category";
   return localizedName(product?.subcategory);
 }

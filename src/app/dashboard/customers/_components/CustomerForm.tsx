@@ -12,6 +12,7 @@ import {
 import { createCustomerSchema } from "@/schemas/customer/customer.schema";
 import { toast } from "sonner";
 import { SUPER_CATEGORIES } from "@/lib/constants";
+import { usePriceLists } from "@/services/priceList/priceList.hooks";
 
 export default function CustomerForm({
   superCategories,
@@ -23,6 +24,16 @@ export default function CustomerForm({
   const [values, setValues] = useState<CustomerFormValues>(initialValues);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { data: priceListPage, isFetching: priceListsLoading } = usePriceLists(
+    {
+      superCategory: values.superCategory || undefined,
+      page: 1,
+      limit: 100,
+    },
+    { enabled: Boolean(values.superCategory) },
+  );
+  const priceListOptions = priceListPage?.lists ?? [];
 
   useEffect(() => {
     setValues(initialValues);
@@ -174,7 +185,11 @@ export default function CustomerForm({
               value={values.superCategory}
               disabled={isSubmitting || superCategories?.length === 0}
               onChange={(e) =>
-                setValues((v) => ({ ...v, superCategory: e.target.value }))
+                setValues((v) => ({
+                  ...v,
+                  superCategory: e.target.value,
+                  priceList: "",
+                }))
               }
               className={`border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
                 errors.superCategory ? "border-red-500" : "border-gray-200"
@@ -194,6 +209,51 @@ export default function CustomerForm({
               <p className="mt-1 text-xs text-red-600">
                 {errors.superCategory}
               </p>
+            )}
+          </div>
+
+          <div className="w-full md:col-span-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Price list
+              <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <select
+              value={values.priceList}
+              disabled={
+                isSubmitting ||
+                !values.superCategory ||
+                priceListsLoading ||
+                superCategories?.length === 0
+              }
+              onChange={(e) =>
+                setValues((v) => ({ ...v, priceList: e.target.value }))
+              }
+              className={`border rounded-lg px-3 py-2 w-full max-w-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
+                errors?.priceList ? "border-red-500" : "border-gray-200"
+              }`}>
+              <option value="">
+                None — use segment base prices for all products
+              </option>
+              {values?.priceList &&
+                !priceListOptions?.some(
+                  (pl) => pl?._id === values?.priceList,
+                ) && (
+                  <option value={values?.priceList}>
+                    Current list (not in loaded options)
+                  </option>
+                )}
+              {priceListOptions?.map((pl) => (
+                <option key={pl?._id} value={pl?._id}>
+                  {pl?.name}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-gray-500">
+              Only lists for the selected segment are shown. Changing segment
+              clears this field.
+            </p>
+            {errors?.priceList && (
+              <p className="mt-1 text-xs text-red-600">{errors.priceList}</p>
             )}
           </div>
         </div>
