@@ -46,7 +46,7 @@ export default function DashboardNotFound() {
         <Button
           asChild
           variant="ghost"
-          className="text-gray-400 hover:text-blue-600 transition-colors">
+          className="text-gray-400 hover:text-white transition-colors">
           <Link href={ROUTES.DASHBOARD}>Skip wait and go now</Link>
         </Button>
       </div>

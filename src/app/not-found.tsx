@@ -79,10 +79,10 @@ export default function NotFound() {
           </h2>
           <div className="flex flex-col items-center gap-3">
             <p className="text-gray-600 max-w-sm mx-auto leading-relaxed">
-              Redirecting you to safety in
+              Redirecting you to safety in{" "}
               <span className="font-bold text-blue-600 text-xl">
                 {countdown}
-              </span>
+              </span>{" "}
               seconds...
             </p>
             <div className="w-12 h-12 border-4 border-blue-50 border-t-blue-600 rounded-full animate-spin" />
@@ -94,7 +94,7 @@ export default function NotFound() {
           <Button
             asChild
             variant="ghost"
-            className="text-gray-400 hover:text-blue-600 transition-colors">
+            className="text-gray-400 hover:text-white transition-colors">
             <Link href={homeRoute}>Skip wait and go now</Link>
           </Button>
         </div>

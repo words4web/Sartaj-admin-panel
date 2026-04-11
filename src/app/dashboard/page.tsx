@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Users, Package, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -28,6 +29,10 @@ const STATS = [
 ];
 
 export default function DashboardPage() {
+  useEffect(() => {
+    document.title = "Dashboard | Sartaj Admin";
+  }, []);
+
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
