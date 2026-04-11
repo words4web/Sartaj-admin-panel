@@ -126,7 +126,7 @@ export function TranslationInput({
         value={activeTab}
         onValueChange={(v) => setActiveTab(v as LangCode)}>
         <TabsList className="w-full justify-start h-auto flex-wrap bg-gray-100/60 p-1 gap-1 rounded-xl">
-          {SUPPORTED_LANGUAGES.map((lang) => {
+          {SUPPORTED_LANGUAGES?.map((lang) => {
             // const isComplete = fields.every(
             //   (f) => (values[f.key]?.[lang.id] ?? "").trim().length > 0,
             // );
@@ -145,7 +145,7 @@ export function TranslationInput({
           })}
         </TabsList>
 
-        {SUPPORTED_LANGUAGES.map((lang) => (
+        {SUPPORTED_LANGUAGES?.map((lang) => (
           <TabsContent
             key={lang.id}
             value={lang.id}

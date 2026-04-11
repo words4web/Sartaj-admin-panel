@@ -15,7 +15,7 @@ export function ProductFormStepper({
   isFormValid,
 }: ProductFormStepperProps) {
   const isFirstStep = current === 0;
-  const isLastStep = current === steps.length - 1;
+  const isLastStep = current === steps?.length - 1;
 
   return (
     <div className="flex items-center justify-between w-full bg-white/50 backdrop-blur-sm sticky top-0 z-10 py-3 mb-1 border-b border-gray-100 px-4">

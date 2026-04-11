@@ -266,7 +266,7 @@ export default function ProductsPage() {
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
           <p className="text-sm text-gray-500 text-center sm:text-left">
-            Showing <span className="font-medium">{products.length}</span> of{" "}
+            Showing <span className="font-medium">{products?.length}</span> of{" "}
             <span className="font-medium">{total}</span> products
           </p>
           <Pagination

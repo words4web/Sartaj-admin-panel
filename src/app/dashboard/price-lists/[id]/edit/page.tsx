@@ -23,7 +23,7 @@ import {
 function toFormValues(list: PriceList): PriceListFormValues {
   const superCategoryId = extractId(list.superCategory);
 
-  const items: PriceListItemRow[] = (list.items ?? []).map((it: any) => {
+  const items: PriceListItemRow[] = (list.items ?? [])?.map((it: any) => {
     if ("productId" in it && it?.productId) {
       return {
         productId: String(it?.productId),

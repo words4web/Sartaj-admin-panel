@@ -132,7 +132,7 @@ export function FormSelectField({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((opt) => (
+          {options?.map((opt) => (
             <SelectItem key={opt.key} value={opt.key}>
               {opt.label}
             </SelectItem>

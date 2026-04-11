@@ -14,26 +14,14 @@ import {
   LANG_CODES,
   EMPTY_TRANSLATION,
 } from "@/components/common/TranslationInput";
+import {
+  normalizeTranslation,
+  updateTranslationField,
+  isTranslationComplete,
+} from "@/utils/translation.utils";
+import { getStandardTranslationFields } from "@/constants/translation.constants";
 
-const TRANSLATION_FIELDS = [
-  { key: "name", label: "Category Name", required: true },
-  {
-    key: "description",
-    label: "Description",
-    required: true,
-    multiline: true,
-    rows: 4,
-  },
-] as const;
-
-// ─── Helper ───────────────────────────────────────────────────────────────────
-
-function normalizeTranslation(value: unknown): ITranslationMap {
-  const empty = { ...EMPTY_TRANSLATION };
-  if (!value) return empty;
-  if (typeof value === "string") return { ...empty, en: value };
-  return { ...empty, ...(value as ITranslationMap) };
-}
+const TRANSLATION_FIELDS = getStandardTranslationFields("Category Name");
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -82,10 +70,14 @@ export default function CategoryForm({
 
   const handleTranslationChange = useCallback(
     (field: string, lang: string, value: string) => {
-      setValues((v) => ({
-        ...v,
-        [field]: { ...(v[field as keyof CategoryFormValues] as ITranslationMap), [lang]: value },
-      }));
+      setValues((v) =>
+        updateTranslationField(
+          v,
+          field as keyof CategoryFormValues,
+          lang,
+          value,
+        ),
+      );
     },
     [],
   );
@@ -93,10 +85,8 @@ export default function CategoryForm({
   // ─── Validation ────────────────────────────────────────────────────────────
 
   const isValid = useMemo(() => {
-    const nameOk = LANG_CODES.every((l) => !!(values.name as ITranslationMap)?.[l]?.trim());
-    const descOk = LANG_CODES.every(
-      (l) => !!(values.description as ITranslationMap)?.[l]?.trim(),
-    );
+    const nameOk = isTranslationComplete(values.name as ITranslationMap);
+    const descOk = isTranslationComplete(values.description as ITranslationMap);
     const imageOk = requireImage ? !!imagePreview : true;
     return nameOk && descOk && imageOk;
   }, [values.name, values.description, imagePreview, requireImage]);
@@ -105,16 +95,17 @@ export default function CategoryForm({
     e.preventDefault();
     const nextErrors: typeof errors = {};
 
-    const nameMissing = LANG_CODES.some(
-      (l) => !(values.name as ITranslationMap)?.[l]?.trim(),
-    );
-    const descMissing = LANG_CODES.some(
-      (l) => !(values.description as ITranslationMap)?.[l]?.trim(),
+    const nameMissing = !isTranslationComplete(values.name as ITranslationMap);
+    const descMissing = !isTranslationComplete(
+      values.description as ITranslationMap,
     );
 
-    if (nameMissing) nextErrors.name = "Category name is required in all languages";
-    if (descMissing) nextErrors.description = "Description is required in all languages";
-    if (requireImage && !imagePreview) nextErrors.image = "Category image is required.";
+    if (nameMissing)
+      nextErrors.name = "Category name is required in all languages";
+    if (descMissing)
+      nextErrors.description = "Description is required in all languages";
+    if (requireImage && !imagePreview)
+      nextErrors.image = "Category image is required.";
 
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
@@ -206,8 +197,7 @@ export default function CategoryForm({
                 setImagePreview(null);
                 setValues((v) => ({ ...v, image: null, existingImage: null }));
               }}
-              disabled={!imagePreview || isSubmitting}
-            >
+              disabled={!imagePreview || isSubmitting}>
               <X className="w-4 h-4 mr-2" />
               Remove Cover
             </Button>

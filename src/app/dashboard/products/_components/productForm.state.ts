@@ -33,7 +33,7 @@ export const defaultForm = (): ProductFormValues => ({
 });
 
 export function mapProductToFormValues(p: IProduct): ProductFormValues {
-  const existingBp = (p.basePrices ?? []).map((bp) => ({
+  const existingBp = (p.basePrices ?? [])?.map((bp) => ({
     superCategoryId: extractId(bp?.superCategoryId),
     price: String(bp?.price ?? ""),
   }));

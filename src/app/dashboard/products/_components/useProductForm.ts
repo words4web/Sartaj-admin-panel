@@ -16,7 +16,10 @@ import {
 } from "./types/useProductForm.types";
 
 import { PRODUCT_FORM_VALIDATION_HINTS } from "@/constants/product.constants";
-import { normalizeTranslation } from "@/utils/product.util";
+import {
+  normalizeTranslation,
+  isTranslationComplete,
+} from "@/utils/translation.utils";
 
 export function useProductForm({
   initialValues,
@@ -157,12 +160,8 @@ export function useProductForm({
   // ── Validation ──
   const step0Valid = useMemo(() => {
     const skuOk = values?.sku?.trim()?.length > 0;
-    const namesOk = LANG_CODES.every(
-      (lang) => (values?.name?.[lang] ?? "")?.trim()?.length > 0,
-    );
-    const descsOk = LANG_CODES.every(
-      (lang) => (values?.description?.[lang] ?? "")?.trim()?.length > 0,
-    );
+    const namesOk = isTranslationComplete(values?.name);
+    const descsOk = isTranslationComplete(values?.description);
     const imageOk = Boolean(values?.image) || Boolean(values?.existingImage);
     return skuOk && namesOk && descsOk && imageOk;
   }, [

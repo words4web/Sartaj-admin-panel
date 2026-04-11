@@ -1,5 +1,3 @@
-import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
-import { ITranslationMap } from "@/types/api.types";
 import {
   CreateProductPayload,
   IProduct,
@@ -51,12 +49,6 @@ export const buildProductFormData = (
   if (data.image) fd.append("image", data.image);
   return fd;
 };
-
-export function normalizeTranslation(v: unknown): ITranslationMap {
-  if (!v) return { ...EMPTY_TRANSLATION };
-  if (typeof v === "string") return { ...EMPTY_TRANSLATION, en: v };
-  return { ...EMPTY_TRANSLATION, ...v };
-}
 
 export function localizedName(
   ref:
