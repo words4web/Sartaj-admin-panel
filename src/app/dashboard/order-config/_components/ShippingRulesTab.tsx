@@ -19,7 +19,7 @@ export function ShippingRulesTab() {
     <div className="space-y-8">
       <ConfigHeader title="Standard Shipping Rules" icon={Truck} />
 
-      <ConfigGrid className="md:grid-cols-2!">
+      <ConfigGrid className="grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
         {/* Frozen Rules */}
         <ConfigCard
           badge={{ text: "Frozen Goods", bgColor: "bg-blue-600" }}
@@ -50,39 +50,6 @@ export function ShippingRulesTab() {
                 required: true,
               })}
               error={(errors?.shippingRules as any)?.frozen?.fee}
-              min={0}
-            />
-          </div>
-        </ConfigCard>
-
-        {/* Dry Rules */}
-        <ConfigCard
-          badge={{ text: "Dry Goods", bgColor: "bg-green-700" }}
-          className="space-y-6">
-          <NumericInputField
-            className="mb-0"
-            label="Free Shipping Amount Threshold"
-            unit="¥"
-            description="* Orders with a subtotal greater than or equal to this qualify for free dry shipping."
-            register={register("shippingRules.dry.threshold", {
-              valueAsNumber: true,
-              min: 0,
-              required: true,
-            })}
-            error={(errors?.shippingRules as any)?.dry?.threshold}
-            min={0}
-          />
-
-          <div className="pt-6 border-t border-gray-100">
-            <NumericInputField
-              label="Delivery Fee (if below threshold)"
-              unit="¥"
-              register={register("shippingRules.dry.fee", {
-                valueAsNumber: true,
-                min: 0,
-                required: true,
-              })}
-              error={(errors?.shippingRules as any)?.dry?.fee}
               min={0}
             />
           </div>

@@ -29,10 +29,6 @@ export interface IAppConfig {
       weightThreshold: number;
       fee: number;
     };
-    dry: {
-      threshold: number;
-      fee: number;
-    };
   };
   specialAreas: {
     name: string;

@@ -66,7 +66,6 @@ export default function OrderSettings() {
       ],
       shippingRules: {
         frozen: { weightThreshold: 5, fee: 1500 },
-        dry: { threshold: 6500, fee: 1500 },
       },
       specialAreas: [],
       taxes: [
