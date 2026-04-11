@@ -25,6 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { PaginatedDropdown } from "./PaginatedDropdown";
 
 export interface FilterOption {
   label: string;
@@ -36,10 +37,20 @@ export interface FilterConfig {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  options: FilterOption[];
+  options?: FilterOption[];
   placeholder?: string;
   isSearchable?: boolean;
   disabled?: boolean;
+  fetchData?: (params: {
+    search: string;
+    page: number;
+    limit: number;
+  }) => Promise<{
+    options: FilterOption[];
+    hasMore: boolean;
+  }>;
+  queryKey?: string[];
+  selectedLabel?: string;
 }
 
 interface FilterBarProps {
@@ -93,11 +104,23 @@ export function FilterBar({
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">
               {filter?.label}
             </label>
-            {filter?.isSearchable ? (
+            {filter?.fetchData && filter?.queryKey ? (
+              <PaginatedDropdown
+                value={filter?.value}
+                onValueChange={filter?.onChange}
+                fetchData={filter?.fetchData}
+                queryKey={filter?.queryKey}
+                selectedLabel={filter?.selectedLabel}
+                placeholder={filter?.placeholder || `All ${filter?.label}`}
+                disabled={filter?.disabled}
+                isClearable
+                clearLabel={`All ${filter?.label}`}
+              />
+            ) : filter?.isSearchable ? (
               <SearchableSelect
                 value={filter?.value}
                 onChange={filter?.onChange}
-                options={filter?.options}
+                options={filter?.options || []}
                 placeholder={
                   filter?.placeholder || `Select ${filter?.label}...`
                 }
@@ -130,7 +153,6 @@ export function FilterBar({
       {onReset && (
         <div className="flex items-center h-10">
           <Button
-            // variant="primary"
             size="sm"
             onClick={onReset}
             className="flex items-center gap-2 border-gray-200 h-10 px-3 transition-colors cursor-pointer">

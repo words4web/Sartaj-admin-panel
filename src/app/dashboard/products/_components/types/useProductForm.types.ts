@@ -25,9 +25,8 @@ export type UseProductFormReturn = {
   stepValid: boolean[];
   isFormValid: boolean;
   supers: SuperCategory[];
-  categories: ProductNamedRow[];
-  subcategories: ProductNamedRow[];
-  manufacturers: ProductNamedRow[];
+  hasSubcategories: boolean | null;
+  setHasSubcategories: React.Dispatch<React.SetStateAction<boolean | null>>;
   imagePreview: string | null;
   toggleSuperCategory: (superCategoryId: string, checked: boolean) => void;
   setSuperPrice: (superCategoryId: string, price: string) => void;

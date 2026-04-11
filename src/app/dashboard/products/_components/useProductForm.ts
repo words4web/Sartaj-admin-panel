@@ -7,9 +7,6 @@ import {
   ProductTag,
 } from "@/types/product/product.types";
 import { useSuperCategories } from "@/services/superCategory/superCategory.hooks";
-import { useCategoryList } from "@/services/category/category.hooks";
-import { useSubcategoriesByCategory } from "@/services/category/category.hooks";
-import { useManufacturerList } from "@/services/manufacturer/manufacturer.hooks";
 import { toast } from "sonner";
 import { defaultForm } from "./productForm.state";
 
@@ -41,34 +38,34 @@ export function useProductForm({
   const { data: superData } = useSuperCategories();
   const supers = superData ?? [];
 
-  const { data: catList } = useCategoryList();
-  const categories = catList?.categories ?? [];
-
-  const { data: subList } = useSubcategoriesByCategory(values.categoryId);
-  const subcategories = subList ?? [];
-
-  const { data: mfrData } = useManufacturerList({ limit: 200 });
-  const manufacturers = mfrData?.manufacturers ?? [];
-
-  // ── Effects ──
-  const subcategoryIdsKey = useMemo(
-    () =>
-      (subList ?? [])
-        ?.map((s: { _id: string }) => s?._id)
-        ?.slice()
-        ?.sort()
-        ?.join(","),
-    [subList],
+  const [hasSubcategories, setHasSubcategories] = useState<boolean | null>(
+    null,
   );
 
+  // ── Effects ──
   useEffect(() => {
-    if (!values.categoryId || !subcategoryIdsKey) return;
-    setValues((p) => {
-      if (p?.subcategoryId === p?.categoryId)
-        return { ...p, subcategoryId: "" };
-      return p;
-    });
-  }, [values.categoryId, values.subcategoryId, subcategoryIdsKey]);
+    // If the category loses subcategories, drop subcategoryId
+    if (hasSubcategories === false) {
+      setValues((p) => {
+        if (p?.subcategoryId) return { ...p, subcategoryId: "" };
+        return p;
+      });
+    }
+  }, [hasSubcategories]);
+
+  useEffect(() => {
+    // SubcategoryId clear on Category change is natively handled in the UI OnChange,
+    // but if you want strict clearance, you can do it here too:
+    if (!values.categoryId) {
+      setValues((p) => {
+        if (p?.subcategoryId || hasSubcategories !== null) {
+          setHasSubcategories(null);
+          return { ...p, subcategoryId: "" };
+        }
+        return p;
+      });
+    }
+  }, [values.categoryId]);
 
   useEffect(() => {
     if (!initialValues) return;
@@ -153,18 +150,18 @@ export function useProductForm({
 
   const effectiveSubcategoryId = useMemo(() => {
     if (!values.categoryId) return "";
-    if (subcategories.length === 0) return values?.categoryId;
+    if (hasSubcategories === false) return values?.categoryId;
     return values?.subcategoryId;
-  }, [values.categoryId, values.subcategoryId, subcategories.length]);
+  }, [values.categoryId, values.subcategoryId, hasSubcategories]);
 
   // ── Validation ──
   const step0Valid = useMemo(() => {
     const skuOk = values?.sku?.trim()?.length > 0;
     const namesOk = LANG_CODES.every(
-      (lang) => (values?.name?.[lang] ?? "").trim().length > 0,
+      (lang) => (values?.name?.[lang] ?? "")?.trim()?.length > 0,
     );
     const descsOk = LANG_CODES.every(
-      (lang) => (values?.description?.[lang] ?? "").trim().length > 0,
+      (lang) => (values?.description?.[lang] ?? "")?.trim()?.length > 0,
     );
     const imageOk = Boolean(values?.image) || Boolean(values?.existingImage);
     return skuOk && namesOk && descsOk && imageOk;
@@ -181,7 +178,7 @@ export function useProductForm({
       values.basePrices?.length > 0 &&
       values.basePrices?.every((b) => Number(b?.price) > 0);
     const effectiveSub =
-      subcategories?.length === 0 ? values?.categoryId : values?.subcategoryId;
+      hasSubcategories === false ? values?.categoryId : values?.subcategoryId;
     const catalogOk =
       Boolean(values?.categoryId) &&
       Boolean(effectiveSub) &&
@@ -192,7 +189,7 @@ export function useProductForm({
     values.categoryId,
     values.subcategoryId,
     values.manufacturerId,
-    subcategories.length,
+    hasSubcategories,
   ]);
 
   const step2Valid = useMemo(
@@ -290,9 +287,8 @@ export function useProductForm({
     stepValid,
     isFormValid,
     supers,
-    categories,
-    subcategories,
-    manufacturers,
+    hasSubcategories,
+    setHasSubcategories,
     imagePreview,
     toggleSuperCategory,
     setSuperPrice,

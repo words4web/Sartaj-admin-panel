@@ -55,9 +55,8 @@ export default function ProductForm({
             supers={form.supers}
             values={form.values}
             setValues={form.setValues}
-            categories={form.categories}
-            subcategories={form.subcategories}
-            manufacturers={form.manufacturers}
+            hasSubcategories={form.hasSubcategories}
+            setHasSubcategories={form.setHasSubcategories}
             toggleSuperCategory={form.toggleSuperCategory}
             setSuperPrice={form.setSuperPrice}
           />

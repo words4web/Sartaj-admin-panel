@@ -3,13 +3,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   SubCategoryFormProps,
   SubCategoryFormValues,
 } from "@/types/subCategory/subCategory.types";
@@ -19,6 +12,8 @@ import {
   LANG_CODES,
   EMPTY_TRANSLATION,
 } from "@/components/common/TranslationInput";
+import { PaginatedDropdown } from "@/components/common/PaginatedDropdown";
+import { categoryApi } from "@/services/category/category.api";
 
 const TRANSLATION_FIELDS = [
   { key: "name", label: "SubCategory Name", required: true },
@@ -39,8 +34,8 @@ function normalizeTranslation(value: unknown): ITranslationMap {
 }
 
 export default function SubCategoryForm({
-  categories,
   initialValues,
+  initialParentLabel,
   isSubmitting = false,
   submitLabel = "Save",
   onSubmit,
@@ -65,7 +60,7 @@ export default function SubCategoryForm({
     setErrors({});
   }, [initialValues]);
 
-  // ─── Handlers ──────────────────────────────────────────────────────────────
+  // ─── Handlers 
 
   const handleTranslationChange = useCallback(
     (field: string, lang: string, value: string) => {
@@ -80,7 +75,7 @@ export default function SubCategoryForm({
     [],
   );
 
-  // ─── Validation ────────────────────────────────────────────────────────────
+  // ─── Validation 
 
   const isValid = useMemo(() => {
     const nameOk = LANG_CODES.every(
@@ -141,21 +136,36 @@ export default function SubCategoryForm({
         <label className="block text-sm font-medium text-gray-900">
           Parent Category <span className="text-red-500 ml-1">*</span>
         </label>
-        <Select
+
+        <PaginatedDropdown
           value={values.parent}
           onValueChange={(v) => setValues((prev) => ({ ...prev, parent: v }))}
-          disabled={isSubmitting || categories?.length === 0}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a parent category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories?.map((c) => (
-              <SelectItem key={c?._id} value={c?._id}>
-                {c?.name?.en}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          queryKey={["categories", "dropdown"]}
+          fetchData={async ({ search, page, limit }) => {
+            const res = await categoryApi.getCategories({
+              search,
+              page,
+              limit,
+            });
+            return {
+              options: res.categories.map((c) => ({
+                value: c._id,
+                label: c.name?.en || "Unknown Category",
+              })),
+              hasMore: res.categories.length === limit,
+            };
+          }}
+          limit={10}
+          selectedLabel={
+            values.parent === initialValues.parent
+              ? initialParentLabel
+              : undefined
+          }
+          placeholder="Select a parent category"
+          searchPlaceholder="Search categories..."
+          disabled={isSubmitting}
+        />
+
         {errors?.parent && (
           <p className="text-red-600 text-sm mt-1">{errors?.parent}</p>
         )}

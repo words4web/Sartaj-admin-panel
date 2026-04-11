@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ROUTES } from "@/constants/routes";
-import { useCategoryList } from "@/services/category/category.hooks";
 import {
   useSubCategoryById,
   useUpdateSubCategory,
@@ -30,11 +29,6 @@ export default function SubCategoryEditPage() {
     isError: isSubError,
     refetch: refetchSubCategory,
   } = useSubCategoryById(id);
-
-  const { data: categoriesData, isLoading: isCatsLoading } = useCategoryList({
-    page: 1,
-    limit: 100,
-  });
 
   useEffect(() => {
     if (!parentId && subCategory) {
@@ -66,7 +60,12 @@ export default function SubCategoryEditPage() {
     );
   };
 
-  const ready = !isSubLoading && !isCatsLoading && !!subCategory && !!parentId;
+  const ready = !isSubLoading && !!subCategory && !!parentId;
+
+  // Extract parent label
+  const parentName =
+    (subCategory?.parent as any)?.name?.en ||
+    (typeof subCategory?.parent === "string" ? subCategory?.parent : undefined);
 
   return (
     <div className="space-y-6 p-6">
@@ -77,7 +76,7 @@ export default function SubCategoryEditPage() {
       />
 
       <Card className="p-6">
-        {isSubLoading || isCatsLoading ? (
+        {isSubLoading ? (
           <CommonLoader fullScreen={false} />
         ) : isSubError || !subCategory ? (
           <CommonError
@@ -88,8 +87,8 @@ export default function SubCategoryEditPage() {
           <CommonLoader fullScreen={false} />
         ) : (
           <SubCategoryForm
-            categories={categoriesData?.categories ?? []}
             initialValues={initialValues}
+            initialParentLabel={parentName}
             isSubmitting={updateMutation.isPending}
             submitLabel="Update SubCategory"
             onSubmit={handleSubmit}

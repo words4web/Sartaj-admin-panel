@@ -45,8 +45,8 @@ export type SubCategoryFormValues = {
 };
 
 export type SubCategoryFormProps = {
-  categories: ICategory[];
   initialValues: SubCategoryFormValues;
+  initialParentLabel?: string;
   isSubmitting?: boolean;
   submitLabel?: string;
   onSubmit: (values: SubCategoryFormValues) => void | Promise<void>;
