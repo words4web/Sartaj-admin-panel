@@ -1,10 +1,5 @@
 import { EMPTY_TRANSLATION } from "@/components/common/TranslationInput";
-import {
-  ProductFormValues,
-  IProduct,
-  ProductUnit,
-  ProductTag,
-} from "@/types/product/product.types";
+import { ProductFormValues, IProduct } from "@/types/product/product.types";
 import {
   PRODUCT_TYPE,
   SELLING_UNIT,

@@ -82,3 +82,6 @@ next.user-config.*
 # Misc
 # -----------------------------
 *.pem
+
+# Project documentation
+PROJECT_INFO.md

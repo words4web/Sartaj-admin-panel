@@ -2,17 +2,21 @@
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { TranslationInput } from "@/components/common/TranslationInput";
 import { ProductFormHint } from "./ProductFormHint";
-import { ImageIcon, X, Tag, Eye, Layers } from "lucide-react";
+import { ImageIcon, X, Tag, Layers } from "lucide-react";
 import {
   PRODUCT_BADGE_OPTIONS,
   PRODUCT_TAGS,
   PRODUCT_BASIC_INFO_FIELDS,
 } from "@/constants/product.constants";
 import { ProductFormBasicTabProps } from "./types/ProductFormBasicTab.types";
-import type { ProductTag } from "@/types/product/product.types";
+
+import {
+  PropertySection,
+  PropertyCheckbox,
+  FormSectionCard,
+} from "./ProductFormDecorators";
 
 export function ProductFormBasicTab({
   values,
@@ -39,14 +43,7 @@ export function ProductFormBasicTab({
 
       <div className="grid gap-8 lg:grid-cols-2 items-start">
         {/* ── LEFT COLUMN: Text & Media ── */}
-        <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-100 space-y-6">
-          <div className="flex items-center gap-2 border-b border-gray-200/60 pb-3">
-            <Layers className="w-4 h-4 text-gray-500" />
-            <h3 className="text-sm font-semibold text-gray-800">
-              Identity & Media
-            </h3>
-          </div>
-
+        <FormSectionCard title="Identity & Media" icon={Layers}>
           {/* Item code */}
           <div className="space-y-1.5">
             <Label
@@ -112,93 +109,58 @@ export function ProductFormBasicTab({
               A clear representation of the product.
             </ProductFormHint>
           </div>
-        </div>
+        </FormSectionCard>
 
         {/* ── RIGHT COLUMN: Properties Panel ── */}
-        <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-100 space-y-6">
-          <div className="flex items-center gap-2 border-b border-gray-200/60 pb-3">
-            <Tag className="w-4 h-4 text-gray-500" />
-            <h3 className="text-sm font-semibold text-gray-800">
-              Product Properties
-            </h3>
-          </div>
-
-          {/* Tags */}
-          <div className="space-y-3">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Classification Rules
-            </Label>
-            <div className="flex gap-6">
+        <FormSectionCard title="Product Properties" icon={Tag}>
+          <PropertySection label="Classification Rules">
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
               {PRODUCT_TAGS.map((tag) => (
-                <label
+                <PropertyCheckbox
                   key={tag.key}
-                  className="flex items-center gap-2.5 text-sm cursor-pointer select-none group">
-                  <Checkbox
-                    checked={values.tags.includes(tag.key)}
-                    onCheckedChange={(c) => toggleTag(tag.key, Boolean(c))}
-                    className="border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <span className="font-medium text-gray-700 capitalize group-hover:text-gray-900 transition-colors">
-                    {tag.label}
-                  </span>
-                </label>
+                  label={tag.label}
+                  checked={values.tags.includes(tag.key)}
+                  onCheckedChange={(c) => toggleTag(tag.key, c)}
+                />
               ))}
             </div>
-          </div>
+          </PropertySection>
 
-          {/* Badges */}
-          <div className="space-y-3 pt-2">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Store Display & Flags
-            </Label>
+          <PropertySection label="Store Display & Flags">
             <div className="grid grid-cols-2 gap-y-4 gap-x-6">
               {PRODUCT_BADGE_OPTIONS.map(({ key, label }) => (
-                <label
+                <PropertyCheckbox
                   key={key}
-                  className="flex items-center gap-2.5 text-sm cursor-pointer select-none group">
-                  <Checkbox
-                    checked={values.badges.includes(key)}
-                    onCheckedChange={(c) => {
-                      const isChecked = Boolean(c);
-                      setValues((p) => ({
-                        ...p,
-                        badges: isChecked
-                          ? [...new Set([...p.badges, key])]
-                          : p.badges.filter((b) => b !== key),
-                      }));
-                    }}
-                    className="border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                    {label}
-                  </span>
-                </label>
+                  label={label}
+                  checked={values.badges.includes(key)}
+                  onCheckedChange={(isChecked) =>
+                    setValues((p) => ({
+                      ...p,
+                      badges: isChecked
+                        ? [...new Set([...p.badges, key])]
+                        : p.badges.filter((b) => b !== key),
+                    }))
+                  }
+                />
               ))}
             </div>
-          </div>
+          </PropertySection>
 
-          {/* Restrictions */}
-          <div className="space-y-3 pt-2">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-              Restrictions
-            </Label>
-            <label className="flex items-center gap-2.5 text-sm cursor-pointer select-none group">
-              <Checkbox
-                checked={values.restrictions?.age20Plus}
-                onCheckedChange={(c) =>
-                  setValues((p) => ({
-                    ...p,
-                    restrictions: { ...p.restrictions, age20Plus: Boolean(c) },
-                  }))
-                }
-                className="border-gray-300 data-[state=checked]:bg-destructive data-[state=checked]:border-destructive"
-              />
-              <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                Age 20+ restriction
-              </span>
-            </label>
-          </div>
-        </div>
+          <PropertySection label="Restrictions">
+            <PropertyCheckbox
+              key="age20Plus"
+              label="Age 20+ restriction"
+              checked={Boolean(values.restrictions?.age20Plus)}
+              variant="destructive"
+              onCheckedChange={(c) =>
+                setValues((p) => ({
+                  ...p,
+                  restrictions: { ...p.restrictions, age20Plus: c },
+                }))
+              }
+            />
+          </PropertySection>
+        </FormSectionCard>
       </div>
     </div>
   );

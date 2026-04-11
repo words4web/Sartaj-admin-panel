@@ -1,19 +1,12 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/utils/common.utils";
 import { ProductFormHint } from "./ProductFormHint";
 import { Layers, CheckCircle2 } from "lucide-react";
 import { ProductFormPricingCatalogTabProps } from "./types/ProductFormPricingCatalogTab.types";
+import { FormSectionCard, FormSelectField } from "./ProductFormDecorators";
 
 export function ProductFormPricingCatalogTab({
   supers,
@@ -37,14 +30,10 @@ export function ProductFormPricingCatalogTab({
   return (
     <div className="grid gap-6 lg:grid-cols-2 px-6">
       {/* ── LEFT: Pricing / Business segments ── */}
-      <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-100 flex flex-col h-full">
-        <div className="flex items-center gap-2 border-b border-gray-200/60 pb-3 mb-4">
-          <h3 className="text-sm font-semibold text-gray-800">
-            Business Segments & Pricing
-          </h3>
-        </div>
-
-        <ProductFormHint className="mb-4">
+      <FormSectionCard
+        title="Business Segments & Pricing"
+        className="flex flex-col h-full">
+        <ProductFormHint className="-mt-2 mb-2">
           Select segments and set a base price for each. One price per segment
           required.
         </ProductFormHint>
@@ -119,107 +108,68 @@ export function ProductFormPricingCatalogTab({
             })}
           </div>
         )}
-      </div>
+      </FormSectionCard>
 
       {/* ── RIGHT: Catalog (category / subcategory / manufacturer) ── */}
-      <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-100 space-y-5">
-        <div className="flex items-center gap-2 border-b border-gray-200/60 pb-3 mb-1">
-          <Layers className="w-4 h-4 text-gray-500" />
-          <h3 className="text-sm font-semibold text-gray-800">
-            Catalog Classification
-          </h3>
-        </div>
-
+      <FormSectionCard title="Catalog Classification" icon={Layers}>
         <div className="space-y-4 max-w-md">
-          {/* Category */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-700">
-              Category <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={values.categoryId || ""}
-              onValueChange={(categoryId) =>
-                setValues((p) => ({ ...p, categoryId, subcategoryId: "" }))
-              }>
-              <SelectTrigger className="w-full bg-white shadow-none border-gray-200 h-10">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories?.map((c) => (
-                  <SelectItem key={c?._id} value={c?._id}>
-                    {c?.name?.en ?? c?._id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelectField
+            label="Category"
+            required
+            value={values.categoryId || ""}
+            placeholder="Select a category"
+            options={categories.map((c) => ({
+              key: c._id,
+              label: c.name?.en ?? c._id,
+            }))}
+            onValueChange={(categoryId) =>
+              setValues((p) => ({ ...p, categoryId, subcategoryId: "" }))
+            }
+          />
 
-          {/* Subcategory */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-700">
-              Subcategory
-            </Label>
-            <Select
-              value={values.subcategoryId || ""}
-              onValueChange={(subcategoryId) =>
-                setValues((p) => ({ ...p, subcategoryId }))
-              }
-              disabled={!values.categoryId || subcategories?.length === 0}>
-              <SelectTrigger className="w-full bg-white shadow-none border-gray-200 h-10">
-                <SelectValue
-                  placeholder={
-                    !values.categoryId
-                      ? "Select a category first"
-                      : subcategories.length === 0
-                        ? "No subcategories found"
-                        : "Select subcategory"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {subcategories?.map((c) => (
-                  <SelectItem key={c?._id} value={c?._id}>
-                    {c?.name?.en ?? c?._id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {!values.categoryId ? (
-              <ProductFormHint>
-                Choose a category to see options.
-              </ProductFormHint>
-            ) : subcategories?.length === 0 ? (
-              <ProductFormHint>
-                Product will be filed under parent category.
-              </ProductFormHint>
-            ) : null}
-          </div>
+          <FormSelectField
+            label="Subcategory"
+            value={values.subcategoryId || ""}
+            disabled={!values.categoryId || subcategories?.length === 0}
+            placeholder={
+              !values.categoryId
+                ? "Select a category first"
+                : subcategories.length === 0
+                  ? "No subcategories found"
+                  : "Select subcategory"
+            }
+            options={subcategories.map((c) => ({
+              key: c._id,
+              label: c.name?.en ?? c._id,
+            }))}
+            onValueChange={(subcategoryId) =>
+              setValues((p) => ({ ...p, subcategoryId }))
+            }
+            hint={
+              !values.categoryId
+                ? "Choose a category to see options."
+                : subcategories?.length === 0
+                  ? "Product will be filed under parent category."
+                  : null
+            }
+          />
 
-          {/* Manufacturer */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-700">
-              Manufacturer / Brand <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={values.manufacturerId || ""}
-              onValueChange={(manufacturerId) =>
-                setValues((p) => ({ ...p, manufacturerId }))
-              }>
-              <SelectTrigger className="w-full bg-white shadow-none border-gray-200 h-10">
-                <SelectValue placeholder="Select manufacturer" />
-              </SelectTrigger>
-              <SelectContent>
-                {manufacturers?.map((m) => (
-                  <SelectItem key={m?._id} value={m?._id}>
-                    {m?.name?.en ?? m?._id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <ProductFormHint>Required for catalog filtering.</ProductFormHint>
-          </div>
+          <FormSelectField
+            label="Manufacturer / Brand"
+            required
+            value={values.manufacturerId || ""}
+            placeholder="Select manufacturer"
+            options={manufacturers.map((m) => ({
+              key: m._id,
+              label: m.name?.en ?? m._id,
+            }))}
+            onValueChange={(manufacturerId) =>
+              setValues((p) => ({ ...p, manufacturerId }))
+            }
+            hint="Required for catalog filtering."
+          />
         </div>
-      </div>
+      </FormSectionCard>
     </div>
   );
 }
