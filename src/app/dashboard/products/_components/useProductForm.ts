@@ -10,7 +10,6 @@ import { useSuperCategories } from "@/services/superCategory/superCategory.hooks
 import { useCategoryList } from "@/services/category/category.hooks";
 import { useSubcategoriesByCategory } from "@/services/category/category.hooks";
 import { useManufacturerList } from "@/services/manufacturer/manufacturer.hooks";
-import { SuperCategory } from "@/types/customer/customer.types";
 import { toast } from "sonner";
 import { defaultForm } from "./productForm.state";
 
