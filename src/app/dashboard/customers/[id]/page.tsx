@@ -9,6 +9,7 @@ import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { dateUtils } from "@/utils/common.utils";
 import { ROUTES } from "@/constants/routes";
+import { getPrefectureName } from "@/constants/prefectures";
 
 export default function CustomerDetailPage() {
   const params = useParams();
@@ -99,8 +100,12 @@ export default function CustomerDetailPage() {
                         {addr?.postalCode}
                       </div>
                       <div>
-                        <span className="text-gray-500">Prefecture/City: </span>
-                        {addr?.prefecture} / {addr?.city}
+                        <span className="text-gray-500">Prefecture: </span>
+                        {getPrefectureName(addr?.prefecture)}
+                      </div>
+                      <div>
+                        <span className="text-gray-500">City: </span>
+                        {addr?.city}
                       </div>
                       <div>
                         <span className="text-gray-500">Street: </span>

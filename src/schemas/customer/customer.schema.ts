@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PREFECTURES } from "@/constants/prefectures";
 
 export const addressSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -6,7 +7,12 @@ export const addressSchema = z.object({
     .string()
     .min(1, "Postal code is required")
     .regex(/^\d{3}-\d{4}$/, "Postal code must be in format XXX-XXXX"),
-  prefecture: z.string().min(1, "Prefecture is required"),
+  prefecture: z
+    .string()
+    .min(1, "Prefecture is required")
+    .refine((val) => PREFECTURES.some((p) => p.code === val), {
+      message: "Invalid prefecture selection",
+    }),
   city: z.string().min(1, "City is required"),
   streetAddress: z.string().min(1, "Street address is required"),
   building: z.string().optional(),
