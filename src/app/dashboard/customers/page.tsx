@@ -205,7 +205,7 @@ export default function CustomersPage() {
               setSuperCategoryId(val);
               setPage(1);
             },
-            options: superCategories.map((sc: any) => ({
+            options: superCategories?.map((sc: any) => ({
               label: sc?.name,
               value: sc?._id,
             })),

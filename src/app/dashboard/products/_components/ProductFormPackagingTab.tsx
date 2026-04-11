@@ -92,7 +92,7 @@ export function ProductFormPackagingTab({
                   <SelectValue placeholder="Select unit" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PRODUCT_UNITS.map((u) => (
+                  {PRODUCT_UNITS?.map((u) => (
                     <SelectItem key={u.key} value={u.key}>
                       {u.label}
                     </SelectItem>
@@ -133,7 +133,7 @@ export function ProductFormPackagingTab({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {SELLING_UNITS.map((u) => (
+                  {SELLING_UNITS?.map((u) => (
                     <SelectItem key={u.key} value={u.key}>
                       {u.label}
                     </SelectItem>
@@ -182,7 +182,7 @@ export function ProductFormPackagingTab({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {PRODUCT_TYPES.map((t) => (
+              {PRODUCT_TYPES?.map((t) => (
                 <SelectItem key={t.key} value={t.key}>
                   {t.label}
                 </SelectItem>
@@ -214,7 +214,7 @@ export function ProductFormPackagingTab({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {STOCK_STATUSES.map((s) => (
+                {STOCK_STATUSES?.map((s) => (
                   <SelectItem key={s.key} value={s.key}>
                     {s.label}
                   </SelectItem>

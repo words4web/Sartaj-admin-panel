@@ -115,11 +115,11 @@ export function ProductFormBasicTab({
         <FormSectionCard title="Product Properties" icon={Tag}>
           <PropertySection label="Classification Rules">
             <div className="flex flex-wrap gap-x-6 gap-y-3">
-              {PRODUCT_TAGS.map((tag) => (
+              {PRODUCT_TAGS?.map((tag) => (
                 <PropertyCheckbox
                   key={tag.key}
                   label={tag.label}
-                  checked={values.tags.includes(tag.key)}
+                  checked={values.tags?.includes(tag.key)}
                   onCheckedChange={(c) => toggleTag(tag.key, c)}
                 />
               ))}
@@ -128,17 +128,17 @@ export function ProductFormBasicTab({
 
           <PropertySection label="Store Display & Flags">
             <div className="grid grid-cols-2 gap-y-4 gap-x-6">
-              {PRODUCT_BADGE_OPTIONS.map(({ key, label }) => (
+              {PRODUCT_BADGE_OPTIONS?.map(({ key, label }) => (
                 <PropertyCheckbox
                   key={key}
                   label={label}
-                  checked={values.badges.includes(key)}
+                  checked={values.badges?.includes(key)}
                   onCheckedChange={(isChecked) =>
                     setValues((p) => ({
                       ...p,
                       badges: isChecked
-                        ? [...new Set([...p.badges, key])]
-                        : p.badges.filter((b) => b !== key),
+                        ? [...new Set([...(p.badges || []), key])]
+                        : p.badges?.filter((b) => b !== key),
                     }))
                   }
                 />

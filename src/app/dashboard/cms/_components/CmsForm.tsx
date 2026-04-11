@@ -12,6 +12,10 @@ import {
   LangCode,
   SUPPORTED_LANGUAGES,
 } from "@/components/common/TranslationInput";
+import {
+  normalizeTranslation,
+  updateTranslationField,
+} from "@/utils/translation.utils";
 
 interface CmsFormValues {
   title: ITranslationMap;
@@ -35,13 +39,6 @@ export default function CmsForm({
   const [values, setValues] = useState<CmsFormValues>(initialValues);
   const [activeTab, setActiveTab] = useState<LangCode>("en");
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
-
-  const normalizeTranslation = (val: any): ITranslationMap => {
-    if (typeof val === "string") {
-      return { ...EMPTY_TRANSLATION, en: val };
-    }
-    return val || EMPTY_TRANSLATION;
-  };
 
   useEffect(() => {
     setValues({
@@ -79,13 +76,7 @@ export default function CmsForm({
     lang: LangCode,
     value: string,
   ) => {
-    setValues((prev) => ({
-      ...prev,
-      [field]: {
-        ...(prev[field] || EMPTY_TRANSLATION),
-        [lang]: value,
-      },
-    }));
+    setValues((prev) => updateTranslationField(prev, field, lang, value));
 
     // Clear error for this field/language if it exists
     if (errors[`${field}_${lang}`]) {
@@ -138,26 +129,23 @@ export default function CmsForm({
 
         <Tabs
           value={activeTab}
-          onValueChange={(v) => setActiveTab(v as LangCode)}
-        >
+          onValueChange={(v) => setActiveTab(v as LangCode)}>
           <TabsList className="w-full justify-start h-auto flex-wrap bg-gray-100/60 p-1 gap-1 rounded-xl">
-            {SUPPORTED_LANGUAGES.map((lang) => (
+            {SUPPORTED_LANGUAGES?.map((lang) => (
               <TabsTrigger
                 key={lang.id}
                 value={lang.id}
-                className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary text-xs sm:text-sm"
-              >
+                className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary text-xs sm:text-sm">
                 {lang.nativeLabel}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          {SUPPORTED_LANGUAGES.map((lang) => (
+          {SUPPORTED_LANGUAGES?.map((lang) => (
             <TabsContent
               key={lang.id}
               value={lang.id}
-              className="space-y-5 mt-4 pt-4 border-t border-gray-50"
-            >
+              className="space-y-5 mt-4 pt-4 border-t border-gray-50">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded uppercase">
                   {lang.id}
@@ -184,8 +172,7 @@ export default function CmsForm({
                     errors[`content_${lang.id}`]
                       ? "text-red-500 font-medium"
                       : "font-medium"
-                  }
-                >
+                  }>
                   Page Content ({lang.label}){" "}
                   {lang.id === "en" && <span className="text-red-500">*</span>}
                 </Label>
@@ -212,8 +199,7 @@ export default function CmsForm({
           size="lg"
           type="submit"
           disabled={isSubmitting}
-          className="min-w-[120px]"
-        >
+          className="min-w-[120px]">
           {isSubmitting ? "Saving Updates..." : submitLabel}
         </Button>
       </div>

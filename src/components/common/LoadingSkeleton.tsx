@@ -7,7 +7,7 @@ export function LoadingSkeleton({
 }) {
   return (
     <>
-      {Array.from({ length: count }).map((_, i) => (
+      {Array.from({ length: count })?.map((_, i) => (
         <div
           key={i}
           className={`${height} bg-gray-200 rounded-lg animate-pulse`}

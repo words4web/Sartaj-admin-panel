@@ -65,7 +65,7 @@ export function Pagination({
         <ChevronLeft size={16} />
       </Button>
 
-      {pages.map((page, idx) => (
+      {pages?.map((page, idx) => (
         <button
           key={idx}
           onClick={() => typeof page === "number" && onPageChange(page)}

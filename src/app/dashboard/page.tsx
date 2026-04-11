@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {STATS.map((stat) => {
+        {STATS?.map((stat) => {
           const Icon = stat.icon;
           return (
             <Card key={stat.label} className="p-6">
@@ -69,7 +69,7 @@ export default function DashboardPage() {
       <Card className="lg:col-span-2 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Orders</h2>
         <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[1, 2, 3, 4, 5]?.map((i) => (
             <div
               key={i}
               className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition">

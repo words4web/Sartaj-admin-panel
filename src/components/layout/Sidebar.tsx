@@ -173,7 +173,7 @@ export default function Sidebar() {
       {/* Menu Items */}
       <nav className="flex flex-col flex-1 justify-between overflow-hidden">
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
-          {MENU_ITEMS.map((item) => {
+          {MENU_ITEMS?.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href, (item as any).exact);
 
@@ -210,7 +210,7 @@ export default function Sidebar() {
 
         {/* Footer Items */}
         <div className="px-2 pt-2 border-t border-gray-100">
-          {FOOTER_ITEMS.map((item) => {
+          {FOOTER_ITEMS?.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href, (item as any).exact);
 

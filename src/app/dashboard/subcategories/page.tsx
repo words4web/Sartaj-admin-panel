@@ -17,7 +17,8 @@ import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useCategoryList } from "@/services/category/category.hooks";
+import { useCategoryById } from "@/services/category/category.hooks";
+import { categoryApi } from "@/services/category/category.api";
 import {
   useDeleteSubCategory,
   useToggleSubCategoryStatus,
@@ -45,8 +46,7 @@ export default function SubCategoriesPage() {
 
   const debouncedSearch = useDebounce(search, 400);
 
-  const { data: categoryData } = useCategoryList({ page: 1, limit: 100 });
-  const topLevelCategories = (categoryData as any)?.categories ?? [];
+  const { data: parentCategory } = useCategoryById(parentId);
 
   const { data, isLoading, isError } = useSubCategoryList({
     search: debouncedSearch || undefined,
@@ -112,8 +112,7 @@ export default function SubCategoriesPage() {
         render: (_: any, row: ISubCategory) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}
-          >
+            onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -124,16 +123,14 @@ export default function SubCategoriesPage() {
                 <DropdownMenuItem
                   onClick={() =>
                     router.push(ROUTES.SUBCATEGORIES.EDIT(row?._id))
-                  }
-                >
+                  }>
                   <Pencil size={14} className="mr-2" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", subCategory: row })
-                  }
-                >
+                  }>
                   <Power size={14} className="mr-2" />
                   {row.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -141,8 +138,7 @@ export default function SubCategoriesPage() {
                   className="text-red-600 focus:text-red-600"
                   onClick={() =>
                     setConfirmAction({ type: "delete", subCategory: row })
-                  }
-                >
+                  }>
                   <Trash2 size={14} className="mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -178,15 +174,26 @@ export default function SubCategoriesPage() {
             key: "parentCategory",
             label: "Parent Category",
             value: parentId,
+            selectedLabel: (parentCategory as any)?.name?.en,
             onChange: (val) => {
               setParentId(val);
               setPage(1);
             },
-            options: topLevelCategories.map((c: any) => ({
-              label: c?.name?.en,
-              value: c?._id,
-            })),
-            isSearchable: true,
+            fetchData: async ({ search, page, limit }) => {
+              const res = await categoryApi.getCategories({
+                search,
+                page,
+                limit,
+              });
+              return {
+                options: res?.categories?.map((c) => ({
+                  value: c._id,
+                  label: c?.name?.en || c?._id,
+                })),
+                hasMore: res?.categories?.length === limit,
+              };
+            },
+            queryKey: ["categories", "filter"],
           },
         ]}
         onReset={() => {

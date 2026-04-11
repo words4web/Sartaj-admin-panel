@@ -74,8 +74,8 @@ export function TranslationDisplay({
       ? "text-sm text-gray-800 whitespace-pre-wrap break-words max-h-48 overflow-y-auto overscroll-contain pr-1 leading-relaxed"
       : "text-sm text-gray-800 line-clamp-2";
 
-  const otherLangs = SUPPORTED_LANGUAGES.filter((l) => l.id !== primaryLang);
-  const primaryLangDef = SUPPORTED_LANGUAGES.find((l) => l.id === primaryLang);
+  const otherLangs = SUPPORTED_LANGUAGES?.filter((l) => l.id !== primaryLang);
+  const primaryLangDef = SUPPORTED_LANGUAGES?.find((l) => l.id === primaryLang);
 
   return (
     <div className="space-y-6">

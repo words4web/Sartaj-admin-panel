@@ -41,7 +41,7 @@ export function MOVTab({ config }: { config: any }) {
             />
 
             <Label className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-widest block">
-              {config?.minOrderValues[index]?.superCategoryName} MOV
+              {config?.minOrderValues?.[index]?.superCategoryName} MOV
             </Label>
             <div className="relative mt-2">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-base">

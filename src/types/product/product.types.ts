@@ -72,8 +72,11 @@ export interface ProductFormValues {
   name: ITranslationMap;
   description: ITranslationMap;
   categoryId: string;
+  categoryLabel?: string;
   subcategoryId: string;
+  subcategoryLabel?: string;
   manufacturerId: string;
+  manufacturerLabel?: string;
   basePrices: { superCategoryId: string; price: string }[];
   unit: ProductUnit | "";
   netWeightKg: string;

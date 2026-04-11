@@ -33,7 +33,7 @@ export const defaultForm = (): ProductFormValues => ({
 });
 
 export function mapProductToFormValues(p: IProduct): ProductFormValues {
-  const existingBp = (p.basePrices ?? []).map((bp) => ({
+  const existingBp = (p.basePrices ?? [])?.map((bp) => ({
     superCategoryId: extractId(bp?.superCategoryId),
     price: String(bp?.price ?? ""),
   }));
@@ -44,8 +44,11 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     name: { ...EMPTY_TRANSLATION, ...(p?.name ?? {}) },
     description: { ...EMPTY_TRANSLATION, ...(p?.description ?? {}) },
     categoryId: catId,
+    categoryLabel: (p?.category as any)?.name?.en || undefined,
     subcategoryId: subId,
+    subcategoryLabel: (p?.subcategory as any)?.name?.en || undefined,
     manufacturerId: extractId(p?.manufacturer),
+    manufacturerLabel: (p?.manufacturer as any)?.name?.en || undefined,
     basePrices: existingBp,
     unit: p.unit ?? "",
     netWeightKg: String(p.netWeightKg ?? ""),

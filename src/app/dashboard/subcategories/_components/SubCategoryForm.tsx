@@ -3,44 +3,25 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   SubCategoryFormProps,
   SubCategoryFormValues,
 } from "@/types/subCategory/subCategory.types";
 import { ITranslationMap } from "@/types/api.types";
+import { TranslationInput } from "@/components/common/TranslationInput";
 import {
-  TranslationInput,
-  LANG_CODES,
-  EMPTY_TRANSLATION,
-} from "@/components/common/TranslationInput";
+  normalizeTranslation,
+  updateTranslationField,
+  isTranslationComplete,
+} from "@/utils/translation.utils";
+import { getStandardTranslationFields } from "@/constants/translation.constants";
+import { PaginatedDropdown } from "@/components/common/PaginatedDropdown";
+import { categoryApi } from "@/services/category/category.api";
 
-const TRANSLATION_FIELDS = [
-  { key: "name", label: "SubCategory Name", required: true },
-  {
-    key: "description",
-    label: "Description",
-    required: true,
-    multiline: true,
-    rows: 4,
-  },
-] as const;
-
-function normalizeTranslation(value: unknown): ITranslationMap {
-  const empty = { ...EMPTY_TRANSLATION };
-  if (!value) return empty;
-  if (typeof value === "string") return { ...empty, en: value };
-  return { ...empty, ...(value as ITranslationMap) };
-}
+const TRANSLATION_FIELDS = getStandardTranslationFields("SubCategory Name");
 
 export default function SubCategoryForm({
-  categories,
   initialValues,
+  initialParentLabel,
   isSubmitting = false,
   submitLabel = "Save",
   onSubmit,
@@ -65,30 +46,27 @@ export default function SubCategoryForm({
     setErrors({});
   }, [initialValues]);
 
-  // ─── Handlers ──────────────────────────────────────────────────────────────
+  // ─── Handlers
 
   const handleTranslationChange = useCallback(
     (field: string, lang: string, value: string) => {
-      setValues((v) => ({
-        ...v,
-        [field]: {
-          ...(v[field as keyof SubCategoryFormValues] as ITranslationMap),
-          [lang]: value,
-        },
-      }));
+      setValues((v) =>
+        updateTranslationField(
+          v,
+          field as keyof SubCategoryFormValues,
+          lang,
+          value,
+        ),
+      );
     },
     [],
   );
 
-  // ─── Validation ────────────────────────────────────────────────────────────
+  // ─── Validation
 
   const isValid = useMemo(() => {
-    const nameOk = LANG_CODES.every(
-      (l) => !!(values.name as ITranslationMap)?.[l]?.trim(),
-    );
-    const descOk = LANG_CODES.every(
-      (l) => !!(values.description as ITranslationMap)?.[l]?.trim(),
-    );
+    const nameOk = isTranslationComplete(values.name as ITranslationMap);
+    const descOk = isTranslationComplete(values.description as ITranslationMap);
     const parentOk = !!values.parent;
     return nameOk && descOk && parentOk;
   }, [values.name, values.description, values.parent]);
@@ -97,11 +75,9 @@ export default function SubCategoryForm({
     e.preventDefault();
     const nextErrors: typeof errors = {};
 
-    const nameMissing = LANG_CODES.some(
-      (l) => !(values.name as ITranslationMap)?.[l]?.trim(),
-    );
-    const descMissing = LANG_CODES.some(
-      (l) => !(values.description as ITranslationMap)?.[l]?.trim(),
+    const nameMissing = !isTranslationComplete(values.name as ITranslationMap);
+    const descMissing = !isTranslationComplete(
+      values.description as ITranslationMap,
     );
 
     if (nameMissing)
@@ -141,21 +117,36 @@ export default function SubCategoryForm({
         <label className="block text-sm font-medium text-gray-900">
           Parent Category <span className="text-red-500 ml-1">*</span>
         </label>
-        <Select
+
+        <PaginatedDropdown
           value={values.parent}
           onValueChange={(v) => setValues((prev) => ({ ...prev, parent: v }))}
-          disabled={isSubmitting || categories?.length === 0}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a parent category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories?.map((c) => (
-              <SelectItem key={c?._id} value={c?._id}>
-                {c?.name?.en}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          queryKey={["categories", "dropdown"]}
+          fetchData={async ({ search, page, limit }) => {
+            const res = await categoryApi.getCategories({
+              search,
+              page,
+              limit,
+            });
+            return {
+              options: res?.categories?.map((c) => ({
+                value: c._id,
+                label: c?.name?.en || "Unknown Category",
+              })),
+              hasMore: res?.categories?.length === limit,
+            };
+          }}
+          limit={10}
+          selectedLabel={
+            values.parent === initialValues.parent
+              ? initialParentLabel
+              : undefined
+          }
+          placeholder="Select a parent category"
+          searchPlaceholder="Search categories..."
+          disabled={isSubmitting}
+        />
+
         {errors?.parent && (
           <p className="text-red-600 text-sm mt-1">{errors?.parent}</p>
         )}
