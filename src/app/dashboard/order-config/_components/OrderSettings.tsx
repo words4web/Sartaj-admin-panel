@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useForm, FormProvider } from "react-hook-form";
 import { useEffect } from "react";
-import { Save, Package, Truck, MapPin } from "lucide-react";
+import { Save, Package, Truck, MapPin, Percent } from "lucide-react";
 import { MOVTab } from "./MOVTab";
 import { ShippingRulesTab } from "./ShippingRulesTab";
 import { SpecialAreasTab } from "./SpecialAreasTab";
+import { TaxConfigTab } from "./TaxConfigTab";
+import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 const orderTabs = [
   {
@@ -31,6 +33,11 @@ const orderTabs = [
     label: "Special Areas",
     icon: MapPin,
   },
+  {
+    value: "tax",
+    label: "Tax Settings",
+    icon: Percent,
+  },
 ];
 
 export default function OrderSettings() {
@@ -40,13 +47,33 @@ export default function OrderSettings() {
   const methods = useForm({
     mode: "onChange",
     defaultValues: config || {
-      minOrderValues: [],
-      halalMinOrderValue: 15000,
+      minOrderValues: [
+        {
+          superCategoryName: "Restaurant",
+          value: 10000,
+          penaltyCharge: 1500,
+        },
+        {
+          superCategoryName: "Retailer",
+          value: 6500,
+          penaltyCharge: 1500,
+        },
+        {
+          superCategoryName: "Wholesale",
+          value: 15000,
+          penaltyCharge: 2000,
+        },
+      ],
       shippingRules: {
         frozen: { weightThreshold: 5, fee: 1500 },
         dry: { threshold: 6500, fee: 1500 },
       },
       specialAreas: [],
+      taxes: [
+        { category: TAX_CATEGORY.REDUCED, value: 8 },
+        { category: TAX_CATEGORY.STANDARD, value: 10 },
+        { category: TAX_CATEGORY.CUSTOM, value: 1 },
+      ],
     },
   });
   const {
@@ -92,15 +119,16 @@ export default function OrderSettings() {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-20">
         <Tabs defaultValue="mov" className="w-full">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 sticky top-0 z-20 bg-white/95 backdrop-blur-sm py-3 border-b border-gray-100">
-            <TabsList className="bg-gray-100/70 p-1 rounded-xl border border-gray-200/50 h-auto">
+          {/* Sticky Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 sticky top-0 z-20 bg-white/95 backdrop-blur-md py-4 border-b border-gray-200">
+            <TabsList className="bg-gray-100 p-1 rounded-lg h-auto">
               {orderTabs &&
                 orderTabs?.map((tab) => (
                   <TabsTrigger
                     key={tab?.value}
                     value={tab?.value}
-                    className="gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md transition-all duration-200 font-semibold text-sm">
-                    <tab.icon className="w-4.5 h-4.5" /> {tab?.label}
+                    className="gap-2 px-4 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all text-sm font-medium">
+                    <tab.icon className="w-4 h-4" /> {tab?.label}
                   </TabsTrigger>
                 ))}
             </TabsList>
@@ -108,9 +136,9 @@ export default function OrderSettings() {
             <Button
               type="submit"
               size="lg"
-              className="gap-2 h-auto shadow-lg shadow-blue-100 px-6 py-3 rounded-lg text-sm font-bold min-w-[140px] transition-transform active:scale-95"
+              className="gap-2 h-11 px-6 rounded-lg text-sm font-semibold min-w-[140px]"
               disabled={updateMutation.isPending || !isValid}>
-              <Save className="w-4.5 h-4.5" />
+              <Save className="w-4 h-4" />
               {updateMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </div>
@@ -130,8 +158,13 @@ export default function OrderSettings() {
             className="mt-0 focus-visible:outline-none">
             <SpecialAreasTab />
           </TabsContent>
+
+          <TabsContent value="tax" className="mt-0 focus-visible:outline-none">
+            <TaxConfigTab />
+          </TabsContent>
         </Tabs>
       </form>
     </FormProvider>
   );
 }
+

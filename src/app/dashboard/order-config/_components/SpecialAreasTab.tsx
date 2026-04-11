@@ -1,13 +1,29 @@
 "use client";
 
-import { useFormContext, useFieldArray } from "react-hook-form";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  Controller,
+  useFormContext,
+  useFieldArray,
+  useFormState,
+} from "react-hook-form";
+import {
+  ConfigHeader,
+  ConfigGrid,
+  ConfigCard,
+  NumericInputField,
+} from "./ConfigCommon";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, MapPin } from "lucide-react";
+import { Plus, MapPin } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import {
+  fetchPrefectures,
+  getPrefectureName,
+} from "@/constants/prefectures";
+import { PaginatedDropdown } from "@/components/common/PaginatedDropdown";
 
 export function SpecialAreasTab() {
   const { register, control } = useFormContext();
+  const { errors } = useFormState({ control });
   const {
     fields: specialAreaFields,
     append,
@@ -19,103 +35,82 @@ export function SpecialAreasTab() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between border-b pb-4">
-        <div className="flex items-center gap-3 text-xl font-bold text-gray-900 leading-none">
-          <div className="p-2 bg-blue-50 rounded-lg">
-            <MapPin className="w-6 h-6 text-blue-600" />
-          </div>
-          Special Delivery Areas (Flat Fee)
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          onClick={() => append({ name: "", fee: 2000 })}
-          className="gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 shadow-sm font-semibold">
-          <Plus className="w-5 h-5" /> Add Special Area
-        </Button>
-      </div>
+      <ConfigHeader
+        title="Special Delivery Areas (Flat Fee)"
+        icon={MapPin}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => append({ name: "", fee: 2000 })}
+            className="gap-2 font-semibold">
+            <Plus className="w-4 h-4" /> Add Special Area
+          </Button>
+        }
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <ConfigGrid>
         {specialAreaFields?.map((field, index) => (
-          <Card
+          <ConfigCard
             key={field?.id}
-            className="p-5 space-y-4 group hover:border-blue-200 hover:shadow-md transition-all duration-300 relative border-gray-100 shadow-sm bg-white overflow-hidden">
+            title={`Zone #${index + 1}`}
+            onRemove={() => remove(index)}>
             <input
               type="hidden"
               {...register(`specialAreas.${index}._id` as const)}
             />
-            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/10 group-hover:bg-blue-500 transition-colors" />
 
-            <div className="flex justify-between items-center border-b border-gray-200">
-              <span className="text-[10px] font-bold text-black uppercase tracking-widest leading-none">
-                Zone Details #{index + 1}
-              </span>
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="text-gray-300 hover:text-red-500 transition-colors p-2 pt-0 hover:bg-red-50 rounded-lg"
-                title="Remove Area">
-                <Trash2 className="w-4.5 h-4.5" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-none">
-                  Prefecture or City Name
-                </label>
-                <Input
-                  placeholder="e.g. Okinawa"
-                  required
-                  {...register(`specialAreas.${index}.name` as const, {
-                    required: true,
-                  })}
-                  className="h-10 text-sm font-bold bg-gray-50/30 border-gray-100 focus:bg-white focus:ring-blue-500 transition-all placeholder:font-normal placeholder:text-gray-300"
+                <Label className="text-xs font-semibold text-gray-900 tracking-wider block">
+                  Select Prefecture
+                </Label>
+                <Controller
+                  control={control}
+                  name={`specialAreas.${index}.name` as const}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <PaginatedDropdown
+                      value={value}
+                      onValueChange={onChange}
+                      fetchData={fetchPrefectures}
+                      queryKey={["prefectures", "dropdown"]}
+                      placeholder="Select Prefecture"
+                      searchPlaceholder="Search prefectures..."
+                      selectedLabel={getPrefectureName(value)}
+                    />
+                  )}
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-blue-600/70 uppercase tracking-widest leading-none">
-                  Flat Delivery Fee
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-400 text-sm">
-                    ¥
-                  </span>
-                  <Input
-                    type="number"
-                    min="0"
-                    required
-                    placeholder="2000"
-                    {...register(`specialAreas.${index}.fee` as const, {
-                      valueAsNumber: true,
-                      min: 0,
-                      required: true,
-                    })}
-                    className="pl-8 h-10 text-sm font-bold border-gray-100 bg-gray-50/10 focus:bg-white transition-all shadow-inner"
-                  />
-                </div>
-              </div>
+              <NumericInputField
+                label="Flat Delivery Fee"
+                unit="¥"
+                register={register(`specialAreas.${index}.fee` as const, {
+                  valueAsNumber: true,
+                  min: 0,
+                  required: true,
+                })}
+                error={(errors?.specialAreas as any)?.[index]?.fee}
+                min={0}
+              />
             </div>
-          </Card>
+          </ConfigCard>
         ))}
 
         {specialAreaFields?.length === 0 && (
-          <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-4xl bg-gray-50/50 text-gray-400">
-            <div className="p-4 bg-white rounded-full w-fit mx-auto mb-4 border border-gray-100 shadow-sm">
-              <MapPin className="w-8 h-8 opacity-20" />
-            </div>
-            <p className="text-sm font-bold text-gray-500">
+          <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 text-gray-400">
+            <MapPin className="w-10 h-10 mx-auto mb-4 opacity-20" />
+            <p className="text-sm font-semibold text-gray-600">
               No special areas defined.
             </p>
-            <p className="text-xs mt-2 max-w-xs mx-auto text-gray-400 leading-relaxed uppercase tracking-tighter font-medium">
-              Standard shipping rules will automatically apply to all other
-              regions.
+            <p className="text-xs mt-1 text-gray-900">
+              Standard shipping rules apply to all regions.
             </p>
           </div>
         )}
-      </div>
+      </ConfigGrid>
     </div>
   );
 }

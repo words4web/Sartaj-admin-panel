@@ -1,13 +1,20 @@
 "use client";
 
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Package, Tag } from "lucide-react";
+import { Package } from "lucide-react";
+import {
+  ConfigHeader,
+  ConfigGrid,
+  ConfigCard,
+  NumericInputField,
+} from "./ConfigCommon";
 
 export function MOVTab({ config }: { config: any }) {
-  const { register, control } = useFormContext();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext();
   const { fields: movFields } = useFieldArray({
     control,
     name: "minOrderValues",
@@ -15,16 +22,15 @@ export function MOVTab({ config }: { config: any }) {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3 text-xl font-bold text-gray-900 border-b pb-3">
-        <Package className="w-6 h-6 text-blue-600" />
-        General Minimum Order Values (MOV)
-      </div>
+      <ConfigHeader title="General Minimum Order Values (MOV)" icon={Package} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+      <ConfigGrid className="xl:grid-cols-3">
         {movFields?.map((field, index) => (
-          <Card
+          <ConfigCard
             key={field?.id}
-            className="p-5 border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 border-t-4 border-t-blue-500/20">
+            title={`${
+              config?.minOrderValues?.[index]?.superCategoryName || "Category"
+            } Settings`}>
             <input
               type="hidden"
               {...register(`minOrderValues.${index}._id` as const)}
@@ -40,52 +46,34 @@ export function MOVTab({ config }: { config: any }) {
               )}
             />
 
-            <Label className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-widest block">
-              {config?.minOrderValues?.[index]?.superCategoryName} MOV
-            </Label>
-            <div className="relative mt-2">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-base">
-                ¥
-              </span>
-              <Input
-                type="number"
-                min="0"
-                required
-                {...register(`minOrderValues.${index}.value` as const, {
+            <div className="space-y-6">
+              <NumericInputField
+                label="Minimum Order Value (MOV)"
+                unit="¥"
+                register={register(`minOrderValues.${index}.value`, {
                   valueAsNumber: true,
                   min: 0,
                   required: true,
                 })}
-                className="pl-8 py-5 text-lg font-bold border-gray-200 focus-visible:ring-blue-500 rounded-lg"
+                error={(errors?.minOrderValues as any)?.[index]?.value}
+                min={0}
+              />
+
+              <NumericInputField
+                label="Penalty Charge (if below MOV)"
+                unit="¥"
+                register={register(`minOrderValues.${index}.penaltyCharge`, {
+                  valueAsNumber: true,
+                  min: { value: 1, message: "Min 1" },
+                  required: true,
+                })}
+                error={(errors?.minOrderValues as any)?.[index]?.penaltyCharge}
+                min={1}
               />
             </div>
-          </Card>
+          </ConfigCard>
         ))}
-
-        <Card className="p-5 border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 border-t-4 border-t-blue-500/20">
-          <Label className="text-sm font-bold text-gray-500 mb-2 flex items-center gap-2 uppercase tracking-widest">
-            <Tag className="w-4 h-4" />
-            Halal Products MOV
-          </Label>
-          <div className="relative mt-2">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-base">
-              ¥
-            </span>
-            <input type="hidden" {...register("_id")} />
-            <Input
-              type="number"
-              min="0"
-              required
-              {...register("halalMinOrderValue", {
-                valueAsNumber: true,
-                min: 0,
-                required: true,
-              })}
-              className="pl-8 py-5 text-lg font-bold border-gray-200 focus-visible:ring-blue-500 rounded-lg bg-white"
-            />
-          </div>
-        </Card>
-      </div>
+      </ConfigGrid>
     </div>
   );
 }

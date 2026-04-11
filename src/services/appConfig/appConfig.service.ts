@@ -1,13 +1,29 @@
 import { API_ROUTES } from "@/constants/api";
 import axiosInstance from "@/lib/api/axios";
 
+export enum TAX_CATEGORY {
+  REDUCED = "REDUCED", // e.g. food (8%)
+  STANDARD = "STANDARD", // e.g. alcohol, non-food (10%)
+  CUSTOM = "CUSTOM", // edge-case override
+}
+
+export enum TAX_TYPE {
+  PERCENTAGE = "PERCENTAGE",
+  FIXED = "FIXED",
+}
+
+export interface ITaxConfig {
+  category: TAX_CATEGORY;
+  value: number;
+}
+
 export interface IAppConfig {
   minOrderValues: {
     superCategoryId: string | any;
     superCategoryName: string;
     value: number;
+    penaltyCharge: number;
   }[];
-  halalMinOrderValue: number;
   shippingRules: {
     frozen: {
       weightThreshold: number;
@@ -22,6 +38,7 @@ export interface IAppConfig {
     name: string;
     fee: number;
   }[];
+  taxes: ITaxConfig[];
 }
 
 export const appConfigService = {
