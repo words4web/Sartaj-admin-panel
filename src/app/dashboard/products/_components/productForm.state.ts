@@ -23,8 +23,8 @@ export const defaultForm = (): ProductFormValues => ({
   stockQuantity: "1",
   sellingUnit: SELLING_UNIT.UNIT,
   stockStatus: STOCK_STATUS.IN_STOCK,
-  image: null,
-  existingImage: null,
+  images: [],
+  newFiles: [],
   isActive: true,
   badges: [],
   restrictions: {
@@ -58,8 +58,8 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     stockQuantity: String(p.stockQuantity ?? "1"),
     sellingUnit: p.sellingUnit ?? SELLING_UNIT.UNIT,
     stockStatus: p.stockStatus,
-    image: null,
-    existingImage: p.image ?? null,
+    images: p.images ?? [],
+    newFiles: [],
     isActive: p.isActive !== false,
     badges: p.badges ?? [],
     restrictions: {

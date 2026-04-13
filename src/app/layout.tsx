@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Sartaj Foods Admin",
+  title: "Dashboard | Sartaj Admin",
   description: "Admin management panel for Sartaj Foods",
   icons: {
     icon: [

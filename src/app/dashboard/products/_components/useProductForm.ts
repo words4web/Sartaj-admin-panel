@@ -9,6 +9,7 @@ import {
 import { useSuperCategories } from "@/services/superCategory/superCategory.hooks";
 import { toast } from "sonner";
 import { defaultForm } from "./productForm.state";
+import { productApi } from "@/services/product/product.api";
 
 import {
   UseProductFormProps,
@@ -32,10 +33,13 @@ export function useProductForm({
     ...initialValues,
     name: normalizeTranslation(initialValues?.name),
     description: normalizeTranslation(initialValues?.description),
+    images: initialValues?.images || [],
+    newFiles: [],
   }));
 
   const [step, setStep] = useState(0);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [newFilePreviews, setNewFilePreviews] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   // ── Data Fetching ──
   const { data: superData } = useSuperCategories();
@@ -84,16 +88,19 @@ export function useProductForm({
   }, [initialValues]);
 
   useEffect(() => {
-    if (values.image) {
-      const u = URL.createObjectURL(values?.image);
-      setPreviewUrl(u);
-      return () => URL.revokeObjectURL(u);
+    if (values.newFiles.length > 0) {
+      const urls = values.newFiles?.map((file) => URL.createObjectURL(file));
+      setNewFilePreviews(urls);
+      return () => urls.forEach((u) => URL.revokeObjectURL(u));
     }
-    setPreviewUrl(null);
+    setNewFilePreviews([]);
     return undefined;
-  }, [values.image]);
+  }, [values.newFiles]);
 
-  const imagePreview = previewUrl ?? values?.existingImage ?? null;
+  const imagePreviews = useMemo(
+    () => [...values.images, ...newFilePreviews],
+    [values.images, newFilePreviews],
+  );
 
   // ── Handlers ──
   const toggleSuperCategory = useCallback(
@@ -144,10 +151,105 @@ export function useProductForm({
   }, []);
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setValues((prev) => ({ ...prev, image: file }));
-      e.target.value = "";
+    const rawFiles = Array.from(e.target.files || []);
+
+    // Filter by allowed MIME types
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const selectedFiles = rawFiles.filter((file) =>
+      allowedTypes.includes(file.type),
+    );
+
+    if (rawFiles.length > selectedFiles.length) {
+      toast.error(
+        "Some files were skipped. Only JPEG, PNG, and WebP are allowed.",
+      );
+    }
+
+    if (selectedFiles?.length > 0) {
+      const totalCount =
+        values.images?.length + values.newFiles?.length + selectedFiles?.length;
+      if (totalCount > 10) {
+        toast.error("Maximum 10 images allowed per product.");
+        return;
+      }
+      setValues((prev) => ({
+        ...prev,
+        newFiles: [...prev.newFiles, ...selectedFiles],
+      }));
+    }
+    e.target.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setValues((prev) => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeNewFile = (index: number) => {
+    setValues((prev) => ({
+      ...prev,
+      newFiles: prev.newFiles?.filter((_, i) => i !== index),
+    }));
+  };
+
+  const processPendingUploads = async (): Promise<string[]> => {
+    if (!values.newFiles?.length) return [];
+
+    try {
+      const fileInfos = values.newFiles.map((f) => ({
+        originalName: f.name,
+        contentType: f.type,
+        size: f.size,
+      }));
+
+      const { sessionId, files: s3Files } =
+        await productApi.getUploadUrls(fileInfos);
+
+      const uploadTasks = s3Files?.map((s3File, index) => ({
+        url: s3File.uploadUrl,
+        file: values.newFiles[index],
+        key: s3File.key,
+      }));
+
+      const keys: string[] = [];
+      const uploadWithRetry = async (url: string, file: File, retries = 3) => {
+        for (let i = 0; i < retries; i++) {
+          try {
+            await productApi.uploadToS3(url, file);
+            return;
+          } catch (err) {
+            if (i === retries - 1) throw err;
+            await new Promise((r) => setTimeout(r, Math.pow(2, i) * 1000));
+          }
+        }
+      };
+
+      const queue = [...uploadTasks];
+      const workers = Array(Math.min(3, queue.length))
+        .fill(null)
+        .map(async () => {
+          while (queue.length > 0) {
+            const task = queue.shift();
+            if (task) {
+              await uploadWithRetry(task.url, task.file);
+              keys.push(task.key);
+            }
+          }
+        });
+
+      await Promise.all(workers);
+
+      // Confirm and get permanent URLs
+      const { images: finalUrls } = await productApi.confirmUploads(
+        sessionId,
+        keys,
+      );
+
+      return finalUrls;
+    } catch (error: any) {
+      throw error;
     }
   };
 
@@ -162,14 +264,14 @@ export function useProductForm({
     const skuOk = values?.sku?.trim()?.length > 0;
     const namesOk = isTranslationComplete(values?.name);
     const descsOk = isTranslationComplete(values?.description);
-    const imageOk = Boolean(values?.image) || Boolean(values?.existingImage);
+    const imageOk = values.images?.length > 0 || values.newFiles?.length > 0;
     return skuOk && namesOk && descsOk && imageOk;
   }, [
     values.sku,
     values.name,
     values.description,
-    values.image,
-    values.existingImage,
+    values.images,
+    values.newFiles,
   ]);
 
   const step1Valid = useMemo(() => {
@@ -238,10 +340,32 @@ export function useProductForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[DEBUG] ProductForm handleSubmit triggered");
     if (!isFormValid) {
       toast.error("Complete all required fields in every step.");
       return;
+    }
+
+    let finalImages = [...values.images];
+
+    if (values.newFiles?.length > 0) {
+      setIsUploading(true);
+      toast.loading("Uploading images...", { id: "upload-toast" });
+      try {
+        const newlyUploadedUrls = await processPendingUploads();
+        finalImages = [...finalImages, ...newlyUploadedUrls];
+        setValues((p) => ({
+          ...p,
+          images: finalImages,
+          newFiles: [],
+        }));
+        toast.success("Images uploaded successfully.", { id: "upload-toast" });
+      } catch (error: any) {
+        setIsUploading(false);
+        toast.error(error?.message || "Failed to upload images.", {
+          id: "upload-toast",
+        });
+        return; // Halt submission
+      }
     }
 
     const basePrices = values.basePrices
@@ -270,16 +394,24 @@ export function useProductForm({
     };
 
     if (isEdit) {
-      const updatePayload = { ...base } as UpdateProductPayload;
-      if (values.image) updatePayload.image = values?.image;
+      const updatePayload = {
+        ...base,
+        images: finalImages,
+      } as UpdateProductPayload;
       await onSubmit(updatePayload);
     } else {
-      await onSubmit({ ...base, image: values.image! } as CreateProductPayload);
+      await onSubmit({
+        ...base,
+        images: finalImages,
+      } as CreateProductPayload);
     }
+
+    setIsUploading(false);
   };
 
   return {
     values,
+    isUploading,
     setValues,
     step,
     complete,
@@ -288,11 +420,13 @@ export function useProductForm({
     supers,
     hasSubcategories,
     setHasSubcategories,
-    imagePreview,
+    imagePreviews,
     toggleSuperCategory,
     setSuperPrice,
     toggleTag,
     handleImage,
+    removeImage,
+    removeNewFile,
     goNext,
     goBack,
     handleSubmit,

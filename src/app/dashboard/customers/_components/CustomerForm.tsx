@@ -12,11 +12,15 @@ import {
 import { createCustomerSchema } from "@/schemas/customer/customer.schema";
 import { toast } from "sonner";
 import { SUPER_CATEGORIES } from "@/lib/constants";
-import { usePriceLists } from "@/services/priceList/priceList.hooks";
+import { PREFECTURES } from "@/constants/prefectures";
+import { CustomerAddressSection } from "./CustomerAddressSection";
+import { priceListApi } from "@/services/priceList/priceList.api";
+import { PaginatedDropdown } from "@/components/common/PaginatedDropdown";
 
 export default function CustomerForm({
   superCategories,
   initialValues,
+  initialPriceListLabel,
   isSubmitting = false,
   submitLabel = "Save",
   onSubmit,
@@ -24,16 +28,6 @@ export default function CustomerForm({
   const [values, setValues] = useState<CustomerFormValues>(initialValues);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const { data: priceListPage, isFetching: priceListsLoading } = usePriceLists(
-    {
-      superCategory: values.superCategory || undefined,
-      page: 1,
-      limit: 100,
-    },
-    { enabled: Boolean(values.superCategory) },
-  );
-  const priceListOptions = priceListPage?.lists ?? [];
 
   useEffect(() => {
     setValues(initialValues);
@@ -54,7 +48,7 @@ export default function CustomerForm({
         (addr) =>
           addr.fullName?.trim()?.length > 0 &&
           addr.postalCode?.trim()?.length > 0 &&
-          addr.prefecture?.trim()?.length > 0 &&
+          PREFECTURES.some((p) => p.code === addr?.prefecture) &&
           addr.city?.trim()?.length > 0 &&
           addr.streetAddress?.trim()?.length > 0 &&
           addr.phone?.trim()?.length > 0,
@@ -217,37 +211,44 @@ export default function CustomerForm({
               Price list
               <span className="text-gray-400 font-normal">(optional)</span>
             </label>
-            <select
+            <PaginatedDropdown
               value={values.priceList}
-              disabled={
-                isSubmitting ||
-                !values.superCategory ||
-                priceListsLoading ||
-                superCategories?.length === 0
+              onValueChange={(v) =>
+                setValues((prev) => ({ ...prev, priceList: v }))
               }
-              onChange={(e) =>
-                setValues((v) => ({ ...v, priceList: e.target.value }))
+              queryKey={["priceLists", values.superCategory]}
+              fetchData={async ({ search, page, limit }) => {
+                if (!values.superCategory)
+                  return { options: [], hasMore: false };
+                const res = await priceListApi.getPriceLists({
+                  superCategory: values.superCategory,
+                  search,
+                  page,
+                  limit,
+                });
+                return {
+                  options: res?.lists?.map((pl) => ({
+                    value: pl._id,
+                    label: pl.name,
+                  })),
+                  hasMore: res?.lists?.length === limit,
+                };
+              }}
+              placeholder={
+                values.superCategory
+                  ? "Select a price list"
+                  : "Select super category first"
               }
-              className={`border rounded-lg px-3 py-2 w-full max-w-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
-                errors?.priceList ? "border-red-500" : "border-gray-200"
-              }`}>
-              <option value="">
-                None — use segment base prices for all products
-              </option>
-              {values?.priceList &&
-                !priceListOptions?.some(
-                  (pl) => pl?._id === values?.priceList,
-                ) && (
-                  <option value={values?.priceList}>
-                    Current list (not in loaded options)
-                  </option>
-                )}
-              {priceListOptions?.map((pl) => (
-                <option key={pl?._id} value={pl?._id}>
-                  {pl?.name}
-                </option>
-              ))}
-            </select>
+              searchPlaceholder="Search price lists..."
+              disabled={isSubmitting || !values.superCategory}
+              isClearable
+              clearLabel="None — use segment base prices"
+              selectedLabel={
+                values.priceList === initialValues.priceList
+                  ? initialPriceListLabel
+                  : undefined
+              }
+            />
             <p className="mt-1 text-xs text-gray-500">
               Only lists for the selected segment are shown. Changing segment
               clears this field.
@@ -259,126 +260,14 @@ export default function CustomerForm({
         </div>
       </Card>
 
-      <div className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold">Addresses</h3>
-            <p className="text-sm text-gray-600">
-              Japan-specific postal code and phone formats.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={addAddress}
-            disabled={isSubmitting}>
-            + Add Address
-          </Button>
-        </div>
-
-        <div className="space-y-4">
-          {values.addresses?.map((addr, idx) => (
-            <Card key={addr?._id || idx} className="p-5 space-y-4">
-              <div className="flex items-center justify-between gap-3">
-                <h4 className="font-medium">Address #{idx + 1}</h4>
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={isSubmitting || values.addresses?.length <= 1}
-                  className="text-red-600 border-red-200 hover:bg-red-50"
-                  onClick={() => removeAddress(idx)}>
-                  Remove
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormInput
-                  label="Address Full Name"
-                  required
-                  placeholder="e.g. Taro Yamada (Home)"
-                  value={addr?.fullName}
-                  error={errors[`addresses.${idx}.fullName`]}
-                  onChange={(e) =>
-                    updateAddress(idx, { fullName: e.target.value })
-                  }
-                />
-                <FormInput
-                  label="Postal Code (XXX-XXXX)"
-                  required
-                  placeholder="e.g. 100-0001"
-                  value={addr?.postalCode}
-                  error={errors[`addresses.${idx}.postalCode`]}
-                  onChange={(e) => {
-                    let val = e.target.value?.replace(/[^\d]/g, "");
-                    if (val?.length > 7) val = val?.slice(0, 7);
-                    if (val?.length > 3) {
-                      val = `${val?.slice(0, 3)}-${val?.slice(3)}`;
-                    }
-                    updateAddress(idx, { postalCode: val });
-                  }}
-                />
-                <FormInput
-                  label="Prefecture"
-                  required
-                  placeholder="e.g. Tokyo"
-                  value={addr?.prefecture}
-                  error={errors[`addresses.${idx}.prefecture`]}
-                  onChange={(e) =>
-                    updateAddress(idx, { prefecture: e.target.value })
-                  }
-                />
-                <FormInput
-                  label="City"
-                  required
-                  placeholder="e.g. Chiyoda-ku"
-                  value={addr?.city}
-                  error={errors[`addresses.${idx}.city`]}
-                  onChange={(e) => updateAddress(idx, { city: e.target.value })}
-                />
-              </div>
-
-              <FormInput
-                label="Street Address"
-                required
-                placeholder="e.g. 1-1 Chiyoda"
-                value={addr?.streetAddress}
-                error={errors[`addresses.${idx}.streetAddress`]}
-                onChange={(e) =>
-                  updateAddress(idx, { streetAddress: e.target.value })
-                }
-              />
-
-              <FormInput
-                label="Building / Suite (optional)"
-                placeholder="e.g. Mansion name 101"
-                value={addr?.building || ""}
-                error={errors[`addresses.${idx}.building`]}
-                onChange={(e) =>
-                  updateAddress(idx, { building: e.target.value })
-                }
-              />
-
-              <FormInput
-                label="Phone (Japan)"
-                required
-                prefix="+81"
-                placeholder="e.g. 9012345678"
-                value={
-                  addr?.phone?.startsWith("+81")
-                    ? addr?.phone?.slice(3)
-                    : addr?.phone
-                }
-                error={errors[`addresses.${idx}.phone`]}
-                onChange={(e) => {
-                  let val = e.target.value?.replace(/[^\d]/g, "");
-                  if (val?.startsWith("0")) val = val?.slice(1);
-                  updateAddress(idx, { phone: val ? `+81${val}` : "" });
-                }}
-              />
-            </Card>
-          ))}
-        </div>
-      </div>
+      <CustomerAddressSection
+        addresses={values.addresses}
+        errors={errors}
+        isSubmitting={isSubmitting}
+        onUpdate={updateAddress}
+        onAdd={addAddress}
+        onRemove={removeAddress}
+      />
 
       <div className="flex items-center gap-3 pt-2">
         <Button type="submit" disabled={!canSubmit || isSubmitting}>

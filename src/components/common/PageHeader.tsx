@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,12 @@ export function PageHeader({
   showBack = true,
 }: PageHeaderProps) {
   const router = useRouter();
+
+  useEffect(() => {
+    if (title) {
+      document.title = `${title} | Sartaj Admin`;
+    }
+  }, [title]);
 
   const handleBack = () => {
     if (backRoute) {

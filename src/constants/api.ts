@@ -67,6 +67,12 @@ export const API_ROUTES = {
     TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/product/${id}/status`,
   },
 
+  // Upload
+  UPLOAD: {
+    GET_URLS: `${API_ADMIN_BASE}/upload/get-urls`,
+    CONFIRM: `${API_ADMIN_BASE}/upload/confirm`,
+  },
+
   // Banners
   BANNERS: {
     LIST: `${API_ADMIN_BASE}/banner`,

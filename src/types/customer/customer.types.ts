@@ -86,6 +86,7 @@ export type StatusFilter = "all" | "active" | "inactive";
 export type CustomerFormProps = {
   superCategories: SuperCategory[];
   initialValues: CustomerFormValues;
+  initialPriceListLabel?: string;
   isSubmitting?: boolean;
   submitLabel?: string;
   onSubmit: (values: CustomerFormValues) => void | Promise<void>;

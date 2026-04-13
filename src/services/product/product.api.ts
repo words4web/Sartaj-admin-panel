@@ -7,7 +7,7 @@ import {
   CreateProductPayload,
   UpdateProductPayload,
 } from "@/types/product/product.types";
-import { buildProductFormData } from "@/utils/product.util";
+import axios from "axios";
 
 export const productApi = {
   getProducts: async (
@@ -37,8 +37,7 @@ export const productApi = {
   createProduct: async (data: CreateProductPayload): Promise<IProduct> => {
     return await axiosInstance.post<any, IProduct>(
       API_ROUTES.PRODUCTS.CREATE,
-      buildProductFormData(data),
-      { headers: { "Content-Type": "multipart/form-data" } },
+      data,
     );
   },
 
@@ -48,9 +47,44 @@ export const productApi = {
   ): Promise<IProduct> => {
     return await axiosInstance.put<any, IProduct>(
       API_ROUTES.PRODUCTS.UPDATE(id),
-      buildProductFormData(data),
-      { headers: { "Content-Type": "multipart/form-data" } },
+      data,
     );
+  },
+
+  getUploadUrls: async (
+    files: { originalName: string; contentType: string; size: number }[],
+  ): Promise<{
+    sessionId: string;
+    files: { key: string; uploadUrl: string }[];
+  }> => {
+    return await axiosInstance.post(API_ROUTES.UPLOAD.GET_URLS, { files });
+  },
+
+  confirmUploads: async (
+    sessionId: string,
+    keys: string[],
+  ): Promise<{ images: string[] }> => {
+    return await axiosInstance.post(API_ROUTES.UPLOAD.CONFIRM, {
+      sessionId,
+      keys,
+    });
+  },
+
+  uploadToS3: async (
+    url: string,
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<void> => {
+    await axios.put(url, file, {
+      headers: { "Content-Type": file.type },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent?.total) {
+          onProgress(
+            Math.round((progressEvent?.loaded * 100) / progressEvent?.total),
+          );
+        }
+      },
+    });
   },
 
   deleteProduct: async (id: string): Promise<void> => {

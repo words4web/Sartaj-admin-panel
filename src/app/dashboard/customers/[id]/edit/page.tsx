@@ -72,6 +72,11 @@ export default function CustomerEditPage() {
   const ready =
     !isCustomerLoading && !isSuperLoading && !!customerData && !!superCategory;
 
+  const initialPriceListLabel =
+    typeof customerData?.priceList === "object"
+      ? customerData?.priceList?.name
+      : undefined;
+
   return (
     <div className="space-y-6 p-6">
       <PageHeader
@@ -98,6 +103,7 @@ export default function CustomerEditPage() {
           <CustomerForm
             superCategories={superCategories}
             initialValues={initialValues}
+            initialPriceListLabel={initialPriceListLabel}
             isSubmitting={updateMutation.isPending}
             submitLabel="Update Customer"
             onSubmit={handleSubmit}
