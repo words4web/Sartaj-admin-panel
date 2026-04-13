@@ -73,14 +73,14 @@ export default function ProductsPage() {
   const columns: Column<IProduct>[] = useMemo(
     () => [
       {
-        key: "image",
+        key: "images",
         label: "Image",
         width: "80px",
         render: (_: unknown, row: IProduct) => (
           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={row?.image}
+              src={row?.images?.[0]}
               alt=""
               className="w-full h-full object-cover"
               onError={(e) => {

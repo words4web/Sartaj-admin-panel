@@ -44,7 +44,7 @@ export interface IProduct {
   stockQuantity: number;
   sellingUnit: SellingUnit;
   stockStatus: StockStatus;
-  image: string;
+  images: string[];
   isActive: boolean;
   badges: ProductBadge[];
   restrictions: {
@@ -86,8 +86,9 @@ export interface ProductFormValues {
   stockQuantity: string;
   sellingUnit: SellingUnit | "";
   stockStatus: StockStatus | "";
-  image: File | null;
-  existingImage?: string | null;
+  images: string[];
+  newFiles: File[];
+
   isActive: boolean;
   badges: ProductBadge[];
   restrictions: {
@@ -111,7 +112,7 @@ export interface CreateProductPayload {
   stockQuantity: number;
   sellingUnit: SellingUnit;
   stockStatus: StockStatus;
-  image: File;
+  images: string[];
   isActive: boolean;
   badges: ProductBadge[];
   restrictions: {
@@ -119,6 +120,4 @@ export interface CreateProductPayload {
   };
 }
 
-export type UpdateProductPayload = Partial<
-  Omit<CreateProductPayload, "image"> & { image?: File }
->;
+export type UpdateProductPayload = Partial<CreateProductPayload>;

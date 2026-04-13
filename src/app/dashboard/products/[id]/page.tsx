@@ -114,16 +114,34 @@ function ProductDetailContent({ product }: { product: IProduct }) {
             ) : null}
           </div>
         </div>
-        <div className="shrink-0 w-full sm:w-56 aspect-square rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={product?.image}
-            alt=""
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = "https://placehold.co/400?text=No+image";
-            }}
-          />
+        <div className="shrink-0 w-full sm:w-56 space-y-2">
+          <div className="aspect-square rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={product?.images?.[0]}
+              alt=""
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "https://placehold.co/400?text=No+image";
+              }}
+            />
+          </div>
+          {(product?.images?.length ?? 0) > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {product?.images?.map((src, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={i}
+                  src={src}
+                  alt={`Product image ${i + 1}`}
+                  className="w-14 h-14 rounded-lg object-cover border border-gray-200 shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://placehold.co/56?text=?";
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

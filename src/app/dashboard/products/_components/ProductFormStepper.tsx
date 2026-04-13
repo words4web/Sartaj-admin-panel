@@ -25,7 +25,7 @@ export function ProductFormStepper({
         variant="ghost"
         size="sm"
         onClick={onBack}
-        disabled={isFirstStep}
+        disabled={isFirstStep || isSubmitting}
         className="gap-1.5 text-muted-foreground hover:text-foreground h-9 px-3">
         <ChevronLeft className="w-4 h-4" />
         <span className="hidden sm:inline">Back</span>

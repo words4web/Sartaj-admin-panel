@@ -22,8 +22,10 @@ export function ProductFormBasicTab({
   values,
   setValues,
   toggleTag,
-  imagePreview,
-  onImageChange,
+  imagePreviews,
+  handleImage,
+  removeImage,
+  removeNewFile,
 }: ProductFormBasicTabProps) {
   return (
     <div className="space-y-6">
@@ -65,48 +67,62 @@ export function ProductFormBasicTab({
             </ProductFormHint>
           </div>
 
-          {/* Product image */}
-          <div className="space-y-2">
+          {/* Product images */}
+          <div className="space-y-4">
             <Label className="text-sm font-medium text-gray-700">
-              Product image <span className="text-destructive">*</span>
+              Product images <span className="text-destructive">*</span>
             </Label>
-            <div className="flex items-center gap-4">
-              {imagePreview && (
-                <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-white border border-gray-200 shrink-0 shadow-sm">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={imagePreview}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                  {values.image && (
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {imagePreviews?.map((url, index) => {
+                const isExisting = index < values?.images?.length;
+                return (
+                  <div
+                    key={url}
+                    className="relative aspect-square rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm group">
+                    <img
+                      src={url}
+                      alt={`Product image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                     <button
                       type="button"
-                      className="absolute top-1 right-1 bg-background/90 rounded-full p-1 shadow hover:bg-background transition-colors"
-                      onClick={() => setValues((p) => ({ ...p, image: null }))}
-                      aria-label="Remove new image">
-                      <X className="w-3.5 h-3.5" />
+                      className="absolute top-1 right-1 bg-background/90 rounded-full p-1.5 shadow-sm hover:bg-destructive hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                      onClick={() =>
+                        isExisting
+                          ? removeImage(index)
+                          : removeNewFile(index - values.images?.length)
+                      }
+                      aria-label="Remove image">
+                      <X className="w-4 h-4" />
                     </button>
-                  )}
-                </div>
-              )}
-              <label className="cursor-pointer">
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm h-10">
-                  <ImageIcon className="w-4 h-4 text-gray-500" />
-                  {values.image || values.existingImage
-                    ? "Change image"
-                    : "Upload image"}
+                    {!isExisting && (
+                      <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-primary/90 text-[10px] text-white rounded font-medium">
+                        Pending
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              <label className="relative aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-primary/50 hover:bg-gray-50 transition-all cursor-pointer flex flex-col items-center justify-center gap-2">
+                <ImageIcon className="w-6 h-6 text-gray-400" />
+                <span className="text-xs font-medium text-gray-500">
+                  Add More
                 </span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg, image/png, image/webp"
+                  multiple
                   className="hidden"
-                  onChange={onImageChange}
+                  onChange={handleImage}
                 />
               </label>
             </div>
+
             <ProductFormHint>
-              A clear representation of the product.
+              A clear representation of the product. Minimum 1 image required.
+              Max 10.
             </ProductFormHint>
           </div>
         </FormSectionCard>

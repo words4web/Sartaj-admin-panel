@@ -9,6 +9,8 @@ export type ProductFormBasicTabProps = {
   values: ProductFormValues;
   setValues: SetProductFormValues;
   toggleTag: (tag: ProductTag, checked: boolean) => void;
-  imagePreview: string | null;
-  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  imagePreviews: string[];
+  handleImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  removeImage: (index: number) => void;
+  removeNewFile: (index: number) => void;
 };

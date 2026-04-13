@@ -34,7 +34,7 @@ export default function ProductForm({
         steps={PRODUCT_FORM_STEPS as any}
         onBack={form.goBack}
         onNext={form.goNext}
-        isSubmitting={isSubmitting}
+        isSubmitting={isSubmitting || form.isUploading}
         submitLabel={submitLabel}
         isFormValid={form.isFormValid}
       />
@@ -46,8 +46,10 @@ export default function ProductForm({
             values={form.values}
             setValues={form.setValues}
             toggleTag={form.toggleTag}
-            imagePreview={form.imagePreview}
-            onImageChange={form.handleImage}
+            imagePreviews={form.imagePreviews}
+            handleImage={form.handleImage}
+            removeImage={form.removeImage}
+            removeNewFile={form.removeNewFile}
           />
         )}
         {form.step === 1 && (
