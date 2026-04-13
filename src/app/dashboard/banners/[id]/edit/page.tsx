@@ -30,7 +30,6 @@ export default function EditBannerPage() {
           isActive: values?.isActive,
         },
       });
-      toast.success("Banner updated successfully");
       router.push(ROUTES.BANNERS.LIST);
     } catch (error) {
       toast.error("Failed to update banner");

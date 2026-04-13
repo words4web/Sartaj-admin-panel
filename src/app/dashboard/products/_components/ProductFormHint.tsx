@@ -1,6 +1,6 @@
 import { cn } from "@/utils/common.utils";
 
-import { ProductFormHintProps } from "./types/ProductFormHint.types";
+import { ProductFormHintProps } from "./ProductFormHint.types";
 
 export function ProductFormHint({ children, className }: ProductFormHintProps) {
   return (

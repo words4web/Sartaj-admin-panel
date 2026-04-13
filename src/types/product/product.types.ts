@@ -8,6 +8,7 @@ import {
   StockStatus,
   ProductTag,
 } from "@/constants/product.constants";
+import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 export type {
   ProductBadge,
@@ -49,6 +50,12 @@ export interface IProduct {
   badges: ProductBadge[];
   restrictions: {
     age20Plus: boolean;
+  };
+  isTaxable: boolean;
+  taxConfig?: {
+    category?: TAX_CATEGORY;
+    taxType: TAX_TYPE;
+    taxValue: number;
   };
   createdAt?: string;
   updatedAt?: string;
@@ -94,6 +101,10 @@ export interface ProductFormValues {
   restrictions: {
     age20Plus: boolean;
   };
+  isTaxable: boolean;
+  taxCategory?: TAX_CATEGORY | "";
+  taxType: TAX_TYPE | "";
+  taxValue: string;
 }
 
 export interface CreateProductPayload {
@@ -117,6 +128,12 @@ export interface CreateProductPayload {
   badges: ProductBadge[];
   restrictions: {
     age20Plus: boolean;
+  };
+  isTaxable: boolean;
+  taxConfig?: {
+    category?: TAX_CATEGORY;
+    taxType: TAX_TYPE;
+    taxValue: number;
   };
 }
 

@@ -2,7 +2,7 @@ import { cn } from "@/utils/common.utils";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { ProductFormStepperProps } from "./types/ProductFormStepper.types";
+import { ProductFormStepperProps } from "./ProductFormStepper.types";
 
 export function ProductFormStepper({
   current,
