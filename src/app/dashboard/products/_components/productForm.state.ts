@@ -6,6 +6,7 @@ import {
   STOCK_STATUS,
 } from "@/constants/product.constants";
 import { extractId } from "@/utils/common.utils";
+import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 export const defaultForm = (): ProductFormValues => ({
   sku: "",
@@ -30,6 +31,10 @@ export const defaultForm = (): ProductFormValues => ({
   restrictions: {
     age20Plus: false,
   },
+  isTaxable: false,
+  taxCategory: TAX_CATEGORY.REDUCED,
+  taxType: TAX_TYPE.PERCENTAGE,
+  taxValue: "0",
 });
 
 export function mapProductToFormValues(p: IProduct): ProductFormValues {
@@ -65,5 +70,9 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     restrictions: {
       age20Plus: Boolean(p.restrictions?.age20Plus),
     },
+    isTaxable: Boolean(p.isTaxable),
+    taxCategory: p.taxConfig?.category ?? TAX_CATEGORY.REDUCED,
+    taxType: p.taxConfig?.taxType ?? TAX_TYPE.PERCENTAGE,
+    taxValue: String(p.taxConfig?.taxValue ?? "0"),
   };
 }

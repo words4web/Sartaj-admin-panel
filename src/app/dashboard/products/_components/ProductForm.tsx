@@ -1,13 +1,13 @@
 "use client";
 
-import { ProductFormBasicTab } from "./ProductFormBasicTab";
-import { ProductFormPricingCatalogTab } from "./ProductFormPricingCatalogTab";
-import { ProductFormPackagingTab } from "./ProductFormPackagingTab";
+import { ProductFormBasicTab } from "./step1/ProductFormBasicTab";
+import { ProductFormPricingCatalogTab } from "./step2/ProductFormPricingCatalogTab";
+import { ProductFormPackagingTab } from "./step3/ProductFormPackagingTab";
 import { ProductFormStepper } from "./ProductFormStepper";
 import { useProductForm } from "./useProductForm";
 import { PRODUCT_FORM_STEPS } from "@/constants/product.constants";
 
-import { ProductFormProps } from "./types/ProductForm.types";
+import { ProductFormProps } from "./ProductForm.types";
 
 export { mapProductToFormValues } from "./productForm.state";
 

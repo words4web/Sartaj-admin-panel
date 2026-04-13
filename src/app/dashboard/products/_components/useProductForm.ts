@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { LANG_CODES } from "@/components/common/TranslationInput";
 import {
   ProductFormValues,
   CreateProductPayload,
@@ -10,11 +9,12 @@ import { useSuperCategories } from "@/services/superCategory/superCategory.hooks
 import { toast } from "sonner";
 import { defaultForm } from "./productForm.state";
 import { productApi } from "@/services/product/product.api";
+import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 import {
   UseProductFormProps,
   UseProductFormReturn,
-} from "./types/useProductForm.types";
+} from "./useProductForm.types";
 
 import { PRODUCT_FORM_VALIDATION_HINTS } from "@/constants/product.constants";
 import {
@@ -284,13 +284,19 @@ export function useProductForm({
       Boolean(values?.categoryId) &&
       Boolean(effectiveSub) &&
       Boolean(values?.manufacturerId);
-    return pricingOk && catalogOk;
+    const taxOk =
+      !values.isTaxable ||
+      (Number(values.taxValue) >= 1 && Boolean(values.taxType));
+    return pricingOk && catalogOk && taxOk;
   }, [
     values.basePrices,
     values.categoryId,
     values.subcategoryId,
     values.manufacturerId,
     hasSubcategories,
+    values.isTaxable,
+    values.taxValue,
+    values.taxType,
   ]);
 
   const step2Valid = useMemo(
@@ -391,6 +397,14 @@ export function useProductForm({
       isActive: values.isActive,
       badges: values.badges,
       restrictions: values.restrictions,
+      isTaxable: values.isTaxable,
+      taxConfig: values.isTaxable
+        ? {
+            category: (values.taxCategory as TAX_CATEGORY) || undefined,
+            taxType: values.taxType as TAX_TYPE,
+            taxValue: Number(values.taxValue),
+          }
+        : undefined,
     };
 
     if (isEdit) {

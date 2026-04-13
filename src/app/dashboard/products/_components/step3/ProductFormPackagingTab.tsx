@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProductFormHint } from "./ProductFormHint";
+import { ProductFormHint } from "../ProductFormHint";
 import {
   PRODUCT_UNITS,
   SELLING_UNITS,
@@ -19,7 +19,7 @@ import {
   STOCK_STATUS,
   PRODUCT_TYPE,
 } from "@/constants/product.constants";
-import { ProductFormPackagingTabProps } from "./types/ProductFormPackagingTab.types";
+import { ProductFormPackagingTabProps } from "./ProductFormPackagingTab.types";
 import type {
   ProductUnit,
   ProductType,

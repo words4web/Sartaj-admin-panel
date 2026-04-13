@@ -3,20 +3,20 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { TranslationInput } from "@/components/common/TranslationInput";
-import { ProductFormHint } from "./ProductFormHint";
+import { ProductFormHint } from "../ProductFormHint";
 import { ImageIcon, X, Tag, Layers } from "lucide-react";
 import {
   PRODUCT_BADGE_OPTIONS,
   PRODUCT_TAGS,
   PRODUCT_BASIC_INFO_FIELDS,
 } from "@/constants/product.constants";
-import { ProductFormBasicTabProps } from "./types/ProductFormBasicTab.types";
+import { ProductFormBasicTabProps } from "./ProductFormBasicTab.types";
 
 import {
   PropertySection,
   PropertyCheckbox,
   FormSectionCard,
-} from "./ProductFormDecorators";
+} from "../ProductFormDecorators";
 
 export function ProductFormBasicTab({
   values,
