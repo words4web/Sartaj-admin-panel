@@ -288,7 +288,13 @@ export function useProductForm({
     const taxOk =
       !values.isTaxable ||
       (Number(values.taxValue) >= 1 && Boolean(values.taxType));
-    return pricingOk && catalogOk && taxOk;
+    const discountOk =
+      !values.timeDiscount.isEnabled ||
+      (Number(values.timeDiscount.discountPercent) >= 1 &&
+        Number(values.timeDiscount.discountPercent) <= 100 &&
+        Boolean(values.timeDiscount.startTime) &&
+        Boolean(values.timeDiscount.endTime));
+    return pricingOk && catalogOk && taxOk && discountOk;
   }, [
     values.basePrices,
     values.categoryId,
@@ -298,6 +304,7 @@ export function useProductForm({
     values.isTaxable,
     values.taxValue,
     values.taxType,
+    values.timeDiscount,
   ]);
 
   const step2Valid = useMemo(
@@ -408,6 +415,12 @@ export function useProductForm({
             taxValue: Number(values.taxValue),
           }
         : undefined,
+      timeDiscount: {
+        isEnabled: values.timeDiscount.isEnabled,
+        startTime: values.timeDiscount.startTime,
+        endTime: values.timeDiscount.endTime,
+        discountPercent: Number(values.timeDiscount.discountPercent),
+      },
     };
 
     if (isEdit) {

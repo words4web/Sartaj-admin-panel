@@ -4,6 +4,7 @@ import { ProductFormPricingCatalogTabProps } from "./ProductFormPricingCatalogTa
 import { ProductFormPricingSection } from "./ProductFormPricingSection";
 import { ProductFormCatalogSection } from "./ProductFormCatalogSection";
 import { ProductFormTaxSection } from "./ProductFormTaxSection";
+import { ProductFormDiscountSection } from "./ProductFormDiscountSection";
 
 export function ProductFormPricingCatalogTab({
   supers,
@@ -15,25 +16,32 @@ export function ProductFormPricingCatalogTab({
   setSuperPrice,
 }: ProductFormPricingCatalogTabProps) {
   return (
-    <div className="grid gap-6 lg:grid-cols-2 px-6">
-      {/* ── LEFT: Pricing / Business segments ── */}
-      <ProductFormPricingSection
-        supers={supers}
-        values={values}
-        toggleSuperCategory={toggleSuperCategory}
-        setSuperPrice={setSuperPrice}
-      />
+    <div className="grid gap-6 lg:grid-cols-12 px-6">
+      <div className="lg:col-span-7 space-y-6">
+        <ProductFormPricingSection
+          supers={supers}
+          values={values}
+          toggleSuperCategory={toggleSuperCategory}
+          setSuperPrice={setSuperPrice}
+        />
+      </div>
 
-      {/* ── RIGHT: Catalog (category / subcategory / manufacturer) ── */}
-      <ProductFormCatalogSection
-        values={values}
-        setValues={setValues}
-        hasSubcategories={hasSubcategories}
-        setHasSubcategories={setHasSubcategories}
-      />
+      <div className="lg:col-span-5 space-y-6">
+        <ProductFormCatalogSection
+          values={values}
+          setValues={setValues}
+          hasSubcategories={hasSubcategories}
+          setHasSubcategories={setHasSubcategories}
+        />
+      </div>
 
-      {/* ── BOTTOM LEFT: Tax Configuration ── */}
-      <ProductFormTaxSection values={values} setValues={setValues} />
+      <div className="lg:col-span-7">
+        <ProductFormDiscountSection values={values} setValues={setValues} />
+      </div>
+
+      <div className="lg:col-span-5">
+        <ProductFormTaxSection values={values} setValues={setValues} />
+      </div>
     </div>
   );
 }

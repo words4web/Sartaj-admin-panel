@@ -7,6 +7,7 @@ import {
 } from "@/constants/product.constants";
 import { extractId } from "@/utils/common.utils";
 import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
+import dayjs from "dayjs";
 
 export const defaultForm = (): ProductFormValues => ({
   sku: "",
@@ -37,6 +38,12 @@ export const defaultForm = (): ProductFormValues => ({
   taxCategory: TAX_CATEGORY.REDUCED,
   taxType: TAX_TYPE.PERCENTAGE,
   taxValue: "0",
+  timeDiscount: {
+    isEnabled: false,
+    startTime: dayjs()?.toISOString(),
+    endTime: dayjs().add(24, "hours")?.toISOString(),
+    discountPercent: "1",
+  },
 });
 
 export function mapProductToFormValues(p: IProduct): ProductFormValues {
@@ -72,14 +79,17 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     badges: p.badges ?? [],
     relatedProducts:
       p.relatedProducts?.map((r) =>
-        typeof r === "string" ? r : String(r._id)
+        typeof r === "string" ? r : String(r._id),
       ) ?? [],
-    relatedProductsLabels: p.relatedProducts?.reduce((acc, r) => {
-      if (typeof r !== "string") {
-        acc[String(r._id)] = `${r.sku} — ${r.name?.en ?? ""}`;
-      }
-      return acc;
-    }, {} as Record<string, string>),
+    relatedProductsLabels: p.relatedProducts?.reduce(
+      (acc, r) => {
+        if (typeof r !== "string") {
+          acc[String(r._id)] = `${r.sku} — ${r.name?.en ?? ""}`;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
     restrictions: {
       age20Plus: Boolean(p.restrictions?.age20Plus),
     },
@@ -87,5 +97,15 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     taxCategory: p.taxConfig?.category ?? TAX_CATEGORY.REDUCED,
     taxType: p.taxConfig?.taxType ?? TAX_TYPE.PERCENTAGE,
     taxValue: String(p.taxConfig?.taxValue ?? "0"),
+    timeDiscount: {
+      isEnabled: p.timeDiscount?.isEnabled ?? false,
+      startTime: p.timeDiscount?.startTime
+        ? dayjs(p.timeDiscount.startTime)?.toISOString()
+        : dayjs()?.toISOString(),
+      endTime: p.timeDiscount?.endTime
+        ? dayjs(p.timeDiscount.endTime)?.toISOString()
+        : dayjs().add(24, "hours")?.toISOString(),
+      discountPercent: String(p.timeDiscount?.discountPercent ?? "0"),
+    },
   };
 }

@@ -51,7 +51,10 @@ export interface IProduct {
   images: string[];
   isActive: boolean;
   badges: ProductBadge[];
-  relatedProducts?: (string | { _id: string; sku?: string; name?: ITranslationMap })[];
+  relatedProducts?: (
+    | string
+    | { _id: string; sku?: string; name?: ITranslationMap }
+  )[];
   restrictions: {
     age20Plus: boolean;
   };
@@ -60,6 +63,12 @@ export interface IProduct {
     category?: TAX_CATEGORY;
     taxType: TAX_TYPE;
     taxValue: number;
+  };
+  timeDiscount?: {
+    isEnabled: boolean;
+    startTime: string;
+    endTime: string;
+    discountPercent: number;
   };
   createdAt?: string;
   updatedAt?: string;
@@ -112,6 +121,12 @@ export interface ProductFormValues {
   taxCategory?: TAX_CATEGORY | "";
   taxType: TAX_TYPE | "";
   taxValue: string;
+  timeDiscount: {
+    isEnabled: boolean;
+    startTime: string | Date;
+    endTime: string | Date;
+    discountPercent: string;
+  };
 }
 
 export interface CreateProductPayload {
@@ -143,6 +158,12 @@ export interface CreateProductPayload {
     category?: TAX_CATEGORY;
     taxType: TAX_TYPE;
     taxValue: number;
+  };
+  timeDiscount: {
+    isEnabled: boolean;
+    startTime: string;
+    endTime: string;
+    discountPercent: number;
   };
 }
 
