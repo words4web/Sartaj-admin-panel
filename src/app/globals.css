@@ -156,12 +156,21 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.8 0.01 240);
+    background: var(--primary);
     border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.7 0.01 240);
+    background: color-mix(in oklch, var(--primary), black 15%);
+  }
+
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
   }
 
   /* Glassmorphism utility */
