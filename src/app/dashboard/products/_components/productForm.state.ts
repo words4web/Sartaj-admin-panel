@@ -29,6 +29,7 @@ export const defaultForm = (): ProductFormValues => ({
   newFiles: [],
   isActive: true,
   badges: [],
+  relatedProducts: [],
   restrictions: {
     age20Plus: false,
   },
@@ -69,6 +70,16 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     newFiles: [],
     isActive: p.isActive !== false,
     badges: p.badges ?? [],
+    relatedProducts:
+      p.relatedProducts?.map((r) =>
+        typeof r === "string" ? r : String(r._id)
+      ) ?? [],
+    relatedProductsLabels: p.relatedProducts?.reduce((acc, r) => {
+      if (typeof r !== "string") {
+        acc[String(r._id)] = `${r.sku} — ${r.name?.en ?? ""}`;
+      }
+      return acc;
+    }, {} as Record<string, string>),
     restrictions: {
       age20Plus: Boolean(p.restrictions?.age20Plus),
     },

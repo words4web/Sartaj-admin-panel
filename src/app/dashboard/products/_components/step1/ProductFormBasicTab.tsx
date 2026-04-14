@@ -11,6 +11,7 @@ import {
   PRODUCT_BASIC_INFO_FIELDS,
 } from "@/constants/product.constants";
 import { ProductFormBasicTabProps } from "./ProductFormBasicTab.types";
+import { RelatedProductsPicker } from "./RelatedProductsPicker";
 
 import {
   PropertySection,
@@ -26,6 +27,7 @@ export function ProductFormBasicTab({
   handleImage,
   removeImage,
   removeNewFile,
+  productId,
 }: ProductFormBasicTabProps) {
   return (
     <div className="space-y-6">
@@ -73,7 +75,7 @@ export function ProductFormBasicTab({
               Product images <span className="text-destructive">*</span>
             </Label>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
               {imagePreviews?.map((url, index) => {
                 const isExisting = index < values?.images?.length;
                 return (
@@ -87,17 +89,17 @@ export function ProductFormBasicTab({
                     />
                     <button
                       type="button"
-                      className="absolute top-1 right-1 bg-background/90 rounded-full p-1.5 shadow-sm hover:bg-destructive hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                      className="absolute top-1 right-1 bg-background/90 rounded-full p-1 shadow-sm hover:bg-destructive hover:text-white transition-all opacity-0 group-hover:opacity-100"
                       onClick={() =>
                         isExisting
                           ? removeImage(index)
                           : removeNewFile(index - values.images?.length)
                       }
                       aria-label="Remove image">
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5" />
                     </button>
                     {!isExisting && (
-                      <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-primary/90 text-[10px] text-white rounded font-medium">
+                      <div className="absolute bottom-1 left-1 px-1 py-0.5 bg-primary/90 text-[9px] text-white rounded font-medium">
                         Pending
                       </div>
                     )}
@@ -105,9 +107,9 @@ export function ProductFormBasicTab({
                 );
               })}
 
-              <label className="relative aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-primary/50 hover:bg-gray-50 transition-all cursor-pointer flex flex-col items-center justify-center gap-2">
-                <ImageIcon className="w-6 h-6 text-gray-400" />
-                <span className="text-xs font-medium text-gray-500">
+              <label className="relative aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-primary/50 hover:bg-gray-50 transition-all cursor-pointer flex flex-col items-center justify-center gap-1 text-center">
+                <ImageIcon className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] font-medium text-gray-500 leading-tight px-1">
                   Add More
                 </span>
                 <input
@@ -176,8 +178,20 @@ export function ProductFormBasicTab({
               }
             />
           </PropertySection>
+
+          <PropertySection label="Related Products">
+            <RelatedProductsPicker
+              selected={values.relatedProducts ?? []}
+              initialLabels={values.relatedProductsLabels}
+              currentProductId={productId}
+              onChange={(ids) =>
+                setValues((p) => ({ ...p, relatedProducts: ids }))
+              }
+            />
+          </PropertySection>
         </FormSectionCard>
       </div>
     </div>
   );
 }
+

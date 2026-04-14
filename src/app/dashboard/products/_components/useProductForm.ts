@@ -27,6 +27,7 @@ export function useProductForm({
   isEdit,
   totalSteps,
   onSubmit,
+  productId,
 }: UseProductFormProps): UseProductFormReturn {
   const [values, setValues] = useState<ProductFormValues>(() => ({
     ...defaultForm(),
@@ -397,6 +398,7 @@ export function useProductForm({
       stockStatus: values.stockStatus,
       isActive: values.isActive,
       badges: values.badges,
+      relatedProducts: values.relatedProducts,
       restrictions: values.restrictions,
       isTaxable: values.isTaxable,
       taxConfig: values.isTaxable
@@ -445,5 +447,6 @@ export function useProductForm({
     goNext,
     goBack,
     handleSubmit,
+    productId,
   };
 }

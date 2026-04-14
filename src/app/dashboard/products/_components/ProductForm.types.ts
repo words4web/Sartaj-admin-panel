@@ -12,4 +12,5 @@ export type ProductFormProps = {
   onSubmit: (
     payload: CreateProductPayload | UpdateProductPayload,
   ) => Promise<void>;
+  productId?: string;
 };

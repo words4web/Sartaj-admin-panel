@@ -51,6 +51,7 @@ export interface IProduct {
   images: string[];
   isActive: boolean;
   badges: ProductBadge[];
+  relatedProducts?: (string | { _id: string; sku?: string; name?: ITranslationMap })[];
   restrictions: {
     age20Plus: boolean;
   };
@@ -102,6 +103,8 @@ export interface ProductFormValues {
 
   isActive: boolean;
   badges: ProductBadge[];
+  relatedProducts: string[];
+  relatedProductsLabels?: Record<string, string>;
   restrictions: {
     age20Plus: boolean;
   };
@@ -131,6 +134,7 @@ export interface CreateProductPayload {
   images: string[];
   isActive: boolean;
   badges: ProductBadge[];
+  relatedProducts: string[];
   restrictions: {
     age20Plus: boolean;
   };

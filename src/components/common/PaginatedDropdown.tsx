@@ -27,7 +27,7 @@ export interface PaginatedDropdownProps {
     options: DropdownOption[];
     hasMore: boolean;
   }>;
-  queryKey: string[];
+  queryKey: any[];
   placeholder?: string;
   searchPlaceholder?: string;
   disabled?: boolean;
@@ -36,6 +36,8 @@ export interface PaginatedDropdownProps {
   isClearable?: boolean;
   clearLabel?: string;
   onItemsLoaded?: (totalItems: number) => void;
+  className?: string;
+  selectedValues?: string[];
 }
 
 export function PaginatedDropdown({
@@ -51,6 +53,8 @@ export function PaginatedDropdown({
   clearLabel = "All",
   limit = 10,
   onItemsLoaded,
+  className,
+  selectedValues = [],
 }: PaginatedDropdownProps) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -117,7 +121,10 @@ export function PaginatedDropdown({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between font-normal text-left px-3 h-10"
+          className={cn(
+            "justify-between font-normal text-left px-3 h-10 w-full",
+            className,
+          )}
           disabled={disabled}>
           <span className="block truncate">
             {value ? displayLabel || placeholder : placeholder}
@@ -179,28 +186,31 @@ export function PaginatedDropdown({
                     {clearLabel}
                   </div>
                 )}
-                {options?.map((option) => (
-                  <div
-                    key={option?.value}
-                    onClick={() => {
-                      onValueChange(option?.value);
-                      setOpen(false);
-                    }}
-                    className={cn(
-                      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
-                      value === option?.value
-                        ? "bg-accent/50 text-accent-foreground"
-                        : "",
-                    )}>
-                    <Check
+                {options?.map((option) => {
+                  const isSelected =
+                    value === option?.value ||
+                    selectedValues.includes(option?.value);
+                  return (
+                    <div
+                      key={option?.value}
+                      onClick={() => {
+                        onValueChange(option?.value);
+                        setOpen(false);
+                      }}
                       className={cn(
-                        "mr-2 h-4 w-4",
-                        value === option?.value ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                    {option?.label}
-                  </div>
-                ))}
+                        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+                        isSelected ? "" : "",
+                      )}>
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          isSelected ? "opacity-100" : "opacity-0",
+                        )}
+                      />
+                      {option?.label}
+                    </div>
+                  );
+                })}
 
                 {isFetchingNextPage ? (
                   <div className="py-3 flex justify-center items-center text-xs text-muted-foreground">

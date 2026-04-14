@@ -57,6 +57,7 @@ export default function EditProductPage() {
             key={product._id}
             isEdit
             initialValues={initialValues}
+            productId={id}
             isSubmitting={updateMutation.isPending}
             submitLabel="Update product"
             onSubmit={handleSubmit}
