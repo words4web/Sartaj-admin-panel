@@ -96,4 +96,36 @@ export const productApi = {
       API_ROUTES.PRODUCTS.TOGGLE_STATUS(id),
     );
   },
+
+  searchProducts: async (params: {
+    search?: string;
+    page?: number;
+    limit?: number;
+    excludeIds?: string[];
+  }): Promise<{
+    options: { value: string; label: string }[];
+    hasMore: boolean;
+  }> => {
+    const response = await axiosInstance.get<any, any>(
+      API_ROUTES.PRODUCTS.LIST,
+      {
+        params: {
+          search: params.search,
+          page: params.page,
+          limit: params.limit,
+          excludeIds: params.excludeIds,
+        },
+        _returnWrapper: true,
+      } as any,
+    );
+    const products: IProduct[] = response?.data ?? [];
+    const total: number = response?.meta?.total ?? 0;
+    return {
+      options: products?.map((p) => ({
+        value: p?._id,
+        label: `${p?.sku} — ${p?.name?.en ?? ""}`,
+      })),
+      hasMore: (params.page ?? 1) * (params.limit ?? 10) < total,
+    };
+  },
 };

@@ -37,8 +37,19 @@ export type StockStatus = (typeof STOCK_STATUS)[keyof typeof STOCK_STATUS];
 export const PRODUCT_TAG = {
   VEG: "veg",
   HALAL: "halal",
+  VEGAN: "vegan",
+  JAIN_FOOD: "jain food",
 } as const;
 export type ProductTag = (typeof PRODUCT_TAG)[keyof typeof PRODUCT_TAG];
+
+export const PRODUCT_CASE_TYPE = {
+  BOTTLE: "bottle",
+  TIN: "tin",
+  BAG: "bag",
+  BOX: "box",
+  PACKET: "packet",
+} as const;
+export type ProductCaseType = (typeof PRODUCT_CASE_TYPE)[keyof typeof PRODUCT_CASE_TYPE];
 
 export const PRODUCT_BADGE_OPTIONS: {
   key: ProductBadge;
@@ -52,6 +63,19 @@ export const PRODUCT_BADGE_OPTIONS: {
 export const PRODUCT_TAGS: { key: ProductTag; label: string }[] = [
   { key: PRODUCT_TAG.VEG, label: "Veg" },
   { key: PRODUCT_TAG.HALAL, label: "Halal" },
+  { key: PRODUCT_TAG.VEGAN, label: "Vegan" },
+  { key: PRODUCT_TAG.JAIN_FOOD, label: "Jain Food" },
+];
+
+export const PRODUCT_CASE_TYPE_OPTIONS: {
+  key: ProductCaseType;
+  label: string;
+}[] = [
+  { key: PRODUCT_CASE_TYPE.BOTTLE, label: "Bottle" },
+  { key: PRODUCT_CASE_TYPE.TIN, label: "Tin" },
+  { key: PRODUCT_CASE_TYPE.BAG, label: "Bag" },
+  { key: PRODUCT_CASE_TYPE.BOX, label: "Box" },
+  { key: PRODUCT_CASE_TYPE.PACKET, label: "Packet" },
 ];
 
 export const PRODUCT_UNITS: { key: ProductUnit; label: string }[] = [

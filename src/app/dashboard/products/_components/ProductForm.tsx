@@ -17,12 +17,14 @@ export default function ProductForm({
   submitLabel = "Save",
   isEdit = false,
   onSubmit,
+  productId,
 }: ProductFormProps) {
   const form = useProductForm({
     initialValues,
     isEdit,
     totalSteps: PRODUCT_FORM_STEPS.length,
     onSubmit,
+    productId,
   });
 
   return (
@@ -50,6 +52,7 @@ export default function ProductForm({
             handleImage={form.handleImage}
             removeImage={form.removeImage}
             removeNewFile={form.removeNewFile}
+            productId={form.productId}
           />
         )}
         {form.step === 1 && (

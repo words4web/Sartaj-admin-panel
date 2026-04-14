@@ -10,13 +10,17 @@ import { CommonError } from "@/components/ui/common-error";
 import { TranslationDisplay } from "@/components/common/TranslationDisplay";
 import { dateUtils, formatYen } from "@/utils/common.utils";
 import type { IProduct } from "@/types/product/product.types";
-import type { ITranslationMap } from "@/types/api.types";
 import { PRODUCT_BADGES } from "@/constants/product.constants";
 import {
   localizedName,
   subcategoryDisplay,
   superCategoryLabel,
 } from "@/utils/product.util";
+import {
+  PRODUCT_TAGS,
+  PRODUCT_CASE_TYPE_OPTIONS,
+} from "@/constants/product.constants";
+import { TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 function DetailRow({
   label,
@@ -72,12 +76,11 @@ export default function ProductDetailPage() {
 
 function ProductDetailContent({ product }: { product: IProduct }) {
   const title = product?.name?.en ?? product?.sku ?? "Product";
-  const tags = product?.tags?.length ? product?.tags?.join(", ") : "—";
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-100">
-        <div className="space-y-2 min-w-0">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 pb-6 border-b border-gray-100">
+        <div className="space-y-2 min-w-0 flex-1">
           <p className="font-mono text-sm text-gray-500">{product?.sku}</p>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 wrap-break-word hyphens-auto">
             {title}
@@ -114,35 +117,54 @@ function ProductDetailContent({ product }: { product: IProduct }) {
             ) : null}
           </div>
         </div>
-        <div className="shrink-0 w-full sm:w-56 space-y-2">
-          <div className="aspect-square rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={product?.images?.[0]}
-              alt=""
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = "https://placehold.co/400?text=No+image";
-              }}
-            />
-          </div>
-          {(product?.images?.length ?? 0) > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {product?.images?.map((src, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
+
+        {/* Single line corner scroll */}
+        {product?.images?.length ? (
+          <div className="shrink-0 flex flex-nowrap gap-2 max-w-[440px] overflow-x-auto pb-2">
+            {product?.images?.slice(0, 3).map((src, i) => (
+              <div
+                key={i}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden shadow-sm shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  key={i}
                   src={src}
-                  alt={`Product image ${i + 1}`}
-                  className="w-14 h-14 rounded-lg object-cover border border-gray-200 shrink-0"
+                  alt={`Product ${i + 1}`}
+                  className="w-full h-full object-cover transition-transform hover:scale-110 duration-300"
                   onError={(e) => {
-                    e.currentTarget.src = "https://placehold.co/56?text=?";
+                    e.currentTarget.src = "https://placehold.co/400?text=Error";
                   }}
                 />
-              ))}
-            </div>
-          )}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
+          Super category pricing
+        </h3>
+        {(product?.basePrices?.length ?? 0) === 0 ? (
+          <p className="text-sm text-gray-500">No base prices.</p>
+        ) : (
+          <div className="rounded-lg border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+            {product?.basePrices?.map((bp, i) => {
+              const sCLabel = superCategoryLabel(bp);
+              return (
+                <div
+                  key={`${sCLabel}-${bp?.superCategoryId ?? "-"}-${i}`}
+                  className="flex items-center justify-between gap-4 px-4 py-3 bg-white">
+                  <span className="text-sm font-medium text-gray-900 min-w-0 wrap-break-word pr-2">
+                    {sCLabel}
+                  </span>
+                  <span className="font-mono text-sm text-gray-700 tabular-nums shrink-0">
+                    {typeof bp?.price === "number" ? formatYen(bp?.price) : "—"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -189,8 +211,32 @@ function ProductDetailContent({ product }: { product: IProduct }) {
             <DetailRow label="Product type">
               {product?.productType ?? "—"}
             </DetailRow>
+            {product?.caseType && (
+              <DetailRow label="Case type">
+                {PRODUCT_CASE_TYPE_OPTIONS.find(
+                  (o) => o.key === product?.caseType,
+                )?.label ?? product.caseType}
+              </DetailRow>
+            )}
             <DetailRow label="Tags" className="col-span-2">
-              {tags}
+              {product?.tags?.length ? (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {product?.tags?.map((tagKey) => {
+                    const label =
+                      PRODUCT_TAGS.find((t) => t.key === tagKey)?.label ??
+                      tagKey;
+                    return (
+                      <span
+                        key={tagKey}
+                        className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">
+                        {label}
+                      </span>
+                    );
+                  })}
+                </div>
+              ) : (
+                "—"
+              )}
             </DetailRow>
           </div>
 
@@ -208,34 +254,36 @@ function ProductDetailContent({ product }: { product: IProduct }) {
               <span className="capitalize">{product?.stockStatus ?? "—"}</span>
             </DetailRow>
           </div>
-        </div>
-      </div>
 
-      <div className="space-y-4 pt-4 border-t border-gray-100">
-        <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
-          Super category pricing
-        </h3>
-        {(product?.basePrices?.length ?? 0) === 0 ? (
-          <p className="text-sm text-gray-500">No base prices.</p>
-        ) : (
-          <div className="rounded-lg border border-gray-200 divide-y divide-gray-100 overflow-hidden">
-            {product?.basePrices?.map((bp, i) => {
-              const sCLabel = superCategoryLabel(bp);
-              return (
-                <div
-                  key={`${sCLabel}-${bp?.superCategoryId ?? "-"}-${i}`}
-                  className="flex items-center justify-between gap-4 px-4 py-3 bg-white">
-                  <span className="text-sm font-medium text-gray-900 min-w-0 wrap-break-word pr-2">
-                    {sCLabel}
+          <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider pt-4 border-t border-gray-100">
+            Tax configuration
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <DetailRow label="Taxable">
+              {product?.isTaxable ? "Yes" : "No"}
+            </DetailRow>
+            {product?.isTaxable && (
+              <>
+                <DetailRow label="Tax category">
+                  <span className="">
+                    {product?.taxConfig?.category ?? "—"}
                   </span>
-                  <span className="font-mono text-sm text-gray-700 tabular-nums shrink-0">
-                    {typeof bp?.price === "number" ? formatYen(bp?.price) : "—"}
+                </DetailRow>
+                <DetailRow label="Tax type">
+                  <span className="capitalize">
+                    {product?.taxConfig?.taxType ?? "—"}
                   </span>
-                </div>
-              );
-            })}
+                </DetailRow>
+                <DetailRow label="Tax value">
+                  {product?.taxConfig?.taxValue ?? "0"}
+                  {product?.taxConfig?.taxType === TAX_TYPE.PERCENTAGE
+                    ? "%"
+                    : ""}
+                </DetailRow>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">

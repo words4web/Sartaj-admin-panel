@@ -13,6 +13,7 @@ export type UseProductFormProps = {
   onSubmit: (
     payload: CreateProductPayload | UpdateProductPayload,
   ) => Promise<void>;
+  productId?: string;
 };
 
 export type ProductNamedRow = { _id: string; name?: { en?: string } };
@@ -38,4 +39,5 @@ export type UseProductFormReturn = {
   goNext: () => void;
   goBack: () => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
+  productId?: string;
 };

@@ -13,4 +13,5 @@ export type ProductFormBasicTabProps = {
   handleImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
   removeImage: (index: number) => void;
   removeNewFile: (index: number) => void;
+  productId?: string;
 };

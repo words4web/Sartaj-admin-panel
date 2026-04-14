@@ -7,6 +7,7 @@ import {
   SellingUnit,
   StockStatus,
   ProductTag,
+  ProductCaseType,
 } from "@/constants/product.constants";
 import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
@@ -17,6 +18,7 @@ export type {
   SellingUnit,
   StockStatus,
   ProductTag,
+  ProductCaseType,
 };
 
 export interface IProductBasePrice {
@@ -40,6 +42,7 @@ export interface IProduct {
   unit: ProductUnit;
   netWeightKg: number;
   caseQuantity: number;
+  caseType?: ProductCaseType;
   productType: ProductType;
   tags: ProductTag[];
   stockQuantity: number;
@@ -48,6 +51,10 @@ export interface IProduct {
   images: string[];
   isActive: boolean;
   badges: ProductBadge[];
+  relatedProducts?: (
+    | string
+    | { _id: string; sku?: string; name?: ITranslationMap }
+  )[];
   restrictions: {
     age20Plus: boolean;
   };
@@ -56,6 +63,12 @@ export interface IProduct {
     category?: TAX_CATEGORY;
     taxType: TAX_TYPE;
     taxValue: number;
+  };
+  timeDiscount?: {
+    isEnabled: boolean;
+    startTime: string;
+    endTime: string;
+    discountPercent: number;
   };
   createdAt?: string;
   updatedAt?: string;
@@ -88,6 +101,7 @@ export interface ProductFormValues {
   unit: ProductUnit | "";
   netWeightKg: string;
   caseQuantity: string;
+  caseType: ProductCaseType | "";
   productType: ProductType | "";
   tags: ProductTag[];
   stockQuantity: string;
@@ -98,6 +112,8 @@ export interface ProductFormValues {
 
   isActive: boolean;
   badges: ProductBadge[];
+  relatedProducts: string[];
+  relatedProductsLabels?: Record<string, string>;
   restrictions: {
     age20Plus: boolean;
   };
@@ -105,6 +121,12 @@ export interface ProductFormValues {
   taxCategory?: TAX_CATEGORY | "";
   taxType: TAX_TYPE | "";
   taxValue: string;
+  timeDiscount: {
+    isEnabled: boolean;
+    startTime: string | Date;
+    endTime: string | Date;
+    discountPercent: string;
+  };
 }
 
 export interface CreateProductPayload {
@@ -118,6 +140,7 @@ export interface CreateProductPayload {
   unit: ProductUnit;
   netWeightKg: number;
   caseQuantity: number;
+  caseType?: ProductCaseType;
   productType: ProductType;
   tags: ProductTag[];
   stockQuantity: number;
@@ -126,6 +149,7 @@ export interface CreateProductPayload {
   images: string[];
   isActive: boolean;
   badges: ProductBadge[];
+  relatedProducts: string[];
   restrictions: {
     age20Plus: boolean;
   };
@@ -134,6 +158,12 @@ export interface CreateProductPayload {
     category?: TAX_CATEGORY;
     taxType: TAX_TYPE;
     taxValue: number;
+  };
+  timeDiscount: {
+    isEnabled: boolean;
+    startTime: string;
+    endTime: string;
+    discountPercent: number;
   };
 }
 

@@ -27,6 +27,7 @@ export function useProductForm({
   isEdit,
   totalSteps,
   onSubmit,
+  productId,
 }: UseProductFormProps): UseProductFormReturn {
   const [values, setValues] = useState<ProductFormValues>(() => ({
     ...defaultForm(),
@@ -287,7 +288,13 @@ export function useProductForm({
     const taxOk =
       !values.isTaxable ||
       (Number(values.taxValue) >= 1 && Boolean(values.taxType));
-    return pricingOk && catalogOk && taxOk;
+    const discountOk =
+      !values.timeDiscount.isEnabled ||
+      (Number(values.timeDiscount.discountPercent) >= 1 &&
+        Number(values.timeDiscount.discountPercent) <= 100 &&
+        Boolean(values.timeDiscount.startTime) &&
+        Boolean(values.timeDiscount.endTime));
+    return pricingOk && catalogOk && taxOk && discountOk;
   }, [
     values.basePrices,
     values.categoryId,
@@ -297,6 +304,7 @@ export function useProductForm({
     values.isTaxable,
     values.taxValue,
     values.taxType,
+    values.timeDiscount,
   ]);
 
   const step2Valid = useMemo(
@@ -389,6 +397,7 @@ export function useProductForm({
       unit: values.unit,
       netWeightKg: Number(values.netWeightKg),
       caseQuantity: Number(values.caseQuantity),
+      caseType: values.caseType || undefined,
       productType: values.productType,
       tags: values.tags,
       stockQuantity: Number(values.stockQuantity),
@@ -396,6 +405,7 @@ export function useProductForm({
       stockStatus: values.stockStatus,
       isActive: values.isActive,
       badges: values.badges,
+      relatedProducts: values.relatedProducts,
       restrictions: values.restrictions,
       isTaxable: values.isTaxable,
       taxConfig: values.isTaxable
@@ -405,6 +415,12 @@ export function useProductForm({
             taxValue: Number(values.taxValue),
           }
         : undefined,
+      timeDiscount: {
+        isEnabled: values.timeDiscount.isEnabled,
+        startTime: values.timeDiscount.startTime,
+        endTime: values.timeDiscount.endTime,
+        discountPercent: Number(values.timeDiscount.discountPercent),
+      },
     };
 
     if (isEdit) {
@@ -444,5 +460,6 @@ export function useProductForm({
     goNext,
     goBack,
     handleSubmit,
+    productId,
   };
 }
