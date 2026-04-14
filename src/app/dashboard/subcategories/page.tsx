@@ -121,25 +121,27 @@ export default function SubCategoriesPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     router.push(ROUTES.SUBCATEGORIES.EDIT(row?._id))
                   }>
-                  <Pencil size={14} className="mr-2" /> Edit
+                  <Pencil size={14} className="mr-2 group-focus:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "toggle", subCategory: row })
                   }>
-                  <Power size={14} className="mr-2" />
+                  <Power size={14} className="mr-2 group-focus:text-white" />
                   {row.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-red-600 focus:text-red-600"
+                  className="text-red-600 focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "delete", subCategory: row })
                   }>
-                  <Trash2 size={14} className="mr-2" /> Delete
+                  <Trash2 size={14} className="mr-2 group-focus:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

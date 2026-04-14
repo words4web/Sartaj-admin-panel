@@ -84,7 +84,7 @@ export default function CouponForm({
             value={values?.type}
             onValueChange={(val: ECouponType) => setValues((v) => ({ ...v, type: val }))}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent>
@@ -103,7 +103,7 @@ export default function CouponForm({
             value={values?.discountType}
             onValueChange={(val: EDiscountType) => setValues((v) => ({ ...v, discountType: val }))}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent>
@@ -175,17 +175,28 @@ export default function CouponForm({
         />
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
         <Switch
           id="is-active"
           checked={values?.isActive}
           onCheckedChange={(checked) => setValues((v) => ({ ...v, isActive: checked }))}
         />
-        <Label htmlFor="is-active">Active</Label>
+        <div className="grid gap-0.5 leading-none">
+          <Label htmlFor="is-active" className="text-sm font-medium cursor-pointer">
+            Active Status
+          </Label>
+          <p className="text-xs text-gray-500">
+            {values?.isActive ? "This coupon is currently visible to customers" : "This coupon is hidden from customers"}
+          </p>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3 pt-4">
-        <Button type="submit" disabled={isSubmitting}>
+      <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 mt-8">
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="min-w-[140px]"
+        >
           {isSubmitting ? "Saving..." : submitLabel}
         </Button>
       </div>

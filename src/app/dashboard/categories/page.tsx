@@ -136,33 +136,39 @@ export default function CategoriesPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     router.push(ROUTES.CATEGORIES.DETAIL(row?._id))
                   }
                 >
-                  <Eye size={14} className="mr-2" /> View Details
+                  <Eye size={14} className="mr-2 group-focus:text-white" /> View
+                  Details
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() => router.push(ROUTES.CATEGORIES.EDIT(row?._id))}
                 >
-                  <Pencil size={14} className="mr-2" /> Edit
+                  <Pencil size={14} className="mr-2 group-focus:text-white" />{" "}
+                  Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "toggle", category: row })
                   }
                 >
-                  <Power size={14} className="mr-2" />
+                  <Power size={14} className="mr-2 group-focus:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-red-600 focus:text-red-600"
+                  className="text-red-600 focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "delete", category: row })
                   }
                 >
-                  <Trash2 size={14} className="mr-2" /> Delete
+                  <Trash2 size={14} className="mr-2 group-focus:text-white" />{" "}
+                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
