@@ -68,6 +68,7 @@ export const ROUTES = {
     NEW: "/dashboard/products/new",
     DETAIL: (id: string) => `/dashboard/products/${id}`,
     EDIT: (id: string) => `/dashboard/products/${id}/edit`,
+    REVIEWS: (id: string) => `/dashboard/products/${id}/review`,
   },
   ANALYTICS: {
     ROOT: "/dashboard/analytics",

@@ -132,4 +132,11 @@ export const API_ROUTES = {
     GET: `${API_ADMIN_BASE}/config`,
     UPDATE: `${API_ADMIN_BASE}/config`,
   },
+
+  // Reviews
+  REVIEWS: {
+    LIST: (productId: string) => `${API_ADMIN_BASE}/reviews/${productId}`,
+    TOGGLE_STATUS: (reviewId: string) =>
+      `${API_ADMIN_BASE}/reviews/${reviewId}/status`,
+  },
 } as const;

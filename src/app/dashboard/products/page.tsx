@@ -21,7 +21,7 @@ import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { MoreHorizontal, Pencil, Trash2, Power, Loader2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Power, Loader2, Star } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import { FilterBar } from "@/components/common/FilterBar";
@@ -189,29 +189,36 @@ export default function ProductsPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() => router.push(ROUTES.PRODUCTS.EDIT(row._id))}>
-                  <Pencil size={14} className="mr-2" /> Edit
+                  <Pencil size={14} className="mr-2 group-focus:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
+                  onClick={() => router.push(ROUTES.PRODUCTS.REVIEWS(row._id))}>
+                  <Star size={14} className="mr-2 group-focus:text-white" /> Reviews
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() => setConfirmStatusChange(row)}
                   disabled={toggleMutation.isPending}>
                   {toggleMutation.isPending &&
                   toggleMutation.variables === row._id ? (
                     <Loader2 size={14} className="mr-2 animate-spin" />
                   ) : (
-                    <Power size={14} className="mr-2" />
+                    <Power size={14} className="mr-2 group-focus:text-white" />
                   )}
                   {row.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-red-600 focus:text-red-600"
+                  className="text-red-600 focus:text-white focus:[&_svg]:text-white group"
                   onClick={() => setConfirmDelete(row)}
                   disabled={deleteMutation.isPending}>
                   {deleteMutation.isPending &&
                   deleteMutation.variables === row._id ? (
                     <Loader2 size={14} className="mr-2 animate-spin" />
                   ) : (
-                    <Trash2 size={14} className="mr-2" />
+                    <Trash2 size={14} className="mr-2 group-focus:text-white" />
                   )}
                   Delete
                 </DropdownMenuItem>
