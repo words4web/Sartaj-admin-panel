@@ -18,6 +18,7 @@ import {
   SELLING_UNIT,
   STOCK_STATUS,
   PRODUCT_TYPE,
+  PRODUCT_CASE_TYPE_OPTIONS,
 } from "@/constants/product.constants";
 import { ProductFormPackagingTabProps } from "./ProductFormPackagingTab.types";
 import type {
@@ -40,6 +41,7 @@ export function ProductFormPackagingTab({
       ...p,
       sellingUnit,
       caseQuantity: sellingUnit === SELLING_UNIT.UNIT ? "1" : p?.caseQuantity,
+      caseType: sellingUnit === SELLING_UNIT.UNIT ? "" : p?.caseType,
     }));
   };
 
@@ -163,33 +165,59 @@ export function ProductFormPackagingTab({
               {isUnitSelling ? "Fixed at 1 for units." : "Units per case."}
             </ProductFormHint>
           </div>
-        </div>
 
-        {/* Product type */}
-        <div className="space-y-1.5 max-w-[240px]">
-          <Label className="text-sm font-medium text-gray-700">
-            Product type
-          </Label>
-          <Select
-            value={values.productType || PRODUCT_TYPE.DRY}
-            onValueChange={(productType) =>
-              setValues((p) => ({
-                ...p,
-                productType: productType as ProductType,
-              }))
-            }>
-            <SelectTrigger className="w-full bg-white shadow-none border-gray-200 h-10">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PRODUCT_TYPES?.map((t) => (
-                <SelectItem key={t.key} value={t.key}>
-                  {t.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <ProductFormHint>Affects delivery.</ProductFormHint>
+          {/* Case type */}
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-700">
+              Case type{" "}
+              {isUnitSelling ? "" : <span className="text-destructive">*</span>}
+            </Label>
+            <Select
+              disabled={isUnitSelling}
+              value={isUnitSelling ? "" : values.caseType || ""}
+              onValueChange={(v) =>
+                setValues((p) => ({ ...p, caseType: v as any }))
+              }>
+              <SelectTrigger className="w-full bg-white shadow-none border-gray-200 h-10 disabled:bg-gray-100/50">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_CASE_TYPE_OPTIONS?.map((o) => (
+                  <SelectItem key={o.key} value={o.key}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <ProductFormHint>Packaging format (e.g. Bottle).</ProductFormHint>
+          </div>
+
+          {/* Product type */}
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-700">
+              Product type
+            </Label>
+            <Select
+              value={values.productType || PRODUCT_TYPE.DRY}
+              onValueChange={(productType) =>
+                setValues((p) => ({
+                  ...p,
+                  productType: productType as ProductType,
+                }))
+              }>
+              <SelectTrigger className="w-full bg-white shadow-none border-gray-200 h-10">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_TYPES?.map((t) => (
+                  <SelectItem key={t.key} value={t.key}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <ProductFormHint>Affects delivery.</ProductFormHint>
+          </div>
         </div>
       </div>
 

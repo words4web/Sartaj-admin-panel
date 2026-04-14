@@ -389,6 +389,7 @@ export function useProductForm({
       unit: values.unit,
       netWeightKg: Number(values.netWeightKg),
       caseQuantity: Number(values.caseQuantity),
+      caseType: values.caseType || undefined,
       productType: values.productType,
       tags: values.tags,
       stockQuantity: Number(values.stockQuantity),

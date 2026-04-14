@@ -7,6 +7,7 @@ import {
   SellingUnit,
   StockStatus,
   ProductTag,
+  ProductCaseType,
 } from "@/constants/product.constants";
 import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
@@ -17,6 +18,7 @@ export type {
   SellingUnit,
   StockStatus,
   ProductTag,
+  ProductCaseType,
 };
 
 export interface IProductBasePrice {
@@ -40,6 +42,7 @@ export interface IProduct {
   unit: ProductUnit;
   netWeightKg: number;
   caseQuantity: number;
+  caseType?: ProductCaseType;
   productType: ProductType;
   tags: ProductTag[];
   stockQuantity: number;
@@ -88,6 +91,7 @@ export interface ProductFormValues {
   unit: ProductUnit | "";
   netWeightKg: string;
   caseQuantity: string;
+  caseType: ProductCaseType | "";
   productType: ProductType | "";
   tags: ProductTag[];
   stockQuantity: string;
@@ -118,6 +122,7 @@ export interface CreateProductPayload {
   unit: ProductUnit;
   netWeightKg: number;
   caseQuantity: number;
+  caseType?: ProductCaseType;
   productType: ProductType;
   tags: ProductTag[];
   stockQuantity: number;
