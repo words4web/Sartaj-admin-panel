@@ -1,6 +1,8 @@
-export enum ECouponType {
-  DEFAULT = "Default",
-  FIRST_ORDER = "First Order",
+import { ITranslationMap } from "@/types/api.types";
+
+export enum ECouponVisibility {
+  PUBLIC = "Public",
+  PRIVATE = "Private",
 }
 
 export enum EDiscountType {
@@ -10,12 +12,12 @@ export enum EDiscountType {
 
 export interface ICoupon {
   _id: string;
-  type: ECouponType;
-  title: string;
+  visibility: ECouponVisibility;
+  superCategory: string | { _id: string; [key: string]: any };
+  title: ITranslationMap;
   code: string;
-  limitPerUser: number;
   discountType: EDiscountType;
-  discountAmount: number;
+  discountValue: number;
   minPurchase: number;
   maxDiscount: number;
   startDate: string;
@@ -27,12 +29,12 @@ export interface ICoupon {
 }
 
 export interface CreateCouponPayload {
-  type?: ECouponType;
-  title: string;
+  visibility?: ECouponVisibility;
+  superCategory: string;
+  title: ITranslationMap;
   code: string;
-  limitPerUser?: number;
   discountType: EDiscountType;
-  discountAmount: number;
+  discountValue: number;
   minPurchase?: number;
   maxDiscount?: number;
   startDate: string;
@@ -56,12 +58,12 @@ export interface CouponFilters {
 }
 
 export type CouponFormValues = {
-  type: ECouponType;
-  title: string;
+  visibility: ECouponVisibility;
+  superCategory: string;
+  title: ITranslationMap;
   code: string;
-  limitPerUser: number;
   discountType: EDiscountType;
-  discountAmount: number;
+  discountValue: number;
   minPurchase: number;
   maxDiscount: number;
   startDate: string;

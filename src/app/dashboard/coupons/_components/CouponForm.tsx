@@ -1,23 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FormInput } from "@/components/common/FormInput";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   CouponFormProps,
   CouponFormValues,
-  ECouponType,
   EDiscountType,
 } from "@/types/coupon/coupon.types";
+import { isTranslationComplete } from "@/utils/translation.utils";
+import dayjs from "dayjs";
+import { useSuperCategories } from "@/services/superCategory/superCategory.hooks";
+
+// Sub-sections
+import { BasicInfoSection } from "./form-sections/BasicInfoSection";
+import { DiscountRulesSection } from "./form-sections/DiscountRulesSection";
+import { ValiditySection } from "./form-sections/ValiditySection";
 
 export default function CouponForm({
   initialValues,
@@ -26,7 +23,16 @@ export default function CouponForm({
   onSubmit,
 }: CouponFormProps) {
   const [values, setValues] = useState<CouponFormValues>(initialValues);
-  const [errors, setErrors] = useState<Partial<Record<keyof CouponFormValues, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CouponFormValues | string, string>>
+  >({});
+
+  const {
+    data: superCategories = [],
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError,
+    refetch: refetchCategories,
+  } = useSuperCategories();
 
   useEffect(() => {
     setValues(initialValues);
@@ -35,20 +41,47 @@ export default function CouponForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const nextErrors: Partial<Record<keyof CouponFormValues, string>> = {};
+    const nextErrors: Partial<Record<keyof CouponFormValues | string, string>> =
+      {};
 
-    if (!values.title?.trim()) nextErrors.title = "Title is required";
-    if (!values.code?.trim()) nextErrors.code = "Code is required";
-    if (values.discountAmount <= 0) nextErrors.discountAmount = "Discount must be greater than 0";
-    if (!values.startDate) nextErrors.startDate = "Start date is required";
-    if (!values.expiryDate) nextErrors.expiryDate = "Expiry date is required";
-    
-    if (values.startDate && values.expiryDate && new Date(values.startDate) >= new Date(values.expiryDate)) {
+    if (!isTranslationComplete(values?.title))
+      nextErrors.title = "All title translations are required";
+    if (!values?.code?.trim()) nextErrors.code = "Code is required";
+    if (!values?.superCategory)
+      nextErrors.superCategory = "Super Category is required";
+
+    // New Stricter Discount Validation
+    const val = Number(values?.discountValue);
+    if (!val || val <= 0) {
+      nextErrors.discountValue = "Discount must be greater than 0";
+    } else if (values?.discountType === EDiscountType.PERCENT && val > 100) {
+      nextErrors.discountValue = "Percentage discount cannot exceed 100%";
+    }
+
+    if (!values?.startDate) nextErrors.startDate = "Start date is required";
+    if (!values?.expiryDate) nextErrors.expiryDate = "Expiry date is required";
+
+    if (
+      values?.startDate &&
+      values?.expiryDate &&
+      dayjs(values.startDate).isAfter(dayjs(values.expiryDate))
+    ) {
       nextErrors.expiryDate = "Expiry date must be after start date";
     }
 
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
+      // Wait for re-render then scroll to first error
+      setTimeout(() => {
+        const firstError = document.querySelector(
+          ".text-red-500, .text-red-600",
+        );
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 100);
       return;
     }
 
@@ -56,147 +89,73 @@ export default function CouponForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormInput
-          label="Coupon Title"
-          required
-          value={values?.title}
-          onChange={(e) => setValues((v) => ({ ...v, title: e?.target?.value }))}
-          placeholder="e.g. Welcome Discount"
-          error={errors?.title}
-        />
+    <form onSubmit={handleSubmit} className="space-y-10">
+      <div className="space-y-10">
+        {/** Section 1: Basic Configuration **/}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">
+              1
+            </span>
+            <h3 className="text-lg font-semibold text-gray-900">
+              General Information
+            </h3>
+          </div>
+          <BasicInfoSection
+            values={values}
+            errors={errors}
+            setValues={setValues}
+            superCategories={superCategories}
+            isCategoriesLoading={isCategoriesLoading}
+            isCategoriesError={isCategoriesError}
+            refetchCategories={refetchCategories}
+          />
+        </section>
 
-        <FormInput
-          label="Coupon Code"
-          required
-          value={values?.code}
-          onChange={(e) => setValues((v) => ({ ...v, code: e?.target?.value?.toUpperCase?.() }))}
-          placeholder="e.g. WELCOME20"
-          error={errors?.code}
-        />
+        <hr className="border-gray-100" />
+
+        {/** Section 2: Discount Logic **/}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 text-xs font-bold">
+              2
+            </span>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Discount Rules
+            </h3>
+          </div>
+          <DiscountRulesSection
+            values={values}
+            errors={errors}
+            setValues={setValues}
+          />
+        </section>
+
+        <hr className="border-gray-100" />
+
+        {/** Section 3: Scheduling **/}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-100 text-purple-600 text-xs font-bold">
+              3
+            </span>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Validity & Status
+            </h3>
+          </div>
+          <ValiditySection
+            values={values}
+            errors={errors}
+            setValues={setValues}
+          />
+        </section>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="space-y-2">
-          <Label>Coupon Type</Label>
-          <Select
-            value={values?.type}
-            onValueChange={(val: ECouponType) => setValues((v) => ({ ...v, type: val }))}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object?.values?.(ECouponType)?.map?.((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label>Discount Type</Label>
-          <Select
-            value={values?.discountType}
-            onValueChange={(val: EDiscountType) => setValues((v) => ({ ...v, discountType: val }))}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object?.values?.(EDiscountType)?.map?.((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <FormInput
-          label={`Discount ${values?.discountType === EDiscountType.PERCENT ? "(%)" : "(¥)"}`}
-          type="number"
-          required
-          prefix={
-            values?.discountType === EDiscountType.AMOUNT ? "¥" : undefined
-          }
-          value={values?.discountAmount}
-          onChange={(e) => setValues((v) => ({ ...v, discountAmount: Number(e?.target?.value) }))}
-          error={errors?.discountAmount}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <FormInput
-          label="Usage Limit Per User"
-          type="number"
-          value={values?.limitPerUser}
-          onChange={(e) => setValues((v) => ({ ...v, limitPerUser: Number(e?.target?.value) }))}
-        />
-
-        <FormInput
-          label="Min Purchase Amount"
-          type="number"
-          prefix="¥"
-          value={values?.minPurchase}
-          onChange={(e) => setValues((v) => ({ ...v, minPurchase: Number(e?.target?.value) }))}
-        />
-
-        <FormInput
-          label="Max Discount Amount"
-          type="number"
-          prefix="¥"
-          value={values?.maxDiscount}
-          onChange={(e) => setValues((v) => ({ ...v, maxDiscount: Number(e?.target?.value) }))}
-          disabled={values?.discountType === EDiscountType.AMOUNT}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormInput
-          label="Start Date"
-          type="date"
-          required
-          value={values?.startDate ? new Date(values?.startDate)?.toISOString()?.split('T')?.[0] : ""}
-          onChange={(e) => setValues((v) => ({ ...v, startDate: e?.target?.value }))}
-          error={errors?.startDate}
-        />
-
-        <FormInput
-          label="Expiry Date"
-          type="date"
-          required
-          value={values?.expiryDate ? new Date(values?.expiryDate)?.toISOString()?.split('T')?.[0] : ""}
-          onChange={(e) => setValues((v) => ({ ...v, expiryDate: e?.target?.value }))}
-          error={errors?.expiryDate}
-        />
-      </div>
-
-      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
-        <Switch
-          id="is-active"
-          checked={values?.isActive}
-          onCheckedChange={(checked) => setValues((v) => ({ ...v, isActive: checked }))}
-        />
-        <div className="grid gap-0.5 leading-none">
-          <Label htmlFor="is-active" className="text-sm font-medium cursor-pointer">
-            Active Status
-          </Label>
-          <p className="text-xs text-gray-500">
-            {values?.isActive ? "This coupon is currently visible to customers" : "This coupon is hidden from customers"}
-          </p>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 mt-8">
-        <Button 
-          type="submit" 
+      <div className="flex items-center justify-end gap-3 pt-8 border-t border-gray-100">
+        <Button
+          type="submit"
           disabled={isSubmitting}
-          className="min-w-[140px]"
-        >
+          className="min-w-[160px] h-[48px] rounded-lg shadow-lg shadow-blue-500/10 transition-all hover:scale-[1.02] active:scale-[0.98]">
           {isSubmitting ? "Saving..." : submitLabel}
         </Button>
       </div>

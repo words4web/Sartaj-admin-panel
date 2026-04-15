@@ -1,28 +1,53 @@
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/common/PageHeader";
 import { useCoupon } from "@/services/coupon/coupon.hooks";
+import { useSuperCategories } from "@/services/superCategory/superCategory.hooks";
 import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { dateUtils, formatYen } from "@/utils/common.utils";
+import { formatYen } from "@/utils/common.utils";
 import { EDiscountType } from "@/types/coupon/coupon.types";
-import { Ticket, Calendar, Calculator, Settings } from "lucide-react";
+import { Ticket, Calendar, Calculator, Settings, Layers } from "lucide-react";
+import dayjs from "dayjs";
 
 export default function CouponDetailsPage() {
   const params = useParams();
   const id = params?.id as string;
 
   const { data: coupon, isLoading, isError, refetch } = useCoupon(id);
+  const { data: superCategories = [] } = useSuperCategories();
+
+  const superCategoryName = useMemo(() => {
+    const targetId =
+      typeof coupon?.superCategory === "object"
+        ? (coupon.superCategory as any)?._id
+        : coupon?.superCategory;
+
+    const matched = superCategories.find((sc: any) => sc?._id === targetId);
+    if (matched?.name) return matched.name;
+
+    if (
+      typeof coupon?.superCategory === "object" &&
+      (coupon.superCategory as any)?.name
+    ) {
+      return (coupon.superCategory as any).name;
+    }
+
+    return typeof coupon?.superCategory === "string"
+      ? coupon.superCategory
+      : "General";
+  }, [coupon, superCategories]);
 
   return (
     <div className="space-y-6 p-6">
       <PageHeader
         title="Coupon Details"
-        description="View coupon configuration and usage limits"
+        description="View coupon configuration and visibility settings"
         backRoute={ROUTES?.COUPONS?.LIST}
         editRoute={coupon?._id ? ROUTES?.COUPONS?.EDIT(coupon?._id) : undefined}
       />
@@ -56,7 +81,9 @@ export default function CouponDetailsPage() {
                   {coupon?.isActive ? "Active" : "Inactive"}
                 </Badge>
               </div>
-              <p className="text-gray-500 text-lg">{coupon?.title}</p>
+              <p className="text-gray-500 text-lg">
+                {coupon?.title?.en || "—"}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100">
@@ -70,8 +97,8 @@ export default function CouponDetailsPage() {
                     <p className="text-sm text-gray-500">Discount Value</p>
                     <p className="text-xl font-bold text-green-600">
                       {coupon?.discountType === EDiscountType.PERCENT
-                        ? `${coupon?.discountAmount}% OFF`
-                        : `${formatYen(Number(coupon?.discountAmount) || 0)} OFF`}
+                        ? `${coupon?.discountValue}% OFF`
+                        : `${formatYen(Number(coupon?.discountValue) || 0)} OFF`}
                     </p>
                   </div>
                   <div>
@@ -103,7 +130,7 @@ export default function CouponDetailsPage() {
                     <p className="text-sm text-gray-500">Start Date</p>
                     <p className="font-semibold text-gray-900">
                       {coupon?.startDate
-                        ? dateUtils?.format(coupon.startDate)
+                        ? dayjs(coupon.startDate).format("MMM DD, YYYY")
                         : "—"}
                     </p>
                   </div>
@@ -111,7 +138,7 @@ export default function CouponDetailsPage() {
                     <p className="text-sm text-gray-500">Expiry Date</p>
                     <p className="font-semibold text-red-600">
                       {coupon?.expiryDate
-                        ? dateUtils?.format(coupon.expiryDate)
+                        ? dayjs(coupon.expiryDate).format("MMM DD, YYYY")
                         : "—"}
                     </p>
                   </div>
@@ -129,30 +156,25 @@ export default function CouponDetailsPage() {
               </div>
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase">Coupon Type</p>
-                  <p className="font-medium text-gray-900">{coupon?.type}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">
-                    Usage Limit Per User
-                  </p>
+                  <p className="text-xs text-gray-500 uppercase">Visibility</p>
                   <p className="font-medium text-gray-900">
-                    {coupon?.limitPerUser} Times
+                    {coupon?.visibility}
                   </p>
                 </div>
-                <div className="pt-4 border-t border-gray-100">
-                  <p className="text-[10px] text-gray-400">
-                    Created:{" "}
-                    {coupon?.createdAt
-                      ? dateUtils?.format(coupon.createdAt)
-                      : "—"}
-                  </p>
-                  <p className="text-[10px] text-gray-400">
-                    Modified:{" "}
-                    {coupon?.updatedAt
-                      ? dateUtils?.format(coupon.updatedAt)
-                      : "—"}
-                  </p>
+
+                <div className="pt-4 border-t border-gray-50 pt-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    <Layers size={14} />
+                    Targeting
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">
+                      Super Category
+                    </p>
+                    <p className="font-medium text-blue-600">
+                      {superCategoryName}
+                    </p>
+                  </div>
                 </div>
               </div>
             </Card>

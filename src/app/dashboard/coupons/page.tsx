@@ -23,11 +23,12 @@ import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { dateUtils, formatYen } from "@/utils/common.utils";
+import { formatYen } from "@/utils/common.utils";
 import { MoreHorizontal, Pencil, Power, Trash2, Ticket } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import { FilterBar } from "@/components/common/FilterBar";
+import dayjs from "dayjs";
 
 type ConfirmAction = {
   type: "delete" | "toggle";
@@ -95,20 +96,13 @@ export default function CouponsPage() {
         ),
       },
       {
-        key: "title",
-        label: "Title",
-        render: (_: any, row: ICoupon) => (
-          <span className="font-medium text-gray-700">{row?.title || "—"}</span>
-        ),
-      },
-      {
         key: "discount",
         label: "Discount",
         render: (_: any, row: ICoupon) => (
           <span className="font-semibold text-green-600">
             {row?.discountType === EDiscountType.PERCENT
-              ? `${row?.discountAmount}% OFF`
-              : `${formatYen(Number(row?.discountAmount) || 0)} OFF`}
+              ? `${row?.discountValue}% OFF`
+              : `${formatYen(Number(row?.discountValue) || 0)} OFF`}
           </span>
         ),
       },
@@ -126,7 +120,9 @@ export default function CouponsPage() {
         label: "Expires",
         render: (_: any, row: ICoupon) => (
           <span className="text-gray-500 text-sm">
-            {row?.expiryDate ? dateUtils?.format(row?.expiryDate) : "—"}
+            {row?.expiryDate
+              ? dayjs(row?.expiryDate).format("MMM DD, YYYY")
+              : "—"}
           </span>
         ),
       },

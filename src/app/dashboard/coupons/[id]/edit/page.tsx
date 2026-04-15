@@ -9,6 +9,7 @@ import { ROUTES } from "@/constants/routes";
 import { toast } from "sonner";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import dayjs from "dayjs";
 
 export default function EditCouponPage() {
   const params = useParams();
@@ -53,19 +54,28 @@ export default function EditCouponPage() {
         ) : (
           <CouponForm
             initialValues={{
-              title: coupon?.title || "",
+              title: {
+                en: coupon?.title?.en || "",
+                hi: coupon?.title?.hi || "",
+                ne: coupon?.title?.ne || "",
+                ja: coupon?.title?.ja || "",
+                bn: coupon?.title?.bn || "",
+              },
               code: coupon?.code || "",
-              type: coupon?.type,
-              limitPerUser: coupon?.limitPerUser || 1,
+              visibility: coupon?.visibility,
+              superCategory:
+                typeof coupon?.superCategory === "object"
+                  ? coupon.superCategory?._id
+                  : (coupon?.superCategory as string) || "",
               discountType: coupon?.discountType,
-              discountAmount: coupon?.discountAmount || 0,
+              discountValue: coupon?.discountValue || 0,
               minPurchase: coupon?.minPurchase || 0,
               maxDiscount: coupon?.maxDiscount || 0,
               startDate: coupon?.startDate
-                ? new Date(coupon?.startDate)?.toISOString()?.split("T")?.[0]
+                ? dayjs(coupon?.startDate).format("YYYY-MM-DD")
                 : "",
               expiryDate: coupon?.expiryDate
-                ? new Date(coupon?.expiryDate)?.toISOString()?.split("T")?.[0]
+                ? dayjs(coupon?.expiryDate).format("YYYY-MM-DD")
                 : "",
               isActive: coupon?.isActive ?? true,
             }}

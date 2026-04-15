@@ -4,9 +4,14 @@ import { useRouter } from "next/navigation";
 import { useCreateCoupon } from "@/services/coupon/coupon.hooks";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ROUTES } from "@/constants/routes";
-import { CouponFormValues, ECouponType, EDiscountType } from "@/types/coupon/coupon.types";
+import {
+  CouponFormValues,
+  ECouponVisibility,
+  EDiscountType,
+} from "@/types/coupon/coupon.types";
 import CouponForm from "../_components/CouponForm";
 import { Card } from "@/components/ui/card";
+import dayjs from "dayjs";
 
 export default function NewCouponPage() {
   const router = useRouter();
@@ -35,16 +40,16 @@ export default function NewCouponPage() {
       <Card className="p-6">
         <CouponForm
           initialValues={{
-            title: "",
+            title: { en: "", hi: "", ne: "", ja: "", bn: "" },
             code: "",
-            type: ECouponType.DEFAULT,
-            limitPerUser: 1,
+            visibility: ECouponVisibility.PUBLIC,
+            superCategory: "",
             discountType: EDiscountType.PERCENT,
-            discountAmount: 0,
+            discountValue: 0,
             minPurchase: 0,
             maxDiscount: 0,
-            startDate: new Date().toISOString().split('T')[0],
-            expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            startDate: dayjs().format("YYYY-MM-DD"),
+            expiryDate: dayjs().add(30, "day").format("YYYY-MM-DD"),
             isActive: true,
           }}
           isSubmitting={createMutation.isPending}
