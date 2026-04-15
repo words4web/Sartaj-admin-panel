@@ -24,6 +24,7 @@ export interface ICoupon {
   expiryDate: string;
   isActive: boolean;
   isDeleted: boolean;
+  usageCount?: number;
   createdAt: string;
   updatedAt: string;
 }

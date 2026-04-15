@@ -161,6 +161,13 @@ export default function CouponDetailsPage() {
                     {coupon?.visibility}
                   </p>
                 </div>
+ 
+                <div>
+                  <p className="text-xs text-gray-500 uppercase">Times Used</p>
+                  <p className="font-medium text-green-600">
+                    {coupon?.usageCount || 0}
+                  </p>
+                </div>
 
                 <div className="pt-4 border-t border-gray-50 pt-4">
                   <div className="flex items-center gap-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">
