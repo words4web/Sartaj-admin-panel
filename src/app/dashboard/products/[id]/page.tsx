@@ -20,7 +20,8 @@ import {
   PRODUCT_TAGS,
   PRODUCT_CASE_TYPE_OPTIONS,
 } from "@/constants/product.constants";
-import { TAX_TYPE } from "@/services/appConfig/appConfig.service";
+import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
+import { useAppConfig } from "@/services/appConfig/appConfig.hooks";
 
 function DetailRow({
   label,
@@ -76,6 +77,7 @@ export default function ProductDetailPage() {
 
 function ProductDetailContent({ product }: { product: IProduct }) {
   const title = product?.name?.en ?? product?.sku ?? "Product";
+  const { data: config } = useAppConfig();
 
   return (
     <div className="space-y-8">
@@ -275,10 +277,35 @@ function ProductDetailContent({ product }: { product: IProduct }) {
                   </span>
                 </DetailRow>
                 <DetailRow label="Tax value">
-                  {product?.taxConfig?.taxValue ?? "0"}
-                  {product?.taxConfig?.taxType === TAX_TYPE.PERCENTAGE
-                    ? "%"
-                    : ""}
+                  {(() => {
+                    const isDynamic =
+                      (product?.taxConfig?.category === TAX_CATEGORY.REDUCED ||
+                        product?.taxConfig?.category ===
+                          TAX_CATEGORY.STANDARD) &&
+                      product?.taxConfig?.taxType === TAX_TYPE.PERCENTAGE;
+
+                    const displayValue = isDynamic
+                      ? (config?.taxes?.find(
+                          (t) => t?.category === product?.taxConfig?.category,
+                        )?.value ??
+                        product?.taxConfig?.taxValue ??
+                        "0")
+                      : (product?.taxConfig?.taxValue ?? "0");
+
+                    return (
+                      <>
+                        {displayValue}
+                        {product?.taxConfig?.taxType === TAX_TYPE.PERCENTAGE
+                          ? "%"
+                          : " ¥"}
+                        {isDynamic && (
+                          <span className="text-gray-400 text-xs ml-2">
+                            (As per global settings)
+                          </span>
+                        )}
+                      </>
+                    );
+                  })()}
                 </DetailRow>
               </>
             )}

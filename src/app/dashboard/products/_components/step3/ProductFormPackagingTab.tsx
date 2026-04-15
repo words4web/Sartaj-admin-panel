@@ -40,8 +40,8 @@ export function ProductFormPackagingTab({
     setValues((p) => ({
       ...p,
       sellingUnit,
-      caseQuantity: sellingUnit === SELLING_UNIT.UNIT ? "1" : p?.caseQuantity,
-      caseType: sellingUnit === SELLING_UNIT.UNIT ? "" : p?.caseType,
+      caseQuantity: sellingUnit === SELLING_UNIT.UNIT ? "1" : "",
+      caseType: "",
     }));
   };
 
@@ -82,7 +82,7 @@ export function ProductFormPackagingTab({
           {/* Unit */}
           <div className="space-y-1.5">
             <Label className="text-sm font-medium text-gray-700">
-              Unit <span className="text-destructive">*</span>
+              Measurement Unit <span className="text-destructive">*</span>
             </Label>
             <div className="w-full">
               <Select

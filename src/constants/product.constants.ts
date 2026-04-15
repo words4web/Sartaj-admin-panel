@@ -108,7 +108,7 @@ export const PRODUCT_FORM_STEPS = [
 
 export const PRODUCT_FORM_VALIDATION_HINTS: Record<number, string> = {
   0: "Fill in all language names, descriptions, item code and upload an image.",
-  1: "Select at least one segment with a price > 0, a category and a manufacturer.",
+  1: "Select at least one segment with a price > 0, set category/manufacturer, and verify tax configuration.",
   2: "Fill in all packaging and inventory fields.",
 };
 
