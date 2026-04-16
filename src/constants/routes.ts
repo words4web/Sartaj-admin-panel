@@ -62,6 +62,7 @@ export const ROUTES = {
   // Future module routes
   ORDERS: {
     LIST: "/dashboard/orders",
+    DETAIL: (id: string) => `/dashboard/orders/${id}`,
   },
   PRODUCTS: {
     LIST: "/dashboard/products",

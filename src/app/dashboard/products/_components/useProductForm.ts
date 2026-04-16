@@ -16,7 +16,10 @@ import {
   UseProductFormReturn,
 } from "./useProductForm.types";
 
-import { PRODUCT_FORM_VALIDATION_HINTS } from "@/constants/product.constants";
+import {
+  PRODUCT_FORM_VALIDATION_HINTS,
+  SELLING_UNIT,
+} from "@/constants/product.constants";
 import {
   normalizeTranslation,
   isTranslationComplete,
@@ -285,9 +288,21 @@ export function useProductForm({
       Boolean(values?.categoryId) &&
       Boolean(effectiveSub) &&
       Boolean(values?.manufacturerId);
-    const taxOk =
-      !values.isTaxable ||
-      (Number(values.taxValue) >= 1 && Boolean(values.taxType));
+    const isDynamicTax =
+      (values.taxCategory === TAX_CATEGORY.REDUCED ||
+        values.taxCategory === TAX_CATEGORY.STANDARD) &&
+      values.taxType === TAX_TYPE.PERCENTAGE;
+
+    const isTaxOk = () => {
+      if (!values.isTaxable) return true;
+      if (isDynamicTax) return true;
+      const tv = Number(values.taxValue);
+      if (values.taxType === TAX_TYPE.PERCENTAGE) return tv >= 0 && tv <= 100;
+      if (values.taxType === TAX_TYPE.FIXED) return tv >= 0;
+      return false;
+    };
+
+    const taxOk = isTaxOk();
     const discountOk =
       !values.timeDiscount.isEnabled ||
       (Number(values.timeDiscount.discountPercent) >= 1 &&
@@ -386,6 +401,8 @@ export function useProductForm({
       ?.filter((b) => Number(b?.price) > 0)
       ?.map((b) => ({ ...b, price: Number(b?.price) }));
 
+    const isUnit = values.sellingUnit === SELLING_UNIT.UNIT;
+
     const base: Record<string, unknown> = {
       sku: values.sku.trim(),
       name: values.name,
@@ -396,8 +413,8 @@ export function useProductForm({
       basePrices,
       unit: values.unit,
       netWeightKg: Number(values.netWeightKg),
-      caseQuantity: Number(values.caseQuantity),
-      caseType: values.caseType || undefined,
+      caseQuantity: isUnit ? 1 : Number(values.caseQuantity),
+      caseType: isUnit ? null : values.caseType || undefined,
       productType: values.productType,
       tags: values.tags,
       stockQuantity: Number(values.stockQuantity),

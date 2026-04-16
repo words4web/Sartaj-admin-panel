@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { couponApi } from "./coupon.api";
 import { CouponFilters, CreateCouponPayload, UpdateCouponPayload } from "@/types/coupon/coupon.types";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/common.utils";
 
 export const COUPON_KEYS = {
   all: ["coupons"] as const,
@@ -35,7 +36,7 @@ export const useCreateCoupon = () => {
       toast.success("Coupon created successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to create coupon");
+      toast.error(getErrorMessage(error) || "Failed to create coupon");
     },
   });
 };
@@ -51,7 +52,7 @@ export const useUpdateCoupon = () => {
       toast.success("Coupon updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update coupon");
+      toast.error(getErrorMessage(error) || "Failed to update coupon");
     },
   });
 };
@@ -67,7 +68,7 @@ export const useToggleCouponStatus = () => {
       toast.success("Status updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update status");
+      toast.error(getErrorMessage(error) || "Failed to update status");
     },
   });
 };
@@ -81,7 +82,7 @@ export const useDeleteCoupon = () => {
       toast.success("Coupon deleted successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to delete coupon");
+      toast.error(getErrorMessage(error) || "Failed to delete coupon");
     },
   });
 };

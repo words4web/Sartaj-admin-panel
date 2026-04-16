@@ -31,6 +31,11 @@ export function ProductFormTaxSection({
 }: ProductFormTaxSectionProps) {
   const { data: config } = useAppConfig();
 
+  const isDynamicTax =
+    (values.taxCategory === TAX_CATEGORY.REDUCED ||
+      values.taxCategory === TAX_CATEGORY.STANDARD) &&
+    values.taxType === TAX_TYPE.PERCENTAGE;
+
   // Auto-sync tax value when category is set but value is placeholder
   useEffect(() => {
     if (values.isTaxable && config?.taxes && values.taxCategory) {
@@ -44,15 +49,15 @@ export function ProductFormTaxSection({
   }, [values.isTaxable, values.taxCategory, config?.taxes]);
 
   const handleTaxToggle = (checked: boolean) => {
-    const category = values.taxCategory || TAX_CATEGORY.REDUCED;
-    const defaultVal =
-      config?.taxes?.find((t) => t.category === category)?.value ?? "1";
+    const defaultCategory = TAX_CATEGORY.REDUCED;
+    const defaultType = TAX_TYPE.PERCENTAGE;
 
     setValues((p) => ({
       ...p,
       isTaxable: checked,
-      taxCategory: category,
-      taxValue: checked ? String(defaultVal) : "0",
+      taxCategory: defaultCategory,
+      taxType: defaultType,
+      taxValue: "0",
     }));
   };
 
@@ -96,8 +101,9 @@ export function ProductFormTaxSection({
                 </Label>
                 <Select
                   value={values.taxCategory}
-                  onValueChange={handleTaxCategoryChange}>
-                  <SelectTrigger className="w-full h-11 bg-white border-gray-200">
+                  onValueChange={handleTaxCategoryChange}
+                  disabled={values.taxType === TAX_TYPE.FIXED}>
+                  <SelectTrigger className="w-full h-11 bg-white border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -117,9 +123,19 @@ export function ProductFormTaxSection({
                 </Label>
                 <Select
                   value={values.taxType}
-                  onValueChange={(val) =>
-                    setValues((p) => ({ ...p, taxType: val as TAX_TYPE }))
-                  }>
+                  onValueChange={(val) => {
+                    const newType = val as TAX_TYPE;
+                    setValues((p) => {
+                      if (newType === TAX_TYPE.FIXED) {
+                        return {
+                          ...p,
+                          taxType: newType,
+                          taxCategory: TAX_CATEGORY.CUSTOM,
+                        };
+                      }
+                      return { ...p, taxType: newType };
+                    });
+                  }}>
                   <SelectTrigger className="w-full h-11 bg-white border-gray-200">
                     <SelectValue placeholder="Select Type" />
                   </SelectTrigger>
@@ -159,25 +175,67 @@ export function ProductFormTaxSection({
                 <Input
                   className={cn(
                     "h-11 pl-11 bg-white font-medium border-gray-200 transition-all focus-visible:ring-primary/20",
-                    Number(values.taxValue) < 1 &&
+                    !isDynamicTax &&
+                      values.taxType === TAX_TYPE.PERCENTAGE &&
+                      (Number(values.taxValue) < 0 ||
+                        Number(values.taxValue) > 100) &&
                       "border-destructive/30 focus-visible:ring-destructive/20",
+                    !isDynamicTax &&
+                      values.taxType === TAX_TYPE.FIXED &&
+                      Number(values.taxValue) < 0 &&
+                      "border-destructive/30 focus-visible:ring-destructive/20",
+                    isDynamicTax &&
+                      "bg-gray-50 text-gray-400 cursor-not-allowed opacity-80",
                   )}
                   type="text"
-                  placeholder="0"
-                  value={values.taxValue}
+                  placeholder={
+                    isDynamicTax ? "Fetched statically from settings" : "0"
+                  }
+                  value={
+                    isDynamicTax && config?.taxes
+                      ? String(
+                          config.taxes.find(
+                            (t) => t?.category === values.taxCategory,
+                          )?.value ?? values.taxValue,
+                        )
+                      : values.taxValue
+                  }
                   onChange={(e) => handleTaxValueChange(e.target.value)}
+                  disabled={isDynamicTax}
+                  readOnly={isDynamicTax}
                 />
               </div>
-              {Number(values.taxValue) < 1 ? (
-                <p className="text-[11px] text-destructive font-semibold mt-1 flex items-center gap-1.5 animate-pulse">
-                  <span className="w-1 h-1 rounded-full bg-destructive" />
-                  Value must be at least 1 when taxable.
-                </p>
-              ) : (
-                <ProductFormHint>
-                  Final {values.taxType?.toLowerCase()} amount applied.
-                </ProductFormHint>
-              )}
+              {(() => {
+                if (!isDynamicTax) {
+                  const numVal = Number(values.taxValue);
+                  if (
+                    values.taxType === TAX_TYPE.PERCENTAGE &&
+                    (numVal < 0 || numVal > 100)
+                  ) {
+                    return (
+                      <p className="text-[11px] text-destructive font-semibold mt-1 flex items-center gap-1.5 animate-pulse">
+                        <span className="w-1 h-1 rounded-full bg-destructive" />
+                        Percentage must be between 0 and 100.
+                      </p>
+                    );
+                  }
+                  if (values.taxType === TAX_TYPE.FIXED && numVal < 0) {
+                    return (
+                      <p className="text-[11px] text-destructive font-semibold mt-1 flex items-center gap-1.5 animate-pulse">
+                        <span className="w-1 h-1 rounded-full bg-destructive" />
+                        Fixed value cannot be negative.
+                      </p>
+                    );
+                  }
+                }
+                return (
+                  <ProductFormHint>
+                    {isDynamicTax
+                      ? "Value is dynamically kept up to date by global settings."
+                      : `Final ${values.taxType?.toLowerCase() || "percentage"} amount applied.`}
+                  </ProductFormHint>
+                );
+              })()}
             </div>
           </div>
         )}
