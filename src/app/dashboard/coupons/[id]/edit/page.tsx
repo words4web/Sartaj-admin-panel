@@ -6,7 +6,6 @@ import { PageHeader } from "@/components/common/PageHeader";
 import CouponForm from "../../_components/CouponForm";
 import { useCoupon, useUpdateCoupon } from "@/services/coupon/coupon.hooks";
 import { ROUTES } from "@/constants/routes";
-import { toast } from "sonner";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import dayjs from "dayjs";
@@ -19,19 +18,20 @@ export default function EditCouponPage() {
   const { data: coupon, isLoading, isError, refetch } = useCoupon(id);
   const updateMutation = useUpdateCoupon();
 
-  const handleSubmit = async (values: any) => {
-    try {
-      await updateMutation.mutateAsync({
+  const handleSubmit = (values: any) => {
+    updateMutation.mutate(
+      {
         id,
         data: {
           ...values,
         },
-      });
-      toast.success("Coupon updated successfully");
-      router.push(ROUTES.COUPONS.LIST);
-    } catch (error) {
-      toast.error("Failed to update coupon");
-    }
+      },
+      {
+        onSuccess: () => {
+          router.push(ROUTES.COUPONS.LIST);
+        },
+      },
+    );
   };
 
   return (

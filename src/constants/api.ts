@@ -50,11 +50,8 @@ export const API_ROUTES = {
   // Orders
   ORDERS: {
     LIST: `${API_ADMIN_BASE}/orders`,
-    CREATE: `${API_ADMIN_BASE}/orders`,
     DETAIL: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
-    UPDATE: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
     UPDATE_STATUS: (id: string) => `${API_ADMIN_BASE}/orders/${id}/status`,
-    DELETE: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
   },
 
   // Products

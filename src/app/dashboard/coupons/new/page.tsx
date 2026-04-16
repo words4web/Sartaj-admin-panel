@@ -17,13 +17,13 @@ export default function NewCouponPage() {
   const router = useRouter();
   const createMutation = useCreateCoupon();
 
-  const handleCreate = async (values: CouponFormValues) => {
-    await createMutation?.mutateAsync?.(
+  const handleCreate = (values: CouponFormValues) => {
+    createMutation.mutate(
       {
         ...values,
       },
       {
-        onSuccess: () => router?.push?.(ROUTES?.COUPONS?.LIST),
+        onSuccess: () => router.push(ROUTES.COUPONS.LIST),
       },
     );
   };

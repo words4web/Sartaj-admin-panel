@@ -72,6 +72,11 @@ const MENU_ITEMS = [
   },
   {
     icon: Truck,
+    label: "Orders",
+    href: ROUTES.ORDERS.LIST,
+  },
+  {
+    icon: Truck,
     label: "Order Config",
     href: ROUTES.ORDER_CONFIG,
   },

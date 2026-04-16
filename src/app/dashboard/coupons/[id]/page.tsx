@@ -10,7 +10,7 @@ import { useSuperCategories } from "@/services/superCategory/superCategory.hooks
 import { ROUTES } from "@/constants/routes";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { formatYen } from "@/utils/common.utils";
+import { formatYen, getErrorMessage } from "@/utils/common.utils";
 import { EDiscountType } from "@/types/coupon/coupon.types";
 import { Ticket, Calendar, Calculator, Settings, Layers } from "lucide-react";
 import dayjs from "dayjs";
@@ -19,7 +19,7 @@ export default function CouponDetailsPage() {
   const params = useParams();
   const id = params?.id as string;
 
-  const { data: coupon, isLoading, isError, refetch } = useCoupon(id);
+  const { data: coupon, isLoading, isError, error, refetch } = useCoupon(id);
   const { data: superCategories = [] } = useSuperCategories();
 
   const superCategoryName = useMemo(() => {
@@ -59,7 +59,7 @@ export default function CouponDetailsPage() {
       ) : isError || !coupon ? (
         <Card className="p-6">
           <CommonError
-            message="Failed to load coupon details. Please check your connection."
+            message={getErrorMessage(error) || "Failed to load coupon details. Please check your connection."}
             onRetry={refetch}
           />
         </Card>

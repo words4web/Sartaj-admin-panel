@@ -142,7 +142,10 @@ export default function CouponsPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router?.push(ROUTES?.COUPONS?.EDIT(row?._id))}>
+                  onClick={() => {
+                    if (!row?._id) return;
+                    router?.push(ROUTES?.COUPONS?.EDIT(row._id));
+                  }}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
