@@ -10,13 +10,15 @@ import { ROUTES } from "@/constants/routes";
 import { useOrders } from "@/services/order/order.queries";
 import { Order, OrderStatus } from "@/types/order/order.types";
 import { FilterBar } from "@/components/common/FilterBar";
-import { formatDateTime, formatYen } from "./_components/order.utils";
-
-const statusVariant = (status: OrderStatus) => {
-  if (status === "DELIVERED") return "success";
-  if (status === "CANCELLED") return "destructive";
-  return "secondary";
-};
+import {
+  formatDateTime,
+  formatYen,
+  statusVariant,
+  ORDER_STATUS_OPTIONS,
+  resolveCustomerName,
+  paymentStatusVariant,
+  formatStatus,
+} from "../../../utils/order.utils";
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -24,15 +26,20 @@ export default function OrdersPage() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<OrderStatus | "all">("all");
 
-  const { data, isLoading, isError, refetch } = useOrders({
+  const {
+    data: response,
+    isLoading,
+    isError,
+    refetch,
+  } = useOrders({
     page,
     limit,
     status: status === "all" ? undefined : status,
   });
 
-  const orders = data?.orders ?? [];
-  const total = data?.total ?? 0;
-  const totalPages = useMemo(() => Math.ceil(total / limit), [total, limit]);
+  const orders = response?.data ?? [];
+  const total = response?.meta?.total ?? 0;
+  const totalPages = response?.meta?.totalPages ?? 0;
 
   const columns: Column<Order>[] = useMemo(
     () => [
@@ -40,11 +47,7 @@ export default function OrdersPage() {
       {
         key: "customer",
         label: "Customer",
-        render: (_: any, row: Order) => {
-          const customer =
-            typeof row?.customer === "string" ? null : row?.customer;
-          return customer?.fullName ?? "—";
-        },
+        render: (_: any, row: Order) => resolveCustomerName(row),
       },
       {
         key: "totalAmount",
@@ -55,15 +58,17 @@ export default function OrdersPage() {
         key: "status",
         label: "Status",
         render: (_: any, row: Order) => (
-          <Badge variant={statusVariant(row?.status)}>{row?.status}</Badge>
+          <Badge variant={statusVariant(row?.status)}>
+            {formatStatus(row?.status)}
+          </Badge>
         ),
       },
       {
         key: "paymentStatus",
         label: "Payment",
         render: (_: any, row: Order) => (
-          <Badge variant={row?.paymentStatus === "COMPLETED" ? "success" : "secondary"}>
-            {row?.paymentStatus}
+          <Badge variant={paymentStatusVariant(row?.paymentStatus)}>
+            {formatStatus(row?.paymentStatus)}
           </Badge>
         ),
       },
@@ -94,13 +99,7 @@ export default function OrdersPage() {
               setStatus(val as OrderStatus | "all");
               setPage(1);
             },
-            options: [
-              { label: "Pending", value: "PENDING" },
-              { label: "Confirmed", value: "CONFIRMED" },
-              { label: "Shipped", value: "SHIPPED" },
-              { label: "Delivered", value: "DELIVERED" },
-              { label: "Cancelled", value: "CANCELLED" },
-            ],
+            options: ORDER_STATUS_OPTIONS,
           },
         ]}
         onReset={() => {

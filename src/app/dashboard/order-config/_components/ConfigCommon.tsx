@@ -79,10 +79,10 @@ export function ConfigCard({
         <div
           className={cn(
             "absolute top-0 right-0 px-3 py-1.5 text-white rounded-bl-lg border-l border-b border-gray-200",
-            badge.bgColor,
+            badge?.bgColor,
           )}>
           <span className="text-[10px] font-bold uppercase tracking-wider">
-            {badge.text}
+            {badge?.text}
           </span>
         </div>
       )}
@@ -127,6 +127,7 @@ export function NumericInputField({
   unitPosition = "left",
   error,
   min = 0,
+  max,
   step = 1,
   required = true,
   placeholder,
@@ -139,6 +140,7 @@ export function NumericInputField({
   unitPosition?: "left" | "right";
   error?: any;
   min?: number;
+  max?: number;
   step?: number;
   required?: boolean;
   placeholder?: string;
@@ -159,6 +161,7 @@ export function NumericInputField({
         <Input
           type="number"
           min={min}
+          max={max}
           step={step}
           required={required}
           placeholder={placeholder}

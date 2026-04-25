@@ -16,7 +16,7 @@ import { Loader2 } from "lucide-react";
 interface ConfirmModalProps {
   open: boolean;
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   confirmLabel?: string;
   cancelLabel?: string;
   isLoading?: boolean;
@@ -44,7 +44,9 @@ export function ConfirmModal({
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           {description && (
-            <AlertDialogDescription>{description}</AlertDialogDescription>
+            <AlertDialogDescription asChild>
+              <div>{description}</div>
+            </AlertDialogDescription>
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>

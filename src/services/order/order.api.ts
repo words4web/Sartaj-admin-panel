@@ -9,9 +9,10 @@ import {
 
 export const orderApi = {
   getOrders: async (filters?: OrderFilters): Promise<OrderListResponse> => {
-    return axiosInstance.get<any, OrderListResponse>(API_ROUTES.ORDERS.LIST, {
+    return axiosInstance.get<any, any>(API_ROUTES.ORDERS.LIST, {
       params: filters,
-    });
+      _returnWrapper: true,
+    } as any);
   },
 
   getOrderById: async (id: string): Promise<Order> => {
@@ -22,6 +23,9 @@ export const orderApi = {
     id: string,
     data: UpdateOrderStatusPayload,
   ): Promise<Order> => {
-    return axiosInstance.patch<any, Order>(API_ROUTES.ORDERS.UPDATE_STATUS(id), data);
+    return axiosInstance.patch<any, Order>(
+      API_ROUTES.ORDERS.UPDATE_STATUS(id),
+      data,
+    );
   },
 };
