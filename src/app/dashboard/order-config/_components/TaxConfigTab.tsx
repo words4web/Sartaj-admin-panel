@@ -52,9 +52,11 @@ export function TaxConfigTab() {
                   valueAsNumber: true,
                   required: "Value is required",
                   min: { value: 1, message: "Minimum value is 1" },
+                  max: { value: 100, message: "Maximum value is 100" },
                 })}
                 error={error}
                 min={1}
+                max={100}
               />
             </ConfigCard>
           );

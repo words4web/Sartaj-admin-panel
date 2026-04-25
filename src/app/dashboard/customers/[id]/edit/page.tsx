@@ -69,9 +69,6 @@ export default function CustomerEditPage() {
     );
   };
 
-  const ready =
-    !isCustomerLoading && !isSuperLoading && !!customerData && !!superCategory;
-
   const initialPriceListLabel =
     typeof customerData?.priceList === "object"
       ? customerData?.priceList?.name
@@ -95,10 +92,6 @@ export default function CustomerEditPage() {
             message="Failed to load customer details. Please check your connection."
             onRetry={refetch}
           />
-        ) : !ready ? (
-          <div className="space-y-4">
-            <CommonLoader fullScreen={false} />
-          </div>
         ) : (
           <CustomerForm
             superCategories={superCategories}

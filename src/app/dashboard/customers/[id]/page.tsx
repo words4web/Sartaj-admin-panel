@@ -31,7 +31,7 @@ export default function CustomerDetailPage() {
         description="Full profile and saved addresses"
         backRoute={ROUTES.CUSTOMERS.LIST}
         editRoute={
-          customer?._id ? ROUTES.CUSTOMERS.EDIT(customer._id) : undefined
+          customer?._id ? ROUTES.CUSTOMERS.EDIT(customer?._id) : undefined
         }
       />
 
