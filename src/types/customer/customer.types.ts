@@ -15,7 +15,6 @@ export interface IAddress {
 export interface SuperCategory {
   _id: string;
   name: keyof typeof SUPER_CATEGORIES;
-  isActive: boolean;
 }
 
 interface CustomerPriceListRef {
