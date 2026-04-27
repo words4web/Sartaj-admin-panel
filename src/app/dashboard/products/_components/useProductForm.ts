@@ -19,6 +19,7 @@ import {
 import {
   PRODUCT_FORM_VALIDATION_HINTS,
   SELLING_UNIT,
+  STOCK_STATUS,
 } from "@/constants/product.constants";
 import {
   normalizeTranslation,
@@ -334,7 +335,9 @@ export function useProductForm({
       Number(values.caseQuantity) >= 1 &&
       values.stockQuantity !== "" &&
       !Number.isNaN(Number(values.stockQuantity)) &&
-      Number(values.stockQuantity) >= 0 &&
+      (values.stockStatus === STOCK_STATUS.OUT_OF_STOCK
+        ? Number(values.stockQuantity) === 0
+        : Number(values.stockQuantity) >= 1) &&
       Boolean(values.sellingUnit) &&
       Boolean(values.stockStatus),
     [
