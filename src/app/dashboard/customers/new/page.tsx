@@ -11,6 +11,7 @@ import { CustomerFormValues } from "@/types/customer/customer.types";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { ROUTES } from "@/constants/routes";
 import { defaultAddress } from "@/schemas/customer/customer.default";
+import { SUPER_CATEGORIES } from "@/lib/constants";
 
 export default function CustomerCreatePage() {
   const router = useRouter();
@@ -24,7 +25,10 @@ export default function CustomerCreatePage() {
 
   useEffect(() => {
     if (!superCategory && superCategories.length > 0) {
-      setSuperCategory(superCategories[0]._id);
+      setSuperCategory(
+        superCategories.filter((sc: any) => sc?.name === "Wholesaler")?.[0]
+          ?._id,
+      );
     }
   }, [superCategory, superCategories]);
 

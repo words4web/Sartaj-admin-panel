@@ -27,6 +27,7 @@ import { Pagination } from "@/components/common/Pagination";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmAction, StatusFilter } from "@/types/customer/customer.types";
 import { FilterBar } from "@/components/common/FilterBar";
+import { SUPER_CATEGORIES } from "@/lib/constants";
 
 export default function CustomersPage() {
   const router = useRouter();
@@ -137,8 +138,7 @@ export default function CustomersPage() {
         render: (_: any, row: Customer) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}
-          >
+            onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -147,16 +147,14 @@ export default function CustomersPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => router.push(ROUTES.CUSTOMERS.EDIT(row?._id))}
-                >
+                  onClick={() => router.push(ROUTES.CUSTOMERS.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     setConfirmAction({ type: "toggle", customer: row })
-                  }
-                >
+                  }>
                   <Power size={14} className="mr-2 hover:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
@@ -164,8 +162,7 @@ export default function CustomersPage() {
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() =>
                     setConfirmAction({ type: "delete", customer: row })
-                  }
-                >
+                  }>
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -205,10 +202,12 @@ export default function CustomersPage() {
               setSuperCategoryId(val);
               setPage(1);
             },
-            options: superCategories?.map((sc: any) => ({
-              label: sc?.name,
-              value: sc?._id,
-            })),
+            options: superCategories
+              ?.filter((sc) => String(sc?.name) !== SUPER_CATEGORIES.RETAILER)
+              ?.map((sc: any) => ({
+                label: sc?.name,
+                value: sc?._id,
+              })),
             isSearchable: true,
             disabled: isSuperCategoriesLoading,
           },

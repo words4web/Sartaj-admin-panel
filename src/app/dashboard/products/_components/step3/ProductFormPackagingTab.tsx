@@ -46,12 +46,20 @@ export function ProductFormPackagingTab({
   };
 
   const handleStockStatusChange = (stockStatus: StockStatus) => {
-    setValues((p) => ({
-      ...p,
-      stockStatus,
-      stockQuantity:
-        stockStatus === STOCK_STATUS.OUT_OF_STOCK ? "0" : p?.stockQuantity,
-    }));
+    setValues((p) => {
+      const isNowInStock = stockStatus === STOCK_STATUS.IN_STOCK;
+      const currentQty = Number(p?.stockQuantity || 0);
+
+      return {
+        ...p,
+        stockStatus,
+        stockQuantity: isNowInStock
+          ? currentQty < 1
+            ? "1"
+            : String(currentQty)
+          : "0",
+      };
+    });
   };
 
   const handleTextChange = (
@@ -65,6 +73,12 @@ export function ProductFormPackagingTab({
       sanitized =
         parts?.[0] + (parts?.length > 1 ? "." + parts?.slice(1)?.join("") : "");
     }
+    if (field === "stockQuantity" && !isOutOfStock) {
+      if (sanitized === "" || Number(sanitized) < 1) {
+        sanitized = "1";
+      }
+    }
+
     setValues((p) => ({ ...p, [field]: sanitized }));
   };
 
