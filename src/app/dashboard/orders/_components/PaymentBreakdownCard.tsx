@@ -1,7 +1,7 @@
 "use client";
 import { JapaneseYen, Wallet } from "lucide-react";
 import { formatYen, formatPaymentMethod } from "../../../../utils/order.utils";
-import { PaymentBreakdownCardProps } from "@/types/order/order.types";
+import { PaymentBreakdownCardProps, PriceBreakdownType } from "@/types/order/order.types";
 
 export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
   return (
@@ -26,7 +26,8 @@ export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
         {(order?.priceBreakdown || [])?.map((item, idx) => {
           const isDiscount =
             item?.isNegative ||
-            item?.type === "DISCOUNT" ||
+            item?.type === PriceBreakdownType.DISCOUNT ||
+            item?.type === PriceBreakdownType.COUPON ||
             item?.name?.toLowerCase()?.includes("discount");
 
           return (
@@ -34,11 +35,11 @@ export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
               key={idx}
               className="flex justify-between items-center text-sm">
               <span
-                className={`font-medium ${isDiscount ? "text-red-500" : "text-black"}`}>
+                className={`font-medium ${isDiscount ? "text-emerald-600" : "text-black"}`}>
                 {item?.name}
               </span>
               <span
-                className={`font-bold ${isDiscount ? "text-red-500" : "text-gray-900"}`}>
+                className={`font-bold ${isDiscount ? "text-emerald-600" : "text-gray-900"}`}>
                 {isDiscount && !item?.amount?.toString()?.startsWith("-")
                   ? "-"
                   : ""}

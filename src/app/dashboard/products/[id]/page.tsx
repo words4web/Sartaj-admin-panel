@@ -149,17 +149,17 @@ function ProductDetailContent({ product }: { product: IProduct }) {
         {(product?.basePrices?.length ?? 0) === 0 ? (
           <p className="text-sm text-gray-500">No base prices.</p>
         ) : (
-          <div className="rounded-lg border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {product?.basePrices?.map((bp, i) => {
               const sCLabel = superCategoryLabel(bp);
               return (
                 <div
                   key={`${sCLabel}-${bp?.superCategoryId ?? "-"}-${i}`}
-                  className="flex items-center justify-between gap-4 px-4 py-3 bg-white">
-                  <span className="text-sm font-medium text-gray-900 min-w-0 wrap-break-word pr-2">
+                  className="flex flex-col gap-1 px-4 py-3 bg-gray-50/50 rounded-xl border border-gray-100 shadow-sm">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                     {sCLabel}
                   </span>
-                  <span className="font-mono text-sm text-gray-700 tabular-nums shrink-0">
+                  <span className="font-mono text-lg font-bold text-primary tabular-nums shrink-0">
                     {typeof bp?.price === "number" ? formatYen(bp?.price) : "—"}
                   </span>
                 </div>

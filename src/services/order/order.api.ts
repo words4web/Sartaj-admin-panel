@@ -4,6 +4,7 @@ import {
   Order,
   OrderFilters,
   OrderListResponse,
+  UpdateOrderTrackingPayload,
   UpdateOrderStatusPayload,
 } from "@/types/order/order.types";
 
@@ -25,6 +26,16 @@ export const orderApi = {
   ): Promise<Order> => {
     return axiosInstance.patch<any, Order>(
       API_ROUTES.ORDERS.UPDATE_STATUS(id),
+      data,
+    );
+  },
+
+  updateOrderTracking: async (
+    id: string,
+    data: UpdateOrderTrackingPayload,
+  ): Promise<void> => {
+    return axiosInstance.patch<any, void>(
+      API_ROUTES.ORDERS.UPDATE_TRACKING(id),
       data,
     );
   },

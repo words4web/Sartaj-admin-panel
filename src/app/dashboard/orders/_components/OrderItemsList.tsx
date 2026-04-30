@@ -53,28 +53,53 @@ export function OrderItemsList({ items }: OrderItemsListProps) {
                   key={`${item?.product?._id || idx}-${idx}`}
                   className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-5">
-                    <p className="font-bold text-gray-900 mb-2">
-                      {resolveItemName(item)}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-mono font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        SKU: {resolveItemSku(item)}
-                      </span>
-                      {(item?.lineTax ?? 0) > 0 && (
-                        <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded">
-                          +{formatYen(item?.lineTax)} Tax
-                        </span>
-                      )}
-                      {(item?.lineDiscount ?? 0) > 0 && (
-                        <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                          -{formatYen(item?.lineDiscount)} Disc
-                        </span>
-                      )}
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 flex-shrink-0 bg-gray-50 rounded-lg border border-gray-100 overflow-hidden flex items-center justify-center">
+                        {item?.product?.images?.[0] ||
+                        item?.productSnapshot?.images?.[0] ? (
+                          <img
+                            src={
+                              item?.product?.images?.[0] ||
+                              item?.productSnapshot?.images?.[0]
+                            }
+                            alt={resolveItemName(item)}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-gray-400 text-[10px]">
+                            No img
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 mb-2">
+                          {resolveItemName(item)}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[10px] font-mono font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            SKU: {resolveItemSku(item)}
+                          </span>
+                          {item?.productSnapshot?.productType && (
+                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase">
+                              {item?.productSnapshot?.productType}
+                            </span>
+                          )}
+                          {item?.productSnapshot?.netWeightKg && (
+                            <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                              {item?.productSnapshot?.netWeightKg} kg
+                            </span>
+                          )}
+
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-5 text-center">
-                    <span className="inline-flex items-center justify-center font-bold text-gray-900">
+                    <span className="inline-flex items-center justify-center font-bold text-gray-900 gap-1">
                       {item?.quantity ?? 0}
+                      <span className="text-[12px] text-gray-400 font-medium">
+                        {item?.productSnapshot?.unit || ""}
+                      </span>
                     </span>
                   </td>
                   <td className="px-6 py-5 text-right font-medium text-gray-500 text-sm">
