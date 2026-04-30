@@ -4,15 +4,19 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { useOrder } from "@/services/order/order.queries";
-import { useUpdateOrderStatus } from "@/services/order/order.mutations";
+import {
+  useUpdateOrderStatus,
+  useUpdateOrderTracking,
+} from "@/services/order/order.mutations";
 import { OrderStatus, PaymentStatus } from "@/types/order/order.types";
 import { CustomerInfoCard } from "../_components/CustomerInfoCard";
 import { PaymentBreakdownCard } from "../_components/PaymentBreakdownCard";
 import { OrderStatusUpdater } from "../_components/OrderStatusUpdater";
 import { OrderItemsList } from "../_components/OrderItemsList";
 import { OrderNotesCard } from "../_components/OrderNotesCard";
+import { UpdateTrackingModal } from "../_components/UpdateTrackingModal";
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Eye, Truck } from "lucide-react";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { dateUtils } from "@/utils/common.utils";
@@ -22,9 +26,11 @@ export default function OrderDetailsPage() {
   const id = params?.id ?? "";
   const { data: order, isLoading, isError, refetch } = useOrder(id);
   const updateStatus = useUpdateOrderStatus();
+  const updateTracking = useUpdateOrderTracking();
 
   const [status, setStatus] = useState<OrderStatus | "">("");
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus | "">("");
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
 
   // Sync state when order data is loaded
   useEffect(() => {
@@ -34,7 +40,16 @@ export default function OrderDetailsPage() {
     }
   }, [order]);
 
-
+  const handleUpdateTracking = (trackOrderURL: string) => {
+    updateTracking.mutate(
+      { id, data: { trackOrderURL } },
+      {
+        onSuccess: () => {
+          setIsTrackingModalOpen(false);
+        },
+      },
+    );
+  };
 
   return (
     <div className="space-y-6 p-6 max-w-[1400px] mx-auto">
@@ -50,11 +65,23 @@ export default function OrderDetailsPage() {
           />
         </div>
 
-        <Button
-          variant="outline"
-          className="h-10 rounded-xl font-bold border-gray-200 text-gray-700 hover:text-gray-900 cursor-pointer hover:bg-gray-50 flex items-center gap-2">
-          <Printer className="w-4 h-4" /> Print Invoice
-        </Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          {order?.invoiceURL && (
+            <Button
+              variant="outline"
+              onClick={() => window.open(order?.invoiceURL, "_blank")}
+              className="h-10 rounded-xl font-bold border-gray-200 text-emerald-600 hover:text-emerald-700 cursor-pointer hover:bg-emerald-50 flex items-center gap-2">
+              <Eye className="w-4 h-4" /> View Invoice
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            onClick={() => setIsTrackingModalOpen(true)}
+            className="h-10 rounded-xl font-bold border-gray-200 text-blue-600 hover:text-blue-700 cursor-pointer hover:bg-blue-50 flex items-center gap-2">
+            <Truck className="w-4 h-4" /> Update Tracking
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -94,6 +121,14 @@ export default function OrderDetailsPage() {
           </div>
         </div>
       )}
+
+      <UpdateTrackingModal
+        isOpen={isTrackingModalOpen}
+        onClose={() => setIsTrackingModalOpen(false)}
+        currentUrl={order?.trackOrderURL}
+        onUpdate={handleUpdateTracking}
+        isLoading={updateTracking.isPending}
+      />
     </div>
   );
 }

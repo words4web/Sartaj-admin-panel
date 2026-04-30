@@ -333,6 +333,9 @@ export function useProductForm({
       values.caseQuantity !== "" &&
       !Number.isNaN(Number(values.caseQuantity)) &&
       Number(values.caseQuantity) >= 1 &&
+      (values.sellingUnit === SELLING_UNIT.CASE
+        ? Boolean(values.caseType)
+        : true) &&
       values.stockQuantity !== "" &&
       !Number.isNaN(Number(values.stockQuantity)) &&
       (values.stockStatus === STOCK_STATUS.OUT_OF_STOCK
@@ -345,6 +348,7 @@ export function useProductForm({
       values.productType,
       values.netWeightKg,
       values.caseQuantity,
+      values.caseType,
       values.stockQuantity,
       values.sellingUnit,
       values.stockStatus,

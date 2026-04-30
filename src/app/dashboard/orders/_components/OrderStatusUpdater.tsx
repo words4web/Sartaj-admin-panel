@@ -113,17 +113,29 @@ export function OrderStatusUpdater({
         </h3>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mb-6">
-        <Badge
-          variant={statusVariant(initialStatus as OrderStatus)}
-          className="h-7 px-3 text-[14px] font-bold uppercase tracking-wider">
-          {formatStatus(initialStatus as OrderStatus)}
-        </Badge>
-        <Badge
-          variant={paymentStatusVariant(initialPaymentStatus as PaymentStatus)}
-          className="h-7 px-3 text-[14px] font-bold uppercase tracking-wider">
-          {formatStatus(initialPaymentStatus as PaymentStatus)}
-        </Badge>
+      <div className="flex flex-col gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-bold text-black uppercase tracking-widest w-28">
+            Order Status
+          </span>
+          <Badge
+            variant={statusVariant(initialStatus as OrderStatus)}
+            className="h-7 px-3 text-[14px] font-bold uppercase tracking-wider">
+            {formatStatus(initialStatus as OrderStatus)}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-bold text-black uppercase tracking-widest w-28">
+            Payment Status
+          </span>
+          <Badge
+            variant={paymentStatusVariant(
+              initialPaymentStatus as PaymentStatus,
+            )}
+            className="h-7 px-3 text-[14px] font-bold uppercase tracking-wider">
+            {formatStatus(initialPaymentStatus as PaymentStatus)}
+          </Badge>
+        </div>
       </div>
 
       <div className="flex flex-col gap-5 flex-grow">

@@ -31,6 +31,7 @@ export enum PriceBreakdownType {
   TAX = "TAX",
   SHIPPING = "SHIPPING",
   DISCOUNT = "DISCOUNT",
+  COUPON = "COUPON",
   PENALTY = "PENALTY",
   SURCHARGE = "SURCHARGE",
   OTHER = "OTHER",
@@ -59,17 +60,20 @@ export interface OrderItem {
     _id?: string;
     name?: string;
     sku?: string;
+    images?: string[];
   };
   productSnapshot?: {
     productId: string;
     sku: string;
     name: string;
+    images?: string[];
     productType: string;
     unit: string;
     basePrice: number;
     discountedBasePrice: number;
     customerPrice?: number;
     priceSource: string;
+    netWeightKg?: number;
   };
   quantity: number;
   price: number;
@@ -103,8 +107,14 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   shippingAddress: OrderAddressSnapshot;
+  trackOrderURL?: string;
+  invoiceURL?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface UpdateOrderTrackingPayload {
+  trackOrderURL: string;
 }
 
 export interface OrderListResponse {
