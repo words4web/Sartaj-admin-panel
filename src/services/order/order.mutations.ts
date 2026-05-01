@@ -43,13 +43,13 @@ export const useUpdateOrderTracking = () => {
       data: UpdateOrderTrackingPayload;
     }) => orderApi.updateOrderTracking(id, data),
     onSuccess: (_, variables) => {
-      toast.success("Tracking URL updated successfully");
+      toast.success("Tracking number updated successfully");
       queryClient.invalidateQueries({
         queryKey: orderKeys.detail(variables.id),
       });
     },
     onError: (error: any) => {
-      toast.error(error?.message || "Failed to update tracking URL");
+      toast.error(error?.message || "Failed to update tracking number");
     },
   });
 };

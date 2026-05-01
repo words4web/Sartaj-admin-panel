@@ -40,9 +40,9 @@ export default function OrderDetailsPage() {
     }
   }, [order]);
 
-  const handleUpdateTracking = (trackOrderURL: string) => {
+  const handleUpdateTracking = (trackOrder: string) => {
     updateTracking.mutate(
-      { id, data: { trackOrderURL } },
+      { id, data: { trackOrder } },
       {
         onSuccess: () => {
           setIsTrackingModalOpen(false);
@@ -54,16 +54,14 @@ export default function OrderDetailsPage() {
   return (
     <div className="space-y-6 p-6 max-w-[1400px] mx-auto">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-4 flex-wrap">
-          <PageHeader
-            title={order?.orderId ? `${order?.orderId}` : "Order Details"}
-            description={
-              order?.createdAt
-                ? `Placed on ${dateUtils.format(order.createdAt, "MMMM DD, YYYY")} at ${dateUtils.formatTime(order.createdAt, "hh:mm A")}`
-                : "View order snapshot"
-            }
-          />
-        </div>
+        <PageHeader
+          title={order?.orderId ? `${order?.orderId}` : "Order Details"}
+          description={
+            order?.createdAt
+              ? `Placed on ${dateUtils.format(order.createdAt, "MMMM DD, YYYY")} at ${dateUtils.formatTime(order.createdAt, "hh:mm A")}`
+              : "View order snapshot"
+          }
+        />
 
         <div className="flex items-center gap-3 flex-wrap">
           {order?.invoiceURL && (
@@ -125,7 +123,7 @@ export default function OrderDetailsPage() {
       <UpdateTrackingModal
         isOpen={isTrackingModalOpen}
         onClose={() => setIsTrackingModalOpen(false)}
-        currentUrl={order?.trackOrderURL}
+        currentTrackingNumber={order?.trackOrder}
         onUpdate={handleUpdateTracking}
         isLoading={updateTracking.isPending}
       />
