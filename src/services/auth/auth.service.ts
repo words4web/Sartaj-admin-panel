@@ -7,9 +7,9 @@ export const authService = {
     return axiosInstance.post(API_ROUTES.AUTH.LOGIN, credentials);
   },
 
-  logout: async (): Promise<void> => {
+  logout: async (fcmToken?: string | null): Promise<void> => {
     try {
-      await axiosInstance.post(API_ROUTES.AUTH.LOGOUT);
+      await axiosInstance.post(API_ROUTES.AUTH.LOGOUT, { fcmToken });
     } catch (error) {}
   },
 
@@ -24,10 +24,10 @@ export const authService = {
     return axiosInstance.post(API_ROUTES.AUTH.REFRESH);
   },
 
-  getProfile: async (): Promise<User> => {
-    const data = await axiosInstance.get<{ user: User }>(
-      API_ROUTES.AUTH.PROFILE,
-    );
-    return (data as any)?.user;
+  getProfile: async (): Promise<{
+    user: User;
+    unreadNotificationCount: number;
+  }> => {
+    return axiosInstance.get(API_ROUTES.AUTH.PROFILE);
   },
 };

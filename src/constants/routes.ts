@@ -75,6 +75,7 @@ export const ROUTES = {
     ROOT: "/dashboard/analytics",
   },
   ORDER_CONFIG: "/dashboard/order-config",
+  NOTIFICATIONS: "/dashboard/notifications",
 } as const;
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];

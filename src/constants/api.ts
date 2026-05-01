@@ -137,4 +137,18 @@ export const API_ROUTES = {
     TOGGLE_STATUS: (reviewId: string) =>
       `${API_ADMIN_BASE}/reviews/${reviewId}/status`,
   },
+
+  NOTIFICATIONS: {
+    LIST: `${API_ADMIN_BASE}/notifications`,
+    UNREAD_COUNT: `${API_ADMIN_BASE}/notifications/unread-count`,
+    READ: (id: string) => `${API_ADMIN_BASE}/notifications/${id}/read`,
+    READ_ALL: `${API_ADMIN_BASE}/notifications/read-all`,
+    DEVICES: {
+      SYNC: `${API_ADMIN_BASE}/notifications/devices/sync`,
+      REMOVE: `${API_ADMIN_BASE}/notifications/devices/remove`,
+    },
+  },
+  DASHBOARD: {
+    STATS: `${API_ADMIN_BASE}/dashboard/stats`,
+  },
 } as const;
