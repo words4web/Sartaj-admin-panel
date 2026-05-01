@@ -107,14 +107,14 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   shippingAddress: OrderAddressSnapshot;
-  trackOrderURL?: string;
+  trackOrder?: string;
   invoiceURL?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface UpdateOrderTrackingPayload {
-  trackOrderURL: string;
+  trackOrder: string;
 }
 
 export interface OrderListResponse {

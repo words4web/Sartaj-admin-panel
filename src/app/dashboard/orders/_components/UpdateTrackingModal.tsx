@@ -16,29 +16,31 @@ import { Loader2 } from "lucide-react";
 interface UpdateTrackingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUrl?: string;
-  onUpdate: (url: string) => void;
+  currentTrackingNumber?: string;
+  onUpdate: (trackingNumber: string) => void;
   isLoading: boolean;
 }
 
 export function UpdateTrackingModal({
   isOpen,
   onClose,
-  currentUrl,
+  currentTrackingNumber,
   onUpdate,
   isLoading,
 }: UpdateTrackingModalProps) {
-  const [url, setUrl] = useState(currentUrl || "");
+  const [trackingNumber, setTrackingNumber] = useState(
+    currentTrackingNumber || "",
+  );
 
   useEffect(() => {
     if (isOpen) {
-      setUrl(currentUrl || "");
+      setTrackingNumber(currentTrackingNumber || "");
     }
-  }, [isOpen, currentUrl]);
+  }, [isOpen, currentTrackingNumber]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdate(url);
+    onUpdate(trackingNumber);
   };
 
   return (
@@ -46,29 +48,26 @@ export function UpdateTrackingModal({
       <DialogContent className="sm:max-w-[425px] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            Update Tracking URL
+            Update Order Tracking Number
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label
-              htmlFor="tracking-url"
+              htmlFor="tracking-number"
               className="text-sm font-semibold text-gray-700">
-              Tracking URL
+              Tracking Number
             </Label>
             <Input
-              id="tracking-url"
-              placeholder="https://track.example.com/..."
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              id="tracking-number"
+              placeholder="tracking number"
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
               className="rounded-xl border-gray-200 focus:border-primary focus:ring-primary"
               disabled={isLoading}
               required
-              type="url"
+              type="text"
             />
-            <p className="text-[10px] text-gray-500 italic">
-              Enter the full URL where the customer can track their order.
-            </p>
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
@@ -81,7 +80,7 @@ export function UpdateTrackingModal({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !url}
+              disabled={isLoading || !trackingNumber}
               className="rounded-xl font-bold bg-primary hover:bg-primary/90 text-white min-w-[100px]">
               {isLoading ? (
                 <>
@@ -89,7 +88,7 @@ export function UpdateTrackingModal({
                   Saving...
                 </>
               ) : (
-                "Save Tracking URL"
+                "Save"
               )}
             </Button>
           </DialogFooter>
