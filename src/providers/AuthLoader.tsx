@@ -2,10 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { useAuthStore } from "@/stores/authStore";
+import { useFcmLifecycle } from "@/hooks/useFcmLifecycle";
+import NotificationListener from "./NotificationListener";
 
 export function AuthLoader({ children }: { children: React.ReactNode }) {
-  const { getProfile, token, _hasHydrated } = useAuthStore();
+  const { getProfile, token, user, _hasHydrated } = useAuthStore();
   const initialized = useRef(false);
+
+  useFcmLifecycle(user);
 
   useEffect(() => {
     if (_hasHydrated && token && !initialized.current) {
@@ -14,5 +18,10 @@ export function AuthLoader({ children }: { children: React.ReactNode }) {
     }
   }, [_hasHydrated, token, getProfile]);
 
-  return <>{children}</>;
+  return (
+    <>
+      <NotificationListener />
+      {children}
+    </>
+  );
 }

@@ -121,11 +121,16 @@ axiosInstance.interceptors.response.use(
       // Prevent refresh loops on auth endpoints
       const isAuthEndpoint =
         originalRequest.url?.includes(API_ROUTES.AUTH.LOGIN) ||
-        originalRequest.url?.includes(API_ROUTES.AUTH.REFRESH);
+        originalRequest.url?.includes(API_ROUTES.AUTH.REFRESH) ||
+        originalRequest.url?.includes(API_ROUTES.AUTH.LOGOUT);
 
       if (isAuthEndpoint) {
         isRefreshing = false;
-        if (typeof window !== "undefined") {
+        // Don't re-dispatch logout if the failed request was already a logout attempt
+        const isLogoutRequest = originalRequest.url?.includes(
+          API_ROUTES.AUTH.LOGOUT,
+        );
+        if (typeof window !== "undefined" && !isLogoutRequest) {
           window.dispatchEvent(new CustomEvent("auth:logout"));
         }
         return Promise.reject(apiError);

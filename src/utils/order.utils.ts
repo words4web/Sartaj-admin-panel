@@ -92,7 +92,6 @@ export const PAYMENT_STATUS_OPTIONS = [
 
 export const resolveCustomerName = (order?: Partial<Order>) => {
   if (!order) return "Customer";
-  console.log("order => ", order);
   const customer = typeof order?.customer === "string" ? null : order?.customer;
 
   return customer?.fullName || "Customer";

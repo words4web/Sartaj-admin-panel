@@ -5,13 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/constants/routes";
 import { User, Mail, Shield, LogOut } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
-import { authService } from "@/services/auth/auth.service";
 
 export default function SettingsPage() {
   const { user, logout, getProfile, isLoading, error } = useAuthStore();
@@ -22,10 +20,9 @@ export default function SettingsPage() {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await authService.logout();
+      await logout();
     } finally {
-      logout();
-      router.push(ROUTES.LOGIN);
+      setIsLoggingOut(false);
     }
   };
 

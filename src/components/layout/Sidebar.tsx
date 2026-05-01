@@ -22,6 +22,7 @@ import {
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/utils/common.utils";
 import { ROUTES } from "@/constants/routes";
+import FloatingNotificationBell from "./FloatingNotificationBell";
 
 const MENU_ITEMS = [
   {
@@ -178,6 +179,7 @@ export default function Sidebar() {
       {/* Menu Items */}
       <nav className="flex flex-col flex-1 justify-between overflow-hidden">
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
+          <FloatingNotificationBell isCollapsed={isCollapsed} />
           {MENU_ITEMS?.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href, (item as any).exact);

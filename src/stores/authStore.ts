@@ -2,7 +2,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AuthState, User, LoginCredentials } from "@/types/auth/auth.types";
 import { authService } from "@/services/auth/auth.service";
-import { STORAGE_KEYS } from "@/lib/constants";
+import { useDeviceStore } from "@/stores/deviceStore";
+import { useNotificationStore } from "@/stores/notificationStore";
+import { STORAGE_KEYS, CUSTOM_EVENTS } from "@/lib/constants";
 
 interface AuthStore extends AuthState {
   setUser: (user: User | null) => void;
@@ -10,7 +12,7 @@ interface AuthStore extends AuthState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   login: (credentials: LoginCredentials) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   getProfile: () => Promise<void>;
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
@@ -61,7 +63,17 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
 
-      logout: () => {
+      logout: async () => {
+        try {
+          const fcmToken = useDeviceStore.getState().fcmToken;
+          await authService.logout(fcmToken);
+          if (fcmToken) {
+            useDeviceStore.getState().setFcmToken(null);
+          }
+        } catch (err) {
+          console.error("Logout failed:", err);
+        }
+
         set({
           user: null,
           token: null,
@@ -75,16 +87,23 @@ export const useAuthStore = create<AuthStore>()(
 
         set({ isLoading: true, error: null });
         try {
-          const user = await authService.getProfile();
+          const response = await authService.getProfile();
           set({
-            user,
+            user: response.user,
             isAuthenticated: true,
             isLoading: false,
           });
+
+          // Sync unread notification count
+          if (typeof response.unreadNotificationCount === "number") {
+            useNotificationStore
+              .getState()
+              .setUnreadCount(response.unreadNotificationCount);
+          }
         } catch (error: any) {
           const errorMessage =
             error?.response?.data?.message ||
-            error.message ||
+            error?.message ||
             "Failed to fetch profile";
           set({
             error: errorMessage,
@@ -111,11 +130,11 @@ export const useAuthStore = create<AuthStore>()(
 );
 
 if (typeof window !== "undefined") {
-  window.addEventListener("auth:logout", () => {
-    useAuthStore.getState().logout();
+  window.addEventListener(CUSTOM_EVENTS.AUTH_LOGOUT, async () => {
+    await useAuthStore.getState().logout();
     window.location.href = "/login";
   });
-  window.addEventListener("auth:refresh", (e: any) => {
+  window.addEventListener(CUSTOM_EVENTS.AUTH_REFRESH, (e: any) => {
     if (e.detail?.token) {
       useAuthStore.getState().setToken(e.detail.token);
     }
