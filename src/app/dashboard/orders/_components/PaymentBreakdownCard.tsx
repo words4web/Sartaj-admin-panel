@@ -1,7 +1,10 @@
 "use client";
 import { JapaneseYen, Wallet } from "lucide-react";
 import { formatYen, formatPaymentMethod } from "../../../../utils/order.utils";
-import { PaymentBreakdownCardProps, PriceBreakdownType } from "@/types/order/order.types";
+import {
+  PaymentBreakdownCardProps,
+  PriceBreakdownType,
+} from "@/types/order/order.types";
 
 export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
   return (
@@ -31,13 +34,18 @@ export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
             item?.name?.toLowerCase()?.includes("discount");
 
           return (
-            <div
-              key={idx}
-              className="flex justify-between items-center text-sm">
-              <span
-                className={`font-medium ${isDiscount ? "text-emerald-600" : "text-black"}`}>
-                {item?.name}
-              </span>
+            <div key={idx} className="flex justify-between items-start text-sm">
+              <div className="flex flex-col gap-0.5">
+                <span
+                  className={`font-medium ${isDiscount ? "text-emerald-600" : "text-black"}`}>
+                  {item?.name}
+                </span>
+                {isDiscount && order?.coupon?.code && (
+                  <span className="text-emerald-500 font-medium leading-none">
+                    Code: {order?.coupon?.code}
+                  </span>
+                )}
+              </div>
               <span
                 className={`font-bold ${isDiscount ? "text-emerald-600" : "text-gray-900"}`}>
                 {isDiscount && !item?.amount?.toString()?.startsWith("-")

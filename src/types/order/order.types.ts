@@ -107,6 +107,9 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   shippingAddress: OrderAddressSnapshot;
+  coupon?: {
+    code: string;
+  };
   trackOrder?: string;
   invoiceURL?: string;
   createdAt: string;
