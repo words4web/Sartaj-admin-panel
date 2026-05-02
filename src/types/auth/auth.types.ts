@@ -5,16 +5,20 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  token: string;
-  user: User;
+  accessToken: string;
+  admin: User;
+}
+
+export enum EAdminRole {
+  ADMIN = "superAdmin",
+  SUB_ADMIN = "subAdmin",
 }
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "manager" | "user";
-  createdAt: string;
+  role: EAdminRole;
 }
 
 export interface AuthState {

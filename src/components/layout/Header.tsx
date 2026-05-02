@@ -1,75 +1,28 @@
 "use client";
 
-import { Menu, Settings, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Menu } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
-import { useAuthStore } from "@/stores/authStore";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ROUTES } from "@/constants/routes";
 
 export default function Header() {
-  const router = useRouter();
-  const { toggleSidebar } = useUIStore();
-  const { logout, user } = useAuthStore();
-
-  const handleLogout = () => {
-    logout();
-    router.push(ROUTES.LOGIN);
-  };
-
-  const handleSettings = () => {
-    router.push(ROUTES.SETTINGS_PROFILE);
-  };
+  const { toggleMobileMenu } = useUIStore();
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
-      <div className="flex items-center justify-between h-14 px-4 sm:px-6">
+    <header className="lg:hidden sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+      <div className="flex items-center h-14 px-4 sm:px-6">
         {/* Left: Mobile menu toggle */}
         <button
-          onClick={toggleSidebar}
-          className="p-2 hover:bg-gray-100 rounded-lg transition"
-          aria-label="Toggle sidebar">
-          <Menu size={20} className="text-gray-600" />
+          onClick={toggleMobileMenu}
+          className="lg:hidden p-2.5 mr-3 flex items-center justify-center bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 active:scale-95 transition-all duration-200 group"
+          aria-label="Open mobile menu">
+          <Menu
+            size={20}
+            className="text-gray-700 group-hover:text-blue-600 transition-colors"
+          />
         </button>
 
-        {/* Center: Logo (hidden on mobile) */}
-        <div className="hidden sm:block flex-1">
-          <h1 className="text-base font-semibold text-gray-900">
-            Sartaj Foods
-          </h1>
-        </div>
-
-        {/* Right: Settings button */}
-        <div className="flex items-center ml-auto">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-                aria-label="Settings menu">
-                <Settings size={20} className="text-gray-600" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem
-                onClick={handleSettings}
-                className="flex items-center gap-2 cursor-pointer">
-                <User size={16} />
-                <span>Profile & Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-red-600 cursor-pointer">
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Title */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl font-extrabold text-primary">Sartaj Foods</h1>
         </div>
       </div>
     </header>

@@ -6,6 +6,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   helperText?: string;
   required?: boolean;
+  prefix?: string;
 }
 
 export function FormInput({
@@ -13,6 +14,7 @@ export function FormInput({
   error,
   helperText,
   required,
+  prefix,
   className,
   ...props
 }: FormInputProps) {
@@ -25,16 +27,22 @@ export function FormInput({
         </label>
       )}
 
-      <div className="relative">
+      <div className="relative flex items-center">
+        {prefix && (
+          <span className="absolute left-3 text-gray-500 font-medium">
+            {prefix}
+          </span>
+        )}
         <input
           {...props}
           className={`
-            w-full px-4 py-2.5 border border-gray-200 rounded-lg
+            w-full py-2.5 border border-gray-200 rounded-lg
             focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500
             placeholder:text-gray-400
             transition-all duration-200
             disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
             hover:border-gray-300
+            ${prefix ? "pl-11 pr-4" : "px-4"}
             ${error ? "border-red-500 focus:ring-red-500/30 focus:border-red-500" : ""}
             ${className || ""}
           `}

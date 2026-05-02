@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/common.utils";
 
 interface PaginationProps {
   currentPage: number;
@@ -65,7 +65,7 @@ export function Pagination({
         <ChevronLeft size={16} />
       </Button>
 
-      {pages.map((page, idx) => (
+      {pages?.map((page, idx) => (
         <button
           key={idx}
           onClick={() => typeof page === "number" && onPageChange(page)}

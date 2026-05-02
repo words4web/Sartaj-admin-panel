@@ -1,144 +1,279 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useCustomerStore } from "@/stores/customerStore";
-import { Customer } from "@/types/customer/customer.types";
-import { useCustomers } from "@/services/customerService";
-import CustomerTable from "@/components/customers/CustomerTable";
+import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
-import { toast } from "sonner";
-
-// Mock customer data
-const MOCK_CUSTOMERS: Customer[] = [
-  {
-    id: "1",
-    name: "Rajesh Kumar",
-    email: "rajesh@example.com",
-    phone: "+91 9876543210",
-    address: "123 Main Street",
-    city: "Mumbai",
-    state: "Maharashtra",
-    zipCode: "400001",
-    country: "India",
-    status: "active",
-    createdAt: "2024-01-15",
-    updatedAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    name: "Priya Sharma",
-    email: "priya@example.com",
-    phone: "+91 9876543211",
-    address: "456 Park Avenue",
-    city: "Delhi",
-    state: "Delhi",
-    zipCode: "110001",
-    country: "India",
-    status: "active",
-    createdAt: "2024-01-20",
-    updatedAt: "2024-01-20",
-  },
-  {
-    id: "3",
-    name: "Amit Patel",
-    email: "amit@example.com",
-    phone: "+91 9876543212",
-    address: "789 Business Park",
-    city: "Bangalore",
-    state: "Karnataka",
-    zipCode: "560001",
-    country: "India",
-    status: "inactive",
-    createdAt: "2024-01-25",
-    updatedAt: "2024-01-25",
-  },
-];
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DataTable, Column } from "@/components/common/DataTable";
+import { PageHeader } from "@/components/common/PageHeader";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { useSuperCategories } from "@/services/superCategory/superCategory.hooks";
+import { useDebounce } from "@/hooks/useDebounce";
+import {
+  useDeleteCustomer,
+  useUpdateCustomerStatus,
+} from "@/services/customer/customer.mutations";
+import { Customer } from "@/types/customer/customer.types";
+import { useCustomers as useCustomersQuery } from "@/services/customer/customer.queries";
+import { Pagination } from "@/components/common/Pagination";
+import { ROUTES } from "@/constants/routes";
+import { ConfirmAction, StatusFilter } from "@/types/customer/customer.types";
+import { FilterBar } from "@/components/common/FilterBar";
+import { SUPER_CATEGORIES } from "@/lib/constants";
 
 export default function CustomersPage() {
-  const { search, setSearch, page, setPage, limit } = useCustomerStore();
-  const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
-  const [filteredCustomers, setFilteredCustomers] =
-    useState<Customer[]>(MOCK_CUSTOMERS);
-  const [isLoading, setIsLoading] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const router = useRouter();
+  const limit = 10;
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [superCategoryId, setSuperCategoryId] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const debouncedSearch = useDebounce(search, 400);
 
-  // Filter customers based on search query
-  useEffect(() => {
-    const query = (search || "").toLowerCase();
-    const filtered = customers.filter(
-      (customer) =>
-        customer.name.toLowerCase().includes(query) ||
-        customer.email.toLowerCase().includes(query),
-    );
-    setFilteredCustomers(filtered);
-    setIsLoading(false);
-  }, [search, customers]);
+  const deleteMutation = useDeleteCustomer();
+  const toggleMutation = useUpdateCustomerStatus();
 
-  const handleEdit = (customer: Customer) => {
-    setEditingId(customer.id);
-    toast.info(`Editing ${customer.name}`);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+
+  const { data: superCategoriesData, isLoading: isSuperCategoriesLoading } =
+    useSuperCategories();
+  const superCategories = superCategoriesData ?? [];
+
+  const { data, isLoading, isError, refetch } = useCustomersQuery({
+    search: debouncedSearch || undefined,
+    superCategory: superCategoryId || undefined,
+    isActive: statusFilter === "all" ? undefined : statusFilter === "active",
+    page,
+    limit,
+  });
+
+  const customers: Customer[] = data?.data ?? [];
+  const total: number = data?.total ?? 0;
+  const totalPages = useMemo(() => Math.ceil(total / limit), [total]);
+
+  const handleConfirm = useCallback(() => {
+    if (!confirmAction) return;
+
+    if (confirmAction?.type === "delete") {
+      deleteMutation.mutate(confirmAction?.customer?._id, {
+        onSettled: () => setConfirmAction(null),
+      });
+      return;
+    }
+
+    toggleMutation.mutate(confirmAction?.customer?._id, {
+      onSettled: () => setConfirmAction(null),
+    });
+  }, [confirmAction, deleteMutation, toggleMutation]);
+
+  const superCategoryName = (c: Customer) => {
+    const sc = c?.superCategory;
+    return typeof sc === "string" ? sc : (sc?.name ?? "—");
   };
 
-  const handleDelete = (customer: Customer) => {
-    setCustomers(customers.filter((c) => c.id !== customer.id));
-    toast.success(`${customer.name} deleted successfully`);
-  };
+  const resetFilters = useCallback(() => {
+    setSearch("");
+    setSuperCategoryId("");
+    setStatusFilter("all");
+    setPage(1);
+  }, []);
 
-  const handleAddNew = () => {
-    setEditingId("new");
-    toast.info("Add new customer form would open here");
-  };
-
-  const total = filteredCustomers.length;
-  const safePage = page || 1;
-  const safeLimit = limit || 10;
-  const start = (safePage - 1) * safeLimit;
-  const paginatedCustomers = filteredCustomers.slice(start, start + safeLimit);
+  const columns: Column<Customer>[] = useMemo(
+    () => [
+      {
+        key: "fullName",
+        label: "Full Name",
+        render: (_: any, row: Customer) => (
+          <span className="font-medium">{row?.fullName}</span>
+        ),
+      },
+      {
+        key: "email",
+        label: "Email",
+        render: (_: any, row: Customer) => (
+          <span className="text-gray-500 truncate max-w-[200px] overflow-hidden whitespace-nowrap inline-block align-bottom">
+            {row?.email}
+          </span>
+        ),
+      },
+      {
+        key: "mobileNumber",
+        label: "Phone",
+        render: (_: any, row: Customer) => (
+          <span className="text-gray-500 truncate max-w-[200px] overflow-hidden whitespace-nowrap inline-block align-bottom">
+            {row?.mobileNumber}
+          </span>
+        ),
+      },
+      {
+        key: "superCategory",
+        label: "Super Category",
+        render: (_: any, row: Customer) => (
+          <span className="text-gray-500 truncate max-w-[200px] overflow-hidden whitespace-nowrap inline-block align-bottom">
+            {superCategoryName(row)}
+          </span>
+        ),
+      },
+      {
+        key: "isActive",
+        label: "Status",
+        render: (_: any, row: Customer) => (
+          <Badge variant={row?.isActive ? "success" : "secondary"}>
+            {row?.isActive ? "Active" : "Inactive"}
+          </Badge>
+        ),
+      },
+      {
+        key: "actions",
+        label: "Actions",
+        width: "100px",
+        render: (_: any, row: Customer) => (
+          <div
+            className="flex justify-end"
+            onClick={(e) => e.stopPropagation()}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => router.push(ROUTES.CUSTOMERS.EDIT(row?._id))}>
+                  <Pencil size={14} className="mr-2 hover:text-white" /> Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() =>
+                    setConfirmAction({ type: "toggle", customer: row })
+                  }>
+                  <Power size={14} className="mr-2 hover:text-white" />
+                  {row?.isActive ? "Deactivate" : "Activate"}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-600 hover:text-white!"
+                  onClick={() =>
+                    setConfirmAction({ type: "delete", customer: row })
+                  }>
+                  <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ),
+      },
+    ],
+    [router],
+  );
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Customers</h1>
-          <p className="text-gray-600 mt-1">
-            Manage all your customers in one place
-          </p>
-        </div>
-        <Button
-          onClick={handleAddNew}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg h-10 px-4">
-          <Plus size={20} />
-          Add Customer
-        </Button>
-      </div>
+    <div className="space-y-6 p-4">
+      <PageHeader
+        title="Customers"
+        description="Manage customer accounts"
+        addRoute={ROUTES.CUSTOMERS.NEW}
+        addLabel="Add Customer"
+        showBack={false}
+      />
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-3 text-gray-400" size={20} />
-        <Input
-          placeholder="Search by name or email..."
-          value={search || ""}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
-        />
-      </div>
+      <FilterBar
+        search={{
+          value: search,
+          onChange: (val) => {
+            setSearch(val);
+            setPage(1);
+          },
+          placeholder: "Email or phone or name",
+        }}
+        filters={[
+          {
+            key: "superCategory",
+            label: "Super Category",
+            value: superCategoryId,
+            onChange: (val) => {
+              setSuperCategoryId(val);
+              setPage(1);
+            },
+            options: superCategories
+              ?.filter((sc) => String(sc?.name) !== SUPER_CATEGORIES.RETAILER)
+              ?.map((sc: any) => ({
+                label: sc?.name,
+                value: sc?._id,
+              })),
+            isSearchable: true,
+            disabled: isSuperCategoriesLoading,
+          },
+          {
+            key: "status",
+            label: "Status",
+            value: statusFilter,
+            onChange: (val) => {
+              setStatusFilter(val as StatusFilter);
+              setPage(1);
+            },
+            options: [
+              { label: "Active Only", value: "active" },
+              { label: "Inactive Only", value: "inactive" },
+            ],
+          },
+        ]}
+        onReset={resetFilters}
+      />
 
-      {/* Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <CustomerTable
-          customers={paginatedCustomers}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+        <DataTable
+          columns={columns}
+          data={customers}
           isLoading={isLoading}
-          page={safePage}
-          limit={safeLimit}
-          total={total}
-          onPageChange={setPage}
+          isError={isError}
+          onRetry={refetch}
+          onRowClick={(row) => router.push(ROUTES.CUSTOMERS.DETAIL(row?._id))}
         />
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
+          <p className="text-sm text-gray-500 text-center sm:text-left">
+            Showing <span className="font-medium">{customers?.length}</span> of
+            <span className="font-medium">{total}</span> customers
+          </p>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            isLoading={isLoading}
+          />
+        </div>
+      )}
+
+      <ConfirmModal
+        open={!!confirmAction}
+        title={
+          confirmAction?.type === "delete"
+            ? `Delete "${confirmAction?.customer?.fullName}" account ?`
+            : `${confirmAction?.customer?.isActive ? "Deactivate" : "Activate"} "${confirmAction?.customer?.fullName}"?`
+        }
+        description={
+          confirmAction?.type === "delete"
+            ? "This customer will be deleted. This action cannot be undone."
+            : confirmAction?.customer?.isActive
+              ? "This will deactivate the customer account."
+              : "This will activate the customer account."
+        }
+        destructive={confirmAction?.type === "delete"}
+        confirmLabel={confirmAction?.type === "delete" ? "Delete" : "Confirm"}
+        isLoading={deleteMutation.isPending || toggleMutation.isPending}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 }

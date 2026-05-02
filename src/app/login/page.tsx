@@ -9,16 +9,18 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="flex items-center justify-center mb-2">
             <Image
-              src="/sartaj_logo.svg"
+              src="/sartaj_logo.png"
               alt="Sartaj Foods"
               width={164}
-              height={164}
+              height={70}
+              priority
               className="rounded-lg object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
 

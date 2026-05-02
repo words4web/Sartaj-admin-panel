@@ -4,7 +4,7 @@ import { PAGINATION, SORT_OPTIONS } from "@/lib/constants";
 
 interface CustomerStore extends CustomerFilters {
   setSearch: (search: string) => void;
-  setStatus: (status: "active" | "inactive" | "suspended" | undefined) => void;
+  setIsActive: (isActive: boolean | undefined) => void;
   setSortBy: (sortBy: "name" | "createdAt" | "email") => void;
   setSortOrder: (order: "asc" | "desc") => void;
   setPage: (page: number) => void;
@@ -14,7 +14,7 @@ interface CustomerStore extends CustomerFilters {
 
 export const useCustomerStore = create<CustomerStore>((set) => ({
   search: "",
-  status: undefined,
+  isActive: undefined,
   sortBy: SORT_OPTIONS.NAME,
   sortOrder: "asc",
   page: PAGINATION.DEFAULT_PAGE,
@@ -22,7 +22,7 @@ export const useCustomerStore = create<CustomerStore>((set) => ({
 
   setSearch: (search) => set({ search, page: PAGINATION.DEFAULT_PAGE }),
 
-  setStatus: (status) => set({ status, page: PAGINATION.DEFAULT_PAGE }),
+  setIsActive: (isActive) => set({ isActive, page: PAGINATION.DEFAULT_PAGE }),
 
   setSortBy: (sortBy) => set({ sortBy }),
 
@@ -35,7 +35,7 @@ export const useCustomerStore = create<CustomerStore>((set) => ({
   resetFilters: () =>
     set({
       search: "",
-      status: undefined,
+      isActive: undefined,
       sortBy: SORT_OPTIONS.NAME,
       sortOrder: "asc",
       page: PAGINATION.DEFAULT_PAGE,

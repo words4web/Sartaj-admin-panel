@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/stores/authStore";
-import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
+import Header from "@/components/layout/Header";
+import { CommonLoader } from "@/components/ui/common-loader";
 
 export default function DashboardLayout({
   children,
@@ -12,7 +14,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
+  const pathname = usePathname();
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,22 +23,28 @@ export default function DashboardLayout({
   }, []);
 
   useEffect(() => {
-    if (mounted && !isAuthenticated) {
-      router.push("/login");
+    if (mounted && _hasHydrated && !isAuthenticated) {
+      router.push(ROUTES.LOGIN);
     }
-  }, [isAuthenticated, router, mounted]);
+  }, [isAuthenticated, router, mounted, _hasHydrated]);
 
-  if (!mounted || !isAuthenticated) {
-    return null;
+  if (!mounted) {
+    return <CommonLoader />;
+  }
+
+  if (!_hasHydrated || !isAuthenticated) {
+    return <CommonLoader />;
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="flex h-dvh bg-linear-to-br from-gray-50 via-white to-gray-50">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* <Header /> */}
-        <main className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-          <div className="min-h-full">{children}</div>
+        <Header />
+        <main
+          key={pathname}
+          className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent animate-in fade-in duration-500">
+          <div className="min-h-full pb-20">{children}</div>
         </main>
       </div>
     </div>

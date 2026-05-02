@@ -1,44 +1,45 @@
 import { z } from "zod";
+import { PREFECTURES } from "@/constants/prefectures";
 
-export const createCustomerSchema = z.object({
-  name: z
+export const addressSchema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  postalCode: z
     .string()
-    .min(1, "Name is required")
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be less than 100 characters"),
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
+    .min(1, "Postal code is required")
+    .regex(/^\d{3}-\d{4}$/, "Postal code must be in format XXX-XXXX"),
+  prefecture: z
+    .string()
+    .min(1, "Prefecture is required")
+    .refine((val) => PREFECTURES.some((p) => p.code === val), {
+      message: "Invalid prefecture selection",
+    }),
+  city: z.string().min(1, "City is required"),
+  streetAddress: z.string().min(1, "Street address is required"),
+  building: z.string().optional(),
   phone: z
     .string()
     .min(1, "Phone is required")
-    .regex(/^[0-9\-\+\(\)\s]*$/, "Invalid phone number format"),
-  address: z
+    .regex(/^\+81\d{9,10}$/, "Invalid Japan phone number format"),
+});
+
+export const createCustomerSchema = z.object({
+  fullName: z
     .string()
-    .min(1, "Address is required")
-    .max(200, "Address must be less than 200 characters"),
-  city: z
+    .min(1, "Full name is required")
+    .min(2, "Full name must be at least 2 characters")
+    .max(100, "Full name must be less than 100 characters"),
+  email: z.string().min(1, "Email is required").email("Invalid email"),
+  mobileNumber: z
     .string()
-    .min(1, "City is required")
-    .max(50, "City must be less than 50 characters"),
-  state: z
-    .string()
-    .min(1, "State is required")
-    .max(50, "State must be less than 50 characters"),
-  zipCode: z
-    .string()
-    .min(1, "Zip code is required")
-    .regex(/^[0-9\-]*$/, "Invalid zip code format"),
-  country: z
-    .string()
-    .min(1, "Country is required")
-    .max(50, "Country must be less than 50 characters"),
-  notes: z
-    .string()
-    .max(500, "Notes must be less than 500 characters")
-    .optional(),
+    .min(1, "Mobile number is required")
+    .regex(/^\+81\d{9,10}$/, "Invalid Japan phone number format"),
+  superCategory: z.string().min(1, "Super category is required"),
+  priceList: z.string().optional(),
+  addresses: z.array(addressSchema).min(1, "At least one address is required"),
 });
 
 export const updateCustomerSchema = createCustomerSchema.partial().extend({
-  status: z.enum(["active", "inactive", "suspended"]).optional(),
+  isActive: z.boolean().optional(),
 });
 
 export type CreateCustomerFormData = z.infer<typeof createCustomerSchema>;
