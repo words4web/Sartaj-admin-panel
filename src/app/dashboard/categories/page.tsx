@@ -126,8 +126,7 @@ export default function CategoriesPage() {
         render: (_: any, row: ICategory) => (
           <div
             className="flex justify-end"
-            onClick={(e) => e.stopPropagation()}
-          >
+            onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -139,15 +138,13 @@ export default function CategoriesPage() {
                   className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     router.push(ROUTES.CATEGORIES.DETAIL(row?._id))
-                  }
-                >
+                  }>
                   <Eye size={14} className="mr-2 group-focus:text-white" /> View
                   Details
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="focus:text-white focus:[&_svg]:text-white group"
-                  onClick={() => router.push(ROUTES.CATEGORIES.EDIT(row?._id))}
-                >
+                  onClick={() => router.push(ROUTES.CATEGORIES.EDIT(row?._id))}>
                   <Pencil size={14} className="mr-2 group-focus:text-white" />{" "}
                   Edit
                 </DropdownMenuItem>
@@ -156,12 +153,11 @@ export default function CategoriesPage() {
                   className="focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "toggle", category: row })
-                  }
-                >
+                  }>
                   <Power size={14} className="mr-2 group-focus:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   className="text-red-600 focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "delete", category: row })
@@ -169,7 +165,7 @@ export default function CategoriesPage() {
                 >
                   <Trash2 size={14} className="mr-2 group-focus:text-white" />{" "}
                   Delete
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
