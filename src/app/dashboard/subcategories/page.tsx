@@ -125,7 +125,8 @@ export default function SubCategoriesPage() {
                   onClick={() =>
                     router.push(ROUTES.SUBCATEGORIES.EDIT(row?._id))
                   }>
-                  <Pencil size={14} className="mr-2 group-focus:text-white" /> Edit
+                  <Pencil size={14} className="mr-2 group-focus:text-white" />{" "}
+                  Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -136,13 +137,13 @@ export default function SubCategoriesPage() {
                   <Power size={14} className="mr-2 group-focus:text-white" />
                   {row.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   className="text-red-600 focus:text-white focus:[&_svg]:text-white group"
                   onClick={() =>
                     setConfirmAction({ type: "delete", subCategory: row })
                   }>
                   <Trash2 size={14} className="mr-2 group-focus:text-white" /> Delete
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -127,11 +127,11 @@ export default function PriceListsPage() {
                   onClick={() => router.push(ROUTES.PRICE_LISTS.EDIT(row._id))}>
                   <Pencil size={14} className="mr-2 hover:text-white" /> Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   className="text-red-600 hover:text-white!"
                   onClick={() => setConfirmDelete(row)}>
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

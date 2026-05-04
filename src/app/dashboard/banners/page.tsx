@@ -159,13 +159,13 @@ export default function BannersPage() {
                   <Power size={14} className="mr-2 hover:text-white" />
                   {row?.isActive ? "Deactivate" : "Activate"}
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   className="text-red-600 focus:text-red-600 hover:text-white!"
                   onClick={() =>
                     setConfirmAction({ type: "delete", banner: row })
                   }>
                   <Trash2 size={14} className="mr-2 hover:text-white" /> Delete
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
