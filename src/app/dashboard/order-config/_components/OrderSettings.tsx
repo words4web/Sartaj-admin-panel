@@ -10,11 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useForm, FormProvider } from "react-hook-form";
 import { useEffect } from "react";
-import { Save, Package, Truck, MapPin, Percent } from "lucide-react";
+import { Save, Package, Truck, MapPin, Percent, Coins } from "lucide-react";
 import { MOVTab } from "./MOVTab";
 import { ShippingRulesTab } from "./ShippingRulesTab";
 import { SpecialAreasTab } from "./SpecialAreasTab";
 import { TaxConfigTab } from "./TaxConfigTab";
+import { WalletTab } from "./WalletTab";
 import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 const orderTabs = [
@@ -37,6 +38,11 @@ const orderTabs = [
     value: "tax",
     label: "Tax Settings",
     icon: Percent,
+  },
+  {
+    value: "wallet",
+    label: "Wallet",
+    icon: Coins,
   },
 ];
 
@@ -73,6 +79,7 @@ export default function OrderSettings() {
         { category: TAX_CATEGORY.STANDARD, value: 10 },
         { category: TAX_CATEGORY.CUSTOM, value: 1 },
       ],
+      wallet: { rewardPercentage: 0 },
     },
   });
   const {
@@ -83,7 +90,10 @@ export default function OrderSettings() {
 
   useEffect(() => {
     if (config) {
-      reset(config);
+      reset({
+        ...config,
+        wallet: config?.wallet || { rewardPercentage: 0 },
+      });
     }
   }, [config, reset]);
 
@@ -161,9 +171,14 @@ export default function OrderSettings() {
           <TabsContent value="tax" className="mt-0 focus-visible:outline-none">
             <TaxConfigTab />
           </TabsContent>
+
+          <TabsContent
+            value="wallet"
+            className="mt-0 focus-visible:outline-none">
+            <WalletTab />
+          </TabsContent>
         </Tabs>
       </form>
     </FormProvider>
   );
 }
-

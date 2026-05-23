@@ -17,7 +17,12 @@ export interface ITaxConfig {
   value: number;
 }
 
+export interface IWalletConfig {
+  rewardPercentage: number;
+}
+
 export interface IAppConfig {
+  wallet?: IWalletConfig;
   minOrderValues: {
     superCategoryId: string | any;
     superCategoryName: string;
