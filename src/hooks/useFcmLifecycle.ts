@@ -53,14 +53,15 @@ export const useFcmLifecycle = (user: User | null) => {
           }
           return;
         }
-
         const messaging = await getFirebaseMessaging();
         if (!messaging) return;
 
-        // Explicitly register the service worker to avoid race conditions
+        // Explicitly register the service worker
         const registration = await navigator.serviceWorker.register(
           "/firebase-messaging-sw.js",
         );
+
+        await navigator.serviceWorker.ready;
 
         const currentToken = await getToken(messaging, {
           vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
