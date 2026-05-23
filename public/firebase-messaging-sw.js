@@ -14,12 +14,12 @@ self.addEventListener("activate", (event) => {
 });
 
 firebase.initializeApp({
-  apiKey: "AIzaSyDcIbh40fb0s0No1gt-K0zlcTnfpNy8gMA",
-  authDomain: "sartaj-food-booking-app.firebaseapp.com",
-  projectId: "sartaj-food-booking-app",
-  storageBucket: "sartaj-food-booking-app.firebasestorage.app",
-  messagingSenderId: "625924457356",
-  appId: "1:625924457356:web:5b5757ed68f0a65f25cca9",
+  apiKey: "AIzaSyBWxMldSEt2ohShOzHiJJSFkL04Kdl8wFU",
+  authDomain: "sartaj-food-booking-app-3447b.firebaseapp.com",
+  projectId: "sartaj-food-booking-app-3447b",
+  storageBucket: "sartaj-food-booking-app-3447b.firebasestorage.app",
+  messagingSenderId: "583642866759",
+  appId: "1:583642866759:web:2d80c80806aa343d5d3d62",
 });
 
 const messaging = firebase.messaging();
