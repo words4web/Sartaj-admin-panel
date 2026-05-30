@@ -8,7 +8,7 @@ import {
   useUpdateOrderStatus,
   useUpdateOrderTracking,
 } from "@/services/order/order.mutations";
-import { OrderStatus, PaymentStatus } from "@/types/order/order.types";
+import { OrderStatus } from "@/types/order/order.types";
 import { CustomerInfoCard } from "../_components/CustomerInfoCard";
 import { PaymentBreakdownCard } from "../_components/PaymentBreakdownCard";
 import { OrderStatusUpdater } from "../_components/OrderStatusUpdater";
@@ -29,14 +29,12 @@ export default function OrderDetailsPage() {
   const updateTracking = useUpdateOrderTracking();
 
   const [status, setStatus] = useState<OrderStatus | "">("");
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus | "">("");
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
 
   // Sync state when order data is loaded
   useEffect(() => {
     if (order) {
       setStatus(order?.status);
-      setPaymentStatus(order?.paymentStatus);
     }
   }, [order]);
 
@@ -97,12 +95,11 @@ export default function OrderDetailsPage() {
             <CustomerInfoCard order={order} />
 
             <OrderStatusUpdater
+              order={order}
               status={status}
-              paymentStatus={paymentStatus}
+              paymentStatus={order?.paymentStatus || ""}
               initialStatus={order?.status || ""}
-              initialPaymentStatus={order?.paymentStatus || ""}
               onStatusChange={setStatus}
-              onPaymentStatusChange={setPaymentStatus}
               onUpdate={(data) => updateStatus.mutate({ id, data })}
               isUpdating={updateStatus.isPending}
               disabled={!id}

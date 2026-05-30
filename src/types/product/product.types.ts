@@ -9,7 +9,11 @@ import {
   ProductTag,
   ProductCaseType,
 } from "@/constants/product.constants";
-import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
+import {
+  TAX_CATEGORY,
+  TAX_TYPE,
+  DISCOUNT_TYPE,
+} from "@/services/appConfig/appConfig.service";
 
 export type {
   ProductBadge,
@@ -68,7 +72,8 @@ export interface IProduct {
     isEnabled: boolean;
     startTime: string;
     endTime: string;
-    discountPercent: number;
+    discountType: DISCOUNT_TYPE;
+    discountValue: number;
   };
   createdAt?: string;
   updatedAt?: string;
@@ -125,7 +130,8 @@ export interface ProductFormValues {
     isEnabled: boolean;
     startTime: string | Date;
     endTime: string | Date;
-    discountPercent: string;
+    discountType: DISCOUNT_TYPE | "";
+    discountValue: string;
   };
 }
 
@@ -163,7 +169,8 @@ export interface CreateProductPayload {
     isEnabled: boolean;
     startTime: string;
     endTime: string;
-    discountPercent: number;
+    discountType: DISCOUNT_TYPE;
+    discountValue: number;
   };
 }
 

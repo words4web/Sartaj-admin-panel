@@ -7,9 +7,6 @@ import { Order, OrderStatus, PaymentStatus } from "@/types/order/order.types";
 export const formatStatus = (status?: string) =>
   (status || "")?.replace(/_/g, " ")?.replace(/\b\w/g, (c) => c?.toUpperCase());
 
-export const formatYen = (value?: number) =>
-  `¥ ${(value ?? 0)?.toLocaleString()}`;
-
 export const formatDateTime = (value?: string) => {
   if (!value) return "—";
   const date = new Date(value);

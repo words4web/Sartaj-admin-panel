@@ -1,7 +1,7 @@
 "use client";
 
 import { OrderItem, OrderItemsListProps } from "@/types/order/order.types";
-import { formatYen } from "../../../../utils/order.utils";
+import { formatYen } from "@/utils/common.utils";
 
 /** Safely extract a display string from a name that might be a multilingual object */
 function resolveItemName(item: OrderItem): string {
@@ -89,7 +89,6 @@ export function OrderItemsList({ items }: OrderItemsListProps) {
                               {item?.productSnapshot?.netWeightKg} kg
                             </span>
                           )}
-
                         </div>
                       </div>
                     </div>

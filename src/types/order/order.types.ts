@@ -1,5 +1,14 @@
 import { IAddress } from "../customer/customer.types";
 
+export enum OrderStatusEnum {
+  PAYMENT_PENDING = "payment_pending",
+  PLACED = "placed",
+  PROCESSING = "processing",
+  DISPATCHED = "dispatched",
+  DELIVERED = "delivered",
+  CANCELLED = "cancelled",
+}
+
 export type OrderStatus =
   | "payment_pending"
   | "placed"
@@ -29,6 +38,7 @@ export interface OrderCustomerSummary {
 export enum PriceBreakdownType {
   SUBTOTAL = "SUBTOTAL",
   TAX = "TAX",
+  WALLET = "WALLET",
   SHIPPING = "SHIPPING",
   DISCOUNT = "DISCOUNT",
   COUPON = "COUPON",
@@ -145,12 +155,11 @@ export interface UpdateOrderStatusPayload {
 // ─── Component Props
 
 export interface OrderStatusUpdaterProps {
+  order: Order;
   status: OrderStatus | "";
   paymentStatus: PaymentStatus | "";
   initialStatus: OrderStatus | "";
-  initialPaymentStatus: PaymentStatus | "";
   onStatusChange: (value: OrderStatus) => void;
-  onPaymentStatusChange: (value: PaymentStatus) => void;
   onUpdate: (data: UpdateOrderStatusPayload) => void;
   isUpdating: boolean;
   disabled?: boolean;

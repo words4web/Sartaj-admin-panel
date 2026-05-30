@@ -9,6 +9,8 @@ export const customerKeys = {
     [...customerKeys.lists(), { filters }] as const,
   details: () => [...customerKeys.all, "detail"] as const,
   detail: (id: string) => [...customerKeys.details(), id] as const,
+  wallet: (id: string, page: number, limit: number) =>
+    [...customerKeys.all, "wallet", id, { page, limit }] as const,
 };
 
 export const useCustomers = (filters?: CustomerFilters) => {
@@ -22,6 +24,14 @@ export const useCustomer = (id: string) => {
   return useQuery({
     queryKey: customerKeys.detail(id),
     queryFn: () => customerApi.getCustomerById(id),
+    enabled: !!id,
+  });
+};
+
+export const useCustomerWallet = (id: string, page: number, limit: number) => {
+  return useQuery({
+    queryKey: customerKeys.wallet(id, page, limit),
+    queryFn: () => customerApi.getCustomerWallet(id, { page, limit }),
     enabled: !!id,
   });
 };

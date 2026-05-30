@@ -253,7 +253,7 @@ export default function DashboardPage() {
                       #{order?.orderId}
                     </td>
                     <td className="py-4 text-gray-600 font-medium">
-                      {order?.customerName || "Walk-in Customer"}
+                      {order?.customerName || "name_not_found"}
                     </td>
                     <td className="py-4 text-gray-500 text-sm">
                       {format(new Date(order?.createdAt), "MMM d, yyyy")}

@@ -58,4 +58,19 @@ export const customerApi = {
       {},
     );
   },
+
+  getCustomerWallet: async (
+    id: string,
+    params: { page?: number; limit?: number },
+  ): Promise<any> => {
+    const response = await axiosInstance.get<any, any>(
+      API_ROUTES.CUSTOMERS.WALLET(id),
+      { params, _returnWrapper: true } as any,
+    );
+    return {
+      balance: response?.data?.balance ?? 0,
+      transactions: response?.data?.transactions ?? [],
+      meta: response?.meta ?? {},
+    };
+  },
 };
