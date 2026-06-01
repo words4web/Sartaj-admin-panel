@@ -87,13 +87,13 @@ export default function LoginForm() {
         {isLoading ? "Signing in..." : "Sign In"}
       </Button>
 
-      <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+      {/* <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
         <p className="text-sm text-blue-900 mb-2 font-medium">
           Demo Credentials:
         </p>
         <p className="text-sm text-blue-800">Email: super@admin.com</p>
         <p className="text-sm text-blue-800">Password: Admin@123</p>
-      </div>
+      </div> */}
     </form>
   );
 }
