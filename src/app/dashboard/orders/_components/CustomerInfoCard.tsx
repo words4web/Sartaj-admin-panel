@@ -25,17 +25,13 @@ export function CustomerInfoCard({ order }: CustomerInfoCardProps) {
       <div className="space-y-4 flex-grow">
         <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-100">
           <div>
-            <p className="text-[10px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-1">
-              Name
-            </p>
+            <p className="text-sm font-bold text-gray-900">Name</p>
             <p className="text-sm font-semibold text-gray-900">
               {customerName}
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-1">
-              Phone
-            </p>
+            <p className="text-sm font-bold text-gray-900">Phone</p>
             <p className="text-sm font-medium text-black">
               {customer?.mobileNumber || "—"}
             </p>
@@ -43,7 +39,7 @@ export function CustomerInfoCard({ order }: CustomerInfoCardProps) {
         </div>
 
         <div>
-          <p className="text-[10px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2 flex items-center gap-1.5">
+          <p className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-1.5">
             <Truck className="w-3.5 h-3.5" /> Shipping Address
           </p>
           {address ? (

@@ -12,6 +12,11 @@ export enum TAX_TYPE {
   FIXED = "FIXED",
 }
 
+export enum DISCOUNT_TYPE {
+  PERCENTAGE = "PERCENTAGE",
+  FIXED = "FIXED",
+}
+
 export interface ITaxConfig {
   category: TAX_CATEGORY;
   value: number;

@@ -12,13 +12,13 @@ import { Order, OrderStatus } from "@/types/order/order.types";
 import { FilterBar } from "@/components/common/FilterBar";
 import {
   formatDateTime,
-  formatYen,
-  statusVariant,
-  ORDER_STATUS_OPTIONS,
-  resolveCustomerName,
-  paymentStatusVariant,
   formatStatus,
-} from "../../../utils/order.utils";
+  ORDER_STATUS_OPTIONS,
+  paymentStatusVariant,
+  resolveCustomerName,
+  statusVariant,
+} from "@/utils/order.utils";
+import { formatYen } from "@/utils/common.utils";
 
 export default function OrdersPage() {
   const router = useRouter();

@@ -1,10 +1,10 @@
 "use client";
-import { JapaneseYen, Wallet } from "lucide-react";
-import { formatYen, formatPaymentMethod } from "../../../../utils/order.utils";
+import { JapaneseYen } from "lucide-react";
 import {
   PaymentBreakdownCardProps,
   PriceBreakdownType,
 } from "@/types/order/order.types";
+import { formatYen } from "@/utils/common.utils";
 
 export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
   return (
@@ -21,7 +21,7 @@ export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
         <div className="flex justify-between items-center text-sm">
           <span className="font-medium text-black">Subtotal</span>
           <span className="font-bold text-gray-900">
-            {formatYen(order?.calculationSnapshot?.subTotal)}
+            {formatYen(Number(order?.calculationSnapshot?.subTotal))}
           </span>
         </div>
 
@@ -31,6 +31,7 @@ export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
             item?.isNegative ||
             item?.type === PriceBreakdownType.DISCOUNT ||
             item?.type === PriceBreakdownType.COUPON ||
+            item?.type === PriceBreakdownType.WALLET ||
             item?.name?.toLowerCase()?.includes("discount");
 
           return (
@@ -63,29 +64,8 @@ export function PaymentBreakdownCard({ order }: PaymentBreakdownCardProps) {
             Total Amount
           </span>
           <span className="font-black text-2xl text-primary tracking-tight">
-            {formatYen(order?.totalAmount)}
+            {formatYen(Number(order?.totalAmount))}
           </span>
-        </div>
-      </div>
-
-      <div className="mt-6 pt-5">
-        <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100/80 gap-4">
-          <div className="flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-gray-900" />
-            <div className="flex flex-col">
-              <span className="text-gray-900 text-[10px] font-bold uppercase tracking-wider leading-none">
-                Payment
-              </span>
-              <span className="text-gray-900 text-[10px] font-bold uppercase tracking-wider leading-none mt-0.5">
-                Method:
-              </span>
-            </div>
-          </div>
-          <div className="flex-1 text-right">
-            <span className="font-black text-gray-900 text-sm">
-              {formatPaymentMethod(order?.paymentMethod)}
-            </span>
-          </div>
         </div>
       </div>
     </div>

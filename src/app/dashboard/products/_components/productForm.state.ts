@@ -6,7 +6,11 @@ import {
   STOCK_STATUS,
 } from "@/constants/product.constants";
 import { extractId } from "@/utils/common.utils";
-import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
+import {
+  TAX_CATEGORY,
+  TAX_TYPE,
+  DISCOUNT_TYPE,
+} from "@/services/appConfig/appConfig.service";
 import dayjs from "dayjs";
 
 export const defaultForm = (): ProductFormValues => ({
@@ -42,7 +46,8 @@ export const defaultForm = (): ProductFormValues => ({
     isEnabled: false,
     startTime: dayjs()?.toISOString(),
     endTime: dayjs().add(24, "hours")?.toISOString(),
-    discountPercent: "1",
+    discountType: DISCOUNT_TYPE.PERCENTAGE,
+    discountValue: "1",
   },
 });
 
@@ -105,7 +110,8 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
       endTime: p.timeDiscount?.endTime
         ? dayjs(p.timeDiscount.endTime)?.toISOString()
         : dayjs().add(24, "hours")?.toISOString(),
-      discountPercent: String(p.timeDiscount?.discountPercent ?? "0"),
+      discountType: p.timeDiscount?.discountType ?? DISCOUNT_TYPE.PERCENTAGE,
+      discountValue: String(p.timeDiscount?.discountValue ?? "0"),
     },
   };
 }
