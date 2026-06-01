@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -10,9 +10,12 @@ import { CommonError } from "@/components/ui/common-error";
 import { dateUtils } from "@/utils/common.utils";
 import { ROUTES } from "@/constants/routes";
 import { getPrefectureName } from "@/constants/prefectures";
+import { Button } from "@/components/ui/button";
+import { Wallet2 } from "lucide-react";
 
 export default function CustomerDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
 
   const { data: customer, isLoading, isError, refetch } = useCustomer(id);
@@ -47,14 +50,25 @@ export default function CustomerDetailPage() {
           />
         ) : (
           <div className="space-y-5">
-            <div className="flex flex-wrap items-center gap-3">
-              <h2 className="text-xl font-semibold">{customer?.fullName}</h2>
-              <Badge variant={customer?.isActive ? "success" : "secondary"}>
-                {customer?.isActive ? "Active" : "Inactive"}
-              </Badge>
-              {customer?.isDeleted && (
-                <Badge variant="secondary">Deleted</Badge>
-              )}
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="text-xl font-semibold">{customer?.fullName}</h2>
+                {!customer?.isDeleted && (
+                  <Badge variant={customer?.isActive ? "success" : "secondary"}>
+                    {customer?.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                )}
+                {customer?.isDeleted && (
+                  <Badge variant="secondary">Deleted</Badge>
+                )}
+              </div>
+              <Button
+                variant="secondary"
+                className="flex items-center gap-2 text-white bg-primary text-xl hover:bg-primary cursor-pointer"
+                onClick={() => router.push(ROUTES.CUSTOMERS.WALLET(id))}>
+                <Wallet2 className="!w-5 !h-5" />
+                Wallet
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-200">

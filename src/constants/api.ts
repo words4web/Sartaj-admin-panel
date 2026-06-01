@@ -18,6 +18,8 @@ export const API_ROUTES = {
     TOGGLE_STATUS: (id: string) =>
       `${API_ADMIN_BASE}/customer/toggle-status/${id}`,
     DELETE: (id: string) => `${API_ADMIN_BASE}/customer/delete-customer/${id}`,
+    WALLET: (id: string) =>
+      `${API_ADMIN_BASE}/customer/get-customer-wallet/${id}`,
   },
 
   // Super Categories

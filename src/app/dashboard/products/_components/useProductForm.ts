@@ -9,7 +9,11 @@ import { useSuperCategories } from "@/services/superCategory/superCategory.hooks
 import { toast } from "sonner";
 import { defaultForm } from "./productForm.state";
 import { productApi } from "@/services/product/product.api";
-import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
+import {
+  TAX_CATEGORY,
+  TAX_TYPE,
+  DISCOUNT_TYPE,
+} from "@/services/appConfig/appConfig.service";
 
 import {
   UseProductFormProps,
@@ -304,10 +308,20 @@ export function useProductForm({
     };
 
     const taxOk = isTaxOk();
+    const isDiscountValueOk = () => {
+      if (!values.timeDiscount.isEnabled) return true;
+      const dv = Number(values.timeDiscount.discountValue);
+      if (values.timeDiscount.discountType === DISCOUNT_TYPE.PERCENTAGE) {
+        return dv >= 1 && dv <= 100;
+      }
+      if (values.timeDiscount.discountType === DISCOUNT_TYPE.FIXED) {
+        return dv > 0;
+      }
+      return false;
+    };
     const discountOk =
       !values.timeDiscount.isEnabled ||
-      (Number(values.timeDiscount.discountPercent) >= 1 &&
-        Number(values.timeDiscount.discountPercent) <= 100 &&
+      (isDiscountValueOk() &&
         Boolean(values.timeDiscount.startTime) &&
         Boolean(values.timeDiscount.endTime));
     return pricingOk && catalogOk && taxOk && discountOk;
@@ -441,9 +455,10 @@ export function useProductForm({
         : undefined,
       timeDiscount: {
         isEnabled: values.timeDiscount.isEnabled,
-        startTime: values.timeDiscount.startTime,
-        endTime: values.timeDiscount.endTime,
-        discountPercent: Number(values.timeDiscount.discountPercent),
+        startTime: values.timeDiscount.startTime as string,
+        endTime: values.timeDiscount.endTime as string,
+        discountType: values.timeDiscount.discountType,
+        discountValue: Number(values.timeDiscount.discountValue),
       },
     };
 
