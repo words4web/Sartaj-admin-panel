@@ -332,6 +332,7 @@ export function useProductForm({
     values.manufacturerId,
     hasSubcategories,
     values.isTaxable,
+    values.taxCategory,
     values.taxValue,
     values.taxType,
     values.timeDiscount,

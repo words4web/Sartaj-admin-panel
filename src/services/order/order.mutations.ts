@@ -53,3 +53,34 @@ export const useUpdateOrderTracking = () => {
     },
   });
 };
+
+export const useUpdateOrderDeliveryTerms = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { deliveryTerms: string | null };
+    }) => orderApi.updateOrderDeliveryTerms(id, data),
+    onSuccess: (_, variables) => {
+      toast.success(
+        "Delivery terms updated successfully. Invoice is regenerating in background.",
+      );
+      queryClient.invalidateQueries({
+        queryKey: orderKeys.detail(variables?.id),
+      });
+
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: orderKeys.detail(variables?.id),
+        });
+      }, 10000);
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to update delivery terms");
+    },
+  });
+};

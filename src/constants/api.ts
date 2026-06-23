@@ -55,6 +55,8 @@ export const API_ROUTES = {
     DETAIL: (id: string) => `${API_ADMIN_BASE}/orders/${id}`,
     UPDATE_STATUS: (id: string) => `${API_ADMIN_BASE}/orders/${id}/status`,
     UPDATE_TRACKING: (id: string) => `${API_ADMIN_BASE}/orders/${id}/tracking`,
+    UPDATE_DELIVERY_TERMS: (id: string) =>
+      `${API_ADMIN_BASE}/orders/${id}/delivery-terms`,
   },
 
   // Products
