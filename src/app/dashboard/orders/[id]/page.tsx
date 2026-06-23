@@ -7,6 +7,7 @@ import { useOrder } from "@/services/order/order.queries";
 import {
   useUpdateOrderStatus,
   useUpdateOrderTracking,
+  useUpdateOrderDeliveryTerms,
 } from "@/services/order/order.mutations";
 import { OrderStatus } from "@/types/order/order.types";
 import { CustomerInfoCard } from "../_components/CustomerInfoCard";
@@ -21,22 +22,43 @@ import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { dateUtils } from "@/utils/common.utils";
 
+const slotMap: Record<string, string> = {
+  "1": "09:00 AM - 12:00 PM",
+  "2": "12:00 PM - 03:00 PM",
+  "3": "03:00 PM - 06:00 PM",
+  "4": "06:00 PM - 09:00 PM",
+};
+
 export default function OrderDetailsPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? "";
   const { data: order, isLoading, isError, refetch } = useOrder(id);
   const updateStatus = useUpdateOrderStatus();
   const updateTracking = useUpdateOrderTracking();
+  const updateDeliveryTerms = useUpdateOrderDeliveryTerms();
 
   const [status, setStatus] = useState<OrderStatus | "">("");
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [deliveryTermsInput, setDeliveryTermsInput] = useState("");
 
   // Sync state when order data is loaded
   useEffect(() => {
     if (order) {
       setStatus(order?.status);
+      setDeliveryTermsInput(order?.deliveryTerms || "");
     }
   }, [order]);
+
+  const handleSaveDeliveryTerms = () => {
+    const trimmedInput = deliveryTermsInput
+      ?.split("\n")
+      ?.map((line) => line?.trim())
+      ?.join("\n");
+    updateDeliveryTerms.mutate({
+      id,
+      data: { deliveryTerms: trimmedInput },
+    });
+  };
 
   const handleUpdateTracking = (trackOrder: string) => {
     updateTracking.mutate(
@@ -90,6 +112,59 @@ export default function OrderDetailsPage() {
         </div>
       ) : (
         <div className="space-y-8 mt-2">
+          {(order?.deliveryDate || order?.deliverySlot) && (
+            <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-amber-100/90 text-amber-850 flex items-center justify-center shrink-0">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-amber-900 flex items-center gap-2">
+                    Customer Delivery Schedule Request
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                  </h4>
+                  <p className="text-xs text-amber-700 font-medium mt-0.5">
+                    The customer specified when they would like to receive this
+                    order.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {order?.deliveryDate && (
+                  <div className="bg-white px-4 py-2.5 rounded-xl border border-amber-200/60 flex flex-col min-w-[140px]">
+                    <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">
+                      Date
+                    </span>
+                    <span className="text-sm font-black text-gray-900 mt-0.5">
+                      {dateUtils.format(order?.deliveryDate, "MMMM DD, YYYY")}
+                    </span>
+                  </div>
+                )}
+                {order?.deliverySlot && (
+                  <div className="bg-white px-4 py-2.5 rounded-xl border border-amber-200/60 flex flex-col min-w-[160px]">
+                    <span className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">
+                      Time Window
+                    </span>
+                    <span className="text-sm font-black text-gray-900 mt-0.5">
+                      {slotMap[order?.deliverySlot] || order?.deliverySlot}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Top Summary Cards Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <CustomerInfoCard order={order} />
@@ -111,6 +186,50 @@ export default function OrderDetailsPage() {
           {/* Main Content Area */}
           <div className="space-y-8">
             <OrderItemsList items={order?.items} />
+
+            {/* Delivery Terms Card */}
+            <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 transition-all hover:shadow-md">
+              <div className="mb-4 border-b border-gray-100 pb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <h3 className="text-lg font-bold text-gray-900 tracking-tight">
+                    Invoice Terms of Delivery (Optional Notes)
+                  </h3>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <textarea
+                  rows={4}
+                  placeholder="Enter custom delivery instructions or notes to append to the invoice PDF (e.g. Leave package by the door, delivery after 5 PM, etc.)"
+                  value={deliveryTermsInput}
+                  onChange={(e) => setDeliveryTermsInput(e.target.value)}
+                  className="w-full p-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-black bg-white"
+                />
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleSaveDeliveryTerms}
+                    disabled={
+                      updateDeliveryTerms.isPending ||
+                      deliveryTermsInput === (order?.deliveryTerms || "")
+                    }
+                    className="h-10 px-5 rounded-xl font-bold cursor-pointer transition-all">
+                    {updateDeliveryTerms.isPending
+                      ? "Updating Invoice..."
+                      : "Update Invoice PDF"}
+                  </Button>
+                </div>
+              </div>
+            </div>
 
             <OrderNotesCard notes={order?.notes} />
           </div>

@@ -122,6 +122,9 @@ export interface Order {
   };
   trackOrder?: string;
   invoiceURL?: string;
+  deliveryDate?: string | null;
+  deliverySlot?: string | null;
+  deliveryTerms?: string | null;
   createdAt: string;
   updatedAt: string;
 }
