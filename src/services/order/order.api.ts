@@ -39,4 +39,14 @@ export const orderApi = {
       data,
     );
   },
+
+  updateOrderDeliveryTerms: async (
+    id: string,
+    data: { deliveryTerms: string | null },
+  ): Promise<void> => {
+    return axiosInstance.patch<any, void>(
+      API_ROUTES.ORDERS.UPDATE_DELIVERY_TERMS(id),
+      data,
+    );
+  },
 };

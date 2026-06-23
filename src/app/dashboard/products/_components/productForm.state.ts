@@ -75,7 +75,10 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     caseType: p.caseType ?? "",
     productType: p.productType ?? PRODUCT_TYPE.DRY,
     tags: p.tags ?? [],
-    stockQuantity: String(p.stockQuantity ?? "1"),
+    stockQuantity:
+      p.stockStatus === STOCK_STATUS.OUT_OF_STOCK
+        ? "0"
+        : String(Math.max(1, Number(p.stockQuantity ?? 1))),
     sellingUnit: p.sellingUnit ?? SELLING_UNIT.UNIT,
     stockStatus: p.stockStatus,
     images: p.images ?? [],
