@@ -33,3 +33,16 @@ export interface CMSFilters {
   page?: number;
   limit?: number;
 }
+
+export interface CmsFormValues {
+  title: ITranslationMap;
+  slug: string;
+  content: ITranslationMap;
+}
+
+export interface CmsFormProps {
+  initialValues: CmsFormValues;
+  isSubmitting?: boolean;
+  submitLabel?: string;
+  onSubmit: (values: CmsFormValues) => Promise<void>;
+}
