@@ -16,19 +16,7 @@ import {
   normalizeTranslation,
   updateTranslationField,
 } from "@/utils/translation.utils";
-
-interface CmsFormValues {
-  title: ITranslationMap;
-  slug: string;
-  content: ITranslationMap;
-}
-
-interface CmsFormProps {
-  initialValues: CmsFormValues;
-  isSubmitting?: boolean;
-  submitLabel?: string;
-  onSubmit: (values: CmsFormValues) => Promise<void>;
-}
+import { CmsFormValues, CmsFormProps } from "@/types/cms/cms.types";
 
 export default function CmsForm({
   initialValues,

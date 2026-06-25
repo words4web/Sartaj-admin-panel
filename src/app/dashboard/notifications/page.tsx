@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { Bell, CheckCheck, Package, Info } from "lucide-react";
+import { Bell, CheckCheck, Package, Info, AlertTriangle } from "lucide-react";
 import {
   useNotificationsQuery,
   useMarkNotificationAsReadMutation,
@@ -35,6 +35,14 @@ export default function NotificationsPage() {
   const getNotificationIcon = (type: string) => {
     if (type?.includes("ORDER"))
       return <Package className="w-5 h-5 text-blue-500" />;
+    if (
+      type === "LOW_STOCK" ||
+      type === "CRITICALLY_LOW_STOCK" ||
+      type === "OUT_OF_STOCK_ADMIN"
+    ) {
+      const color = type === "LOW_STOCK" ? "text-amber-500" : "text-red-500";
+      return <AlertTriangle className={cn("w-5 h-5", color)} />;
+    }
     return <Info className="w-5 h-5 text-gray-500" />;
   };
 
@@ -45,6 +53,8 @@ export default function NotificationsPage() {
 
     if (notification?.metadata?.orderId) {
       router.push(ROUTES.ORDERS.DETAIL(notification?.metadata?.orderId));
+    } else if (notification?.metadata?.productId) {
+      router.push(ROUTES.PRODUCTS.DETAIL(notification?.metadata?.productId));
     }
   };
 

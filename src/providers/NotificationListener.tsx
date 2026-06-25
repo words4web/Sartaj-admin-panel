@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { onForegroundMessage } from "@/lib/firebase";
 import { toast } from "sonner";
 import { orderKeys } from "@/services/order/order.queries";
+import { notificationKeys } from "@/services/notification/useNotificationQueries";
 import { FCM_EVENT_TYPES } from "@/lib/constants";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useRouter } from "next/navigation";
@@ -42,6 +43,7 @@ export default function NotificationListener() {
         const body = data?.body;
         const type = data?.type;
         const orderId = data?.orderId;
+        const productId = data?.productId;
 
         if (title) {
           toast.info(title, {
@@ -52,7 +54,13 @@ export default function NotificationListener() {
                   label: "View Details",
                   onClick: () => router.push(ROUTES.ORDERS.DETAIL(orderId)),
                 }
-              : undefined,
+              : productId
+                ? {
+                    label: "View Details",
+                    onClick: () =>
+                      router.push(ROUTES.PRODUCTS.DETAIL(productId)),
+                  }
+                : undefined,
           });
 
           const audio = new Audio("/notification.mp3");
@@ -61,6 +69,7 @@ export default function NotificationListener() {
         }
 
         incrementUnread();
+        queryClient.invalidateQueries({ queryKey: notificationKeys.all });
 
         const orderEvents: string[] = [
           FCM_EVENT_TYPES.NEW_ORDER,
@@ -73,12 +82,21 @@ export default function NotificationListener() {
           FCM_EVENT_TYPES.ORDER_CANCELLED_ADMIN,
         ];
 
+        const stockEvents: string[] = [
+          FCM_EVENT_TYPES.LOW_STOCK,
+          FCM_EVENT_TYPES.CRITICALLY_LOW_STOCK,
+          FCM_EVENT_TYPES.OUT_OF_STOCK_ADMIN,
+        ];
+
         if (type && orderEvents.includes(type)) {
           // Invalidate all order-related data
           queryClient.invalidateQueries({ queryKey: orderKeys.all });
           // Invalidate dashboard stats as they depend on orders
           queryClient.invalidateQueries({ queryKey: ["dashboard"] });
           // Invalidate products as stock levels might have changed
+          queryClient.invalidateQueries({ queryKey: ["products"] });
+        } else if (type && stockEvents.includes(type)) {
+          // Invalidate products as stock levels have changed
           queryClient.invalidateQueries({ queryKey: ["products"] });
         }
       });

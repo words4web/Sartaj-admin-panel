@@ -32,6 +32,9 @@ const FCM_EVENT_TYPES = {
   ORDER_SHIPPED: "ORDER_SHIPPED",
   ORDER_DELIVERED: "ORDER_DELIVERED",
   ORDER_CANCELLED: "ORDER_CANCELLED",
+  LOW_STOCK: "LOW_STOCK",
+  CRITICALLY_LOW_STOCK: "CRITICALLY_LOW_STOCK",
+  OUT_OF_STOCK_ADMIN: "OUT_OF_STOCK_ADMIN",
 };
 
 messaging.onBackgroundMessage((payload) => {
@@ -77,6 +80,8 @@ self.addEventListener("notificationclick", function (event) {
   // If we have an orderId but no specific URL, direct to order detail
   if (!data.url && data.orderId) {
     targetPath = `/dashboard/orders/${data.orderId}`;
+  } else if (!data.url && data.productId) {
+    targetPath = `/dashboard/products/${data.productId}`;
   } else if (!data.url && data.type?.includes("PROFILE")) {
     targetPath = "/dashboard/settings/profile";
   } else if (!data.url) {
