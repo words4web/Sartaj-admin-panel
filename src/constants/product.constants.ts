@@ -49,7 +49,8 @@ export const PRODUCT_CASE_TYPE = {
   BOX: "box",
   PACKET: "packet",
 } as const;
-export type ProductCaseType = (typeof PRODUCT_CASE_TYPE)[keyof typeof PRODUCT_CASE_TYPE];
+export type ProductCaseType =
+  (typeof PRODUCT_CASE_TYPE)[keyof typeof PRODUCT_CASE_TYPE];
 
 export const PRODUCT_BADGE_OPTIONS: {
   key: ProductBadge;
@@ -107,7 +108,7 @@ export const PRODUCT_FORM_STEPS = [
 ] as const;
 
 export const PRODUCT_FORM_VALIDATION_HINTS: Record<number, string> = {
-  0: "Fill in all language names, descriptions, item code and upload an image.",
+  0: "Fill in all language names, descriptions, item code, slug and upload an image.",
   1: "Select at least one segment with a price > 0, set category/manufacturer, and verify tax configuration.",
   2: "Fill in all packaging and inventory fields.",
 };

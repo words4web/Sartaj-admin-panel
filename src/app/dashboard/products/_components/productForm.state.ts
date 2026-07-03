@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 
 export const defaultForm = (): ProductFormValues => ({
   sku: "",
+  slug: "",
   name: { ...EMPTY_TRANSLATION },
   description: { ...EMPTY_TRANSLATION },
   categoryId: "",
@@ -60,6 +61,7 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
   const subId = extractId(p?.subcategory);
   return {
     sku: p?.sku ?? "",
+    slug: p?.slug ?? "",
     name: { ...EMPTY_TRANSLATION, ...(p?.name ?? {}) },
     description: { ...EMPTY_TRANSLATION, ...(p?.description ?? {}) },
     categoryId: catId,

@@ -1,7 +1,4 @@
-import {
-  IProduct,
-  IProductBasePrice,
-} from "@/types/product/product.types";
+import { IProduct, IProductBasePrice } from "@/types/product/product.types";
 import { extractId } from "./common.utils";
 
 export function localizedName(
@@ -31,4 +28,14 @@ export function superCategoryLabel(bp: IProductBasePrice): string {
   if (typeof n === "string") return n;
   if (n && typeof n === "object" && "en" in n) return n?.en ?? sc?._id;
   return sc?._id ?? "—";
+}
+
+export function slugify(text: string): string {
+  return text
+    ?.toString()
+    ?.toLowerCase()
+    ?.trim()
+    ?.replace(/\s+/g, "-") // Replace spaces with -
+    ?.replace(/[^\w\-]+/g, "") // Remove all non-word chars except -
+    ?.replace(/\-\-+/g, "-"); // Replace multiple - with single -
 }
