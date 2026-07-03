@@ -271,12 +271,16 @@ export function useProductForm({
   // ── Validation ──
   const step0Valid = useMemo(() => {
     const skuOk = values?.sku?.trim()?.length > 0;
+    const slugOk =
+      values?.slug?.trim()?.length > 0 &&
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values?.slug?.trim());
     const namesOk = isTranslationComplete(values?.name);
     const descsOk = isTranslationComplete(values?.description);
     const imageOk = values.images?.length > 0 || values.newFiles?.length > 0;
-    return skuOk && namesOk && descsOk && imageOk;
+    return skuOk && slugOk && namesOk && descsOk && imageOk;
   }, [
     values.sku,
+    values.slug,
     values.name,
     values.description,
     values.images,
@@ -427,6 +431,7 @@ export function useProductForm({
 
     const base: Record<string, unknown> = {
       sku: values.sku.trim(),
+      slug: values.slug.trim(),
       name: values.name,
       description: values.description,
       category: values.categoryId,

@@ -34,6 +34,7 @@ export interface IProduct {
   _id: string;
   sku: string;
   name: ITranslationMap;
+  slug?: string;
   description: ITranslationMap;
   category:
     | string
@@ -94,6 +95,7 @@ export interface ProductListResponse {
 
 export interface ProductFormValues {
   sku: string;
+  slug: string;
   name: ITranslationMap;
   description: ITranslationMap;
   categoryId: string;
@@ -137,6 +139,7 @@ export interface ProductFormValues {
 
 export interface CreateProductPayload {
   sku: string;
+  slug: string;
   name: ITranslationMap;
   description: ITranslationMap;
   category: string;

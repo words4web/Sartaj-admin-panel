@@ -12,6 +12,7 @@ import {
 } from "@/constants/product.constants";
 import { ProductFormBasicTabProps } from "./ProductFormBasicTab.types";
 import { RelatedProductsPicker } from "./RelatedProductsPicker";
+import { slugify } from "@/utils/product.util";
 
 import {
   PropertySection,
@@ -38,10 +39,20 @@ export function ProductFormBasicTab({
         fields={PRODUCT_BASIC_INFO_FIELDS}
         values={{ name: values.name, description: values.description }}
         onChange={(field, lang, value) =>
-          setValues((p) => ({
-            ...p,
-            [field]: { ...p[field as "name" | "description"], [lang]: value },
-          }))
+          setValues((p) => {
+            const next = {
+              ...p,
+              [field]: { ...p[field as "name" | "description"], [lang]: value },
+            };
+            if (field === "name" && lang === "en") {
+              const currentSlug = p?.slug || "";
+              const expectedOldSlug = slugify(p?.name?.en || "");
+              if (currentSlug === "" || currentSlug === expectedOldSlug) {
+                next.slug = slugify(value);
+              }
+            }
+            return next;
+          })
         }
       />
 
@@ -66,6 +77,33 @@ export function ProductFormBasicTab({
             />
             <ProductFormHint>
               Unique code for invoices. Must not match another active product.
+            </ProductFormHint>
+          </div>
+
+          {/* Product Slug */}
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="product-slug"
+              className="text-sm font-medium text-gray-700">
+              Product Slug <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="product-slug"
+              placeholder="e.g. organic-tea-500g"
+              value={values.slug}
+              onChange={(e) => {
+                const val = e.target.value
+                  ?.toLowerCase()
+                  ?.replace(/\s+/g, "-")
+                  ?.replace(/[^\w\-]+/g, "")
+                  ?.replace(/\-\-+/g, "-");
+                setValues((p) => ({ ...p, slug: val }));
+              }}
+              className="bg-white shadow-none border-gray-200 h-10 font-mono text-sm max-w-md"
+            />
+            <ProductFormHint>
+              URL-friendly identifier. Lowercase letters, numbers, and hyphens
+              only.
             </ProductFormHint>
           </div>
 
@@ -194,4 +232,3 @@ export function ProductFormBasicTab({
     </div>
   );
 }
-
