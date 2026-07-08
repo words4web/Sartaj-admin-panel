@@ -84,3 +84,56 @@ export const useUpdateOrderDeliveryTerms = () => {
     },
   });
 };
+
+export const useValidateOrderEdit = () => {
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        items: { productId: string; quantity: number }[];
+        couponCode?: string | null;
+      };
+    }) => orderApi.validateOrderEdit(id, data),
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to validate order edit");
+    },
+  });
+};
+
+export const useEditOrderItems = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        items: { productId: string; quantity: number }[];
+        couponCode?: string | null;
+      };
+    }) => orderApi.editOrderItems(id, data),
+    onSuccess: (_, variables) => {
+      toast.success(
+        "Order items updated successfully. Invoice is regenerating in background.",
+      );
+      queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: orderKeys.detail(variables.id),
+      });
+      // Invalidate detail page again after a short delay since PDF regeneration runs in the background
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: orderKeys.detail(variables.id),
+        });
+      }, 5000);
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to update order items");
+    },
+  });
+};

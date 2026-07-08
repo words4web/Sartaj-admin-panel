@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { useOrder } from "@/services/order/order.queries";
 import {
@@ -16,8 +16,9 @@ import { OrderStatusUpdater } from "../_components/OrderStatusUpdater";
 import { OrderItemsList } from "../_components/OrderItemsList";
 import { OrderNotesCard } from "../_components/OrderNotesCard";
 import { UpdateTrackingModal } from "../_components/UpdateTrackingModal";
+import { EditHistoryCard } from "../_components/EditHistoryCard";
 import { Button } from "@/components/ui/button";
-import { Eye, Truck } from "lucide-react";
+import { Eye, Truck, Edit } from "lucide-react";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
 import { dateUtils } from "@/utils/common.utils";
@@ -32,6 +33,7 @@ const slotMap: Record<string, string> = {
 export default function OrderDetailsPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? "";
+  const router = useRouter();
   const { data: order, isLoading, isError, refetch } = useOrder(id);
   const updateStatus = useUpdateOrderStatus();
   const updateTracking = useUpdateOrderTracking();
@@ -92,6 +94,16 @@ export default function OrderDetailsPage() {
               <Eye className="w-4 h-4" /> View Invoice
             </Button>
           )}
+
+          {order &&
+            (order?.status === "placed" || order?.status === "processing") && (
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/dashboard/orders/${id}/edit`)}
+                className="h-10 rounded-xl font-bold border-gray-200 text-primary hover:text-primary hover:bg-primary/5 cursor-pointer flex items-center gap-2">
+                <Edit className="w-4 h-4" /> Edit Order
+              </Button>
+            )}
 
           <Button
             variant="outline"
@@ -232,6 +244,8 @@ export default function OrderDetailsPage() {
             </div>
 
             <OrderNotesCard notes={order?.notes} />
+
+            <EditHistoryCard history={order?.editHistory} />
           </div>
         </div>
       )}
