@@ -58,6 +58,7 @@ export const ROUTES = {
   SETTINGS: {
     ROOT: "/dashboard/settings",
     PROFILE: "/dashboard/settings/profile",
+    THEME: "/dashboard/settings/theme",
   },
 
   // Future module routes

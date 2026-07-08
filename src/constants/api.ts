@@ -57,6 +57,9 @@ export const API_ROUTES = {
     UPDATE_TRACKING: (id: string) => `${API_ADMIN_BASE}/orders/${id}/tracking`,
     UPDATE_DELIVERY_TERMS: (id: string) =>
       `${API_ADMIN_BASE}/orders/${id}/delivery-terms`,
+    VALIDATE_EDIT: (id: string) =>
+      `${API_ADMIN_BASE}/orders/${id}/validate-edit`,
+    EDIT_ITEMS: (id: string) => `${API_ADMIN_BASE}/orders/${id}/items`,
   },
 
   // Products
@@ -154,5 +157,10 @@ export const API_ROUTES = {
   },
   DASHBOARD: {
     STATS: `${API_ADMIN_BASE}/dashboard/stats`,
+  },
+  THEME: {
+    LIST: `${API_ADMIN_BASE}/theme`,
+    ACTIVE: `${API_ADMIN_BASE}/theme/active`,
+    ACTIVATE: (name: string) => `${API_ADMIN_BASE}/theme/${name}/activate`,
   },
 } as const;

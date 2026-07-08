@@ -49,4 +49,30 @@ export const orderApi = {
       data,
     );
   },
+
+  validateOrderEdit: async (
+    id: string,
+    data: {
+      items: { productId: string; quantity: number }[];
+      couponCode?: string | null;
+    },
+  ): Promise<any> => {
+    return axiosInstance.post<any, any>(
+      API_ROUTES.ORDERS.VALIDATE_EDIT(id),
+      data,
+    );
+  },
+
+  editOrderItems: async (
+    id: string,
+    data: {
+      items: { productId: string; quantity: number }[];
+      couponCode?: string | null;
+    },
+  ): Promise<void> => {
+    return axiosInstance.patch<any, void>(
+      API_ROUTES.ORDERS.EDIT_ITEMS(id),
+      data,
+    );
+  },
 };
