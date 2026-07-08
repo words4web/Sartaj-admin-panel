@@ -18,6 +18,7 @@ import {
   FileText,
   Truck,
   ListOrdered,
+  Palette,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/utils/common.utils";
@@ -89,6 +90,11 @@ const MENU_ITEMS = [
 ];
 
 const FOOTER_ITEMS = [
+  {
+    icon: Palette,
+    label: "Theme",
+    href: ROUTES.SETTINGS.THEME,
+  },
   {
     icon: Settings,
     label: "Settings",

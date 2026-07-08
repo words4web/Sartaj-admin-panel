@@ -58,6 +58,7 @@ export interface IPriceBreakdownItem {
 export interface IOrderCalculationSnapshot {
   taxTotal: number;
   couponDiscount: number;
+  walletDebit: number;
   shippingFee: number;
   subTotal: number;
   penaltyAmount: number;
@@ -125,8 +126,37 @@ export interface Order {
   deliveryDate?: string | null;
   deliverySlot?: string | null;
   deliveryTerms?: string | null;
+  editHistory?: OrderEditHistoryEntry[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface OrderEditHistoryEntry {
+  editedAt: string;
+  previousTotalAmount: number;
+  newTotalAmount: number;
+  previousItems: any[];
+  newItems: any[];
+  previousCalculationSnapshot: {
+    subTotal: number;
+    couponDiscount: number;
+    walletDebit: number;
+    shippingFee: number;
+    penaltyAmount: number;
+    otherCharges: number;
+    taxTotal: number;
+    totalAmount: number;
+  };
+  newCalculationSnapshot: {
+    subTotal: number;
+    couponDiscount: number;
+    walletDebit: number;
+    shippingFee: number;
+    penaltyAmount: number;
+    otherCharges: number;
+    taxTotal: number;
+    totalAmount: number;
+  };
 }
 
 export interface UpdateOrderTrackingPayload {
@@ -182,4 +212,39 @@ export interface PaymentBreakdownCardProps {
 
 export interface OrderNotesCardProps {
   notes?: string;
+}
+
+export interface EditHistoryCardProps {
+  history?: OrderEditHistoryEntry[];
+}
+
+export interface LocalItem {
+  productId: string;
+  sku: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export interface OrderEditLeftPanelProps {
+  selectedProduct: string;
+  setSelectedProduct: (val: string) => void;
+  handleSelectProduct: (productId: string) => void;
+  items: LocalItem[];
+  handleQtyChange: (productId: string, quantity: number) => void;
+  handleRemoveItem: (productId: string) => void;
+}
+
+export interface OrderEditRightPanelProps {
+  order?: any;
+  couponCode: string;
+  setCouponCode: (code: string) => void;
+  setValidationResult: (res: any) => void;
+  validationResult: any;
+  validationError: string | null;
+  isValidating: boolean;
+  isSaving: boolean;
+  handleValidate: () => void;
+  handleSave: () => void;
+  itemsLength: number;
 }
