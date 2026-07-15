@@ -199,6 +199,52 @@ export default function OrderDetailsPage() {
           <div className="space-y-8">
             <OrderItemsList items={order?.items} />
 
+            {/* Free Gift Product */}
+            {order?.giftProduct && (
+              <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-6 transition-all hover:shadow-md">
+                <div className="mb-4 border-b border-emerald-100/50 pb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-emerald-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    <h3 className="text-lg font-bold text-emerald-900 tracking-tight">
+                      Free Checkout Gift
+                    </h3>
+                  </div>
+                  <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Free
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  {order?.giftProduct.images?.[0] && (
+                    <div className="w-16 h-16 rounded-xl bg-white border border-emerald-100 flex items-center justify-center shrink-0 overflow-hidden p-1 shadow-sm">
+                      <img
+                        src={order?.giftProduct?.images?.[0]}
+                        alt={order?.giftProduct?.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">
+                      {order?.giftProduct?.name}
+                    </h4>
+                    <p className="text-xs text-gray-500 mt-1 font-mono">
+                      SKU: {order?.giftProduct?.sku}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Delivery Terms Card */}
             <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 transition-all hover:shadow-md">
               <div className="mb-4 border-b border-gray-100 pb-4 flex items-center justify-between">

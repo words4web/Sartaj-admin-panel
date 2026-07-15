@@ -121,6 +121,12 @@ export interface Order {
   coupon?: {
     code: string;
   };
+  giftProduct?: {
+    productId: string;
+    sku: string;
+    name: string;
+    images?: string[];
+  } | null;
   trackOrder?: string;
   invoiceURL?: string;
   deliveryDate?: string | null;

@@ -34,6 +34,7 @@ export const defaultForm = (): ProductFormValues => ({
   images: [],
   newFiles: [],
   isActive: true,
+  isGiftItem: false,
   badges: [],
   relatedProducts: [],
   restrictions: {
@@ -86,6 +87,7 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     images: p.images ?? [],
     newFiles: [],
     isActive: p.isActive !== false,
+    isGiftItem: Boolean(p.isGiftItem),
     badges: p.badges ?? [],
     relatedProducts:
       p.relatedProducts?.map((r) =>
