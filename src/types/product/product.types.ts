@@ -55,6 +55,7 @@ export interface IProduct {
   stockStatus: StockStatus;
   images: string[];
   isActive: boolean;
+  isGiftItem?: boolean;
   badges: ProductBadge[];
   relatedProducts?: (
     | string
@@ -118,6 +119,7 @@ export interface ProductFormValues {
   newFiles: File[];
 
   isActive: boolean;
+  isGiftItem: boolean;
   badges: ProductBadge[];
   relatedProducts: string[];
   relatedProductsLabels?: Record<string, string>;
@@ -157,6 +159,7 @@ export interface CreateProductPayload {
   stockStatus: StockStatus;
   images: string[];
   isActive: boolean;
+  isGiftItem?: boolean;
   badges: ProductBadge[];
   relatedProducts: string[];
   restrictions: {

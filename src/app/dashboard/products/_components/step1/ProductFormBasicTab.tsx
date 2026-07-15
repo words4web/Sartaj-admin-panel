@@ -202,19 +202,32 @@ export function ProductFormBasicTab({
             </div>
           </PropertySection>
 
-          <PropertySection label="Restrictions">
-            <PropertyCheckbox
-              key="age20Plus"
-              label="Age 20+ restriction"
-              checked={Boolean(values.restrictions?.age20Plus)}
-              variant="destructive"
-              onCheckedChange={(c) =>
-                setValues((p) => ({
-                  ...p,
-                  restrictions: { ...p.restrictions, age20Plus: c },
-                }))
-              }
-            />
+          <PropertySection label="Restrictions & Gift Status">
+            <div className="space-y-4">
+              <PropertyCheckbox
+                key="age20Plus"
+                label="Age 20+ restriction"
+                checked={Boolean(values.restrictions?.age20Plus)}
+                variant="destructive"
+                onCheckedChange={(c) =>
+                  setValues((p) => ({
+                    ...p,
+                    restrictions: { ...p.restrictions, age20Plus: c },
+                  }))
+                }
+              />
+              <PropertyCheckbox
+                key="isGiftItem"
+                label="Eligible checkout gift"
+                checked={Boolean(values.isGiftItem)}
+                onCheckedChange={(c) =>
+                  setValues((p) => ({
+                    ...p,
+                    isGiftItem: c,
+                  }))
+                }
+              />
+            </div>
           </PropertySection>
 
           <PropertySection label="Related Products">

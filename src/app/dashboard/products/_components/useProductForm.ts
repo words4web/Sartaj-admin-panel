@@ -448,6 +448,7 @@ export function useProductForm({
       sellingUnit: values.sellingUnit,
       stockStatus: values.stockStatus,
       isActive: values.isActive,
+      isGiftItem: values.isGiftItem,
       badges: values.badges,
       relatedProducts: values.relatedProducts,
       restrictions: values.restrictions,
