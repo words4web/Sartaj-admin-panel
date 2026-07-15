@@ -33,11 +33,16 @@ export function ThemeCard({
   return (
     <Card
       className={cn(
-        "group relative overflow-hidden transition-all duration-300 cursor-pointer hover:shadow-md",
+        "group relative overflow-hidden transition-all duration-300 cursor-pointer hover:shadow-md border",
         isActive
           ? "ring-2 ring-primary shadow-md shadow-primary/10"
           : "hover:ring-1 hover:ring-gray-300",
       )}
+      style={{
+        backgroundColor: meta?.cssVars?.background ?? "#ffffff",
+        color: meta?.cssVars?.foreground ?? "#0f172a",
+        borderColor: meta?.cssVars?.border ?? "#e2e8f0",
+      }}
       onClick={!isActive ? onActivate : undefined}>
       {/* Gradient Preview Strip */}
       <div
@@ -63,8 +68,12 @@ export function ThemeCard({
       {/* Card Body */}
       <div className="p-4 space-y-3">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm">{meta?.label}</h3>
-          <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+          <h3
+            className="font-semibold text-sm"
+            style={{ color: meta?.cssVars?.primary ?? "inherit" }}>
+            {meta?.label}
+          </h3>
+          <p className="text-xs mt-0.5 leading-relaxed opacity-75">
             {meta?.description}
           </p>
         </div>
