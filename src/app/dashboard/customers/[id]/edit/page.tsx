@@ -14,6 +14,13 @@ import { CommonError } from "@/components/ui/common-error";
 import { ROUTES } from "@/constants/routes";
 import { defaultAddress } from "@/schemas/customer/customer.default";
 import { CustomerFormValues } from "@/types/customer/customer.types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function CustomerEditPage() {
   const router = useRouter();
@@ -22,6 +29,8 @@ export default function CustomerEditPage() {
 
   const updateMutation = useUpdateCustomer();
   const [superCategory, setSuperCategory] = useState<string>("");
+  const [isRetailerBlocked, setIsRetailerBlocked] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(5);
 
   const {
     data: customerData,
@@ -37,6 +46,36 @@ export default function CustomerEditPage() {
       setSuperCategory(extractId(customerData?.superCategory));
     }
   }, [customerData, superCategory]);
+
+  // Check if customer superCategory is RETAILER
+  useEffect(() => {
+    if (superCategories && customerData?.superCategory) {
+      const parentId = extractId(customerData?.superCategory);
+      const matchedCategory = superCategories?.find(
+        (cat: any) => cat?._id === parentId,
+      );
+
+      if ((matchedCategory?.name as string) === "Retailer") {
+        setIsRetailerBlocked(true);
+      }
+    }
+  }, [customerData, superCategories]);
+
+  useEffect(() => {
+    if (isRetailerBlocked) {
+      const interval = setInterval(() => {
+        setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isRetailerBlocked]);
+
+  useEffect(() => {
+    if (isRetailerBlocked && countdown === 0) {
+      router.replace(ROUTES.CUSTOMERS.LIST);
+    }
+  }, [isRetailerBlocked, countdown, router]);
 
   const initialValues: CustomerFormValues = useMemo(() => {
     const priceListId = extractId(customerData?.priceList);
@@ -103,6 +142,27 @@ export default function CustomerEditPage() {
           />
         )}
       </Card>
+
+      <Dialog open={isRetailerBlocked} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-[425px]" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="text-destructive font-semibold">
+              Edit Not Allowed
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-gray-700">
+              Editing Retailer customer details is not allowed from the admin
+              panel.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 text-center text-sm font-medium text-muted-foreground bg-muted/30 rounded-lg">
+            Redirecting to customer listings in{" "}
+            <span className="font-bold text-destructive text-base px-1">
+              {countdown}
+            </span>{" "}
+            seconds...
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
