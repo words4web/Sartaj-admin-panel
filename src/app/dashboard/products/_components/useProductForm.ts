@@ -381,11 +381,130 @@ export function useProductForm({
 
   const isFormValid = step0Valid && step1Valid && step2Valid;
 
+  // ── Validation Errors Detail Helper ──
+  const getStepValidationErrors = useCallback(
+    (stepIndex: number): string[] => {
+      const errors: string[] = [];
+
+      if (stepIndex === 0) {
+        if (!values?.sku?.trim()) errors.push("SKU/Item Code is required");
+        if (!values?.slug?.trim()) {
+          errors.push("Slug is required");
+        } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values?.slug?.trim())) {
+          errors.push(
+            "Slug format is invalid (must be lowercase alphanumeric with hyphens)",
+          );
+        }
+        if (!isTranslationComplete(values?.name))
+          errors.push("Product name translations are incomplete");
+        if (!isTranslationComplete(values?.description))
+          errors.push("Product description translations are incomplete");
+        const hasImages =
+          values?.images?.length > 0 || values?.newFiles?.length > 0;
+        if (!hasImages) errors.push("At least one product image is required");
+      }
+
+      if (stepIndex === 1) {
+        const hasPrices =
+          values?.basePrices?.length > 0 &&
+          values?.basePrices?.every((b) => Number(b?.price) > 0);
+        if (!hasPrices)
+          errors.push(
+            "Pricing configuration: every selected segment must have a price > 0",
+          );
+        if (!values?.categoryId) errors.push("Category selection is required");
+        const effectiveSub =
+          hasSubcategories === false
+            ? values?.categoryId
+            : values?.subcategoryId;
+        if (hasSubcategories !== false && !effectiveSub)
+          errors.push("Subcategory selection is required");
+        if (!values?.manufacturerId)
+          errors.push("Manufacturer/Brand is required");
+
+        if (values?.isTaxable) {
+          const isDynamicTax =
+            (values?.taxCategory === TAX_CATEGORY.REDUCED ||
+              values?.taxCategory === TAX_CATEGORY.STANDARD) &&
+            values?.taxType === TAX_TYPE.PERCENTAGE;
+          if (!isDynamicTax) {
+            const tv = Number(values?.taxValue);
+            if (Number.isNaN(tv) || tv < 0) {
+              errors.push("Tax value must be a positive number");
+            } else if (values?.taxType === TAX_TYPE.PERCENTAGE && tv > 100) {
+              errors.push("Tax percentage cannot exceed 100%");
+            }
+          }
+        }
+
+        if (values?.timeDiscount?.isEnabled) {
+          const dv = Number(values?.timeDiscount?.discountValue);
+          if (Number.isNaN(dv) || dv <= 0) {
+            errors.push("Discount value must be greater than 0");
+          } else if (
+            values?.timeDiscount?.discountType === DISCOUNT_TYPE.PERCENTAGE &&
+            dv > 100
+          ) {
+            errors.push("Discount percentage cannot exceed 100%");
+          }
+          if (!values?.timeDiscount?.startTime)
+            errors.push("Discount start time is required");
+          if (!values?.timeDiscount?.endTime)
+            errors.push("Discount end time is required");
+        }
+      }
+
+      if (stepIndex === 2) {
+        if (!values?.unit) errors.push("Measurement Unit is required");
+        if (!values?.productType)
+          errors.push("Product Storage Type (Dry/Frozen) is required");
+        if (
+          values?.netWeightKg === "" ||
+          Number.isNaN(Number(values?.netWeightKg)) ||
+          Number(values?.netWeightKg) < 0
+        ) {
+          errors.push("Valid Net Weight (KG) is required");
+        }
+        if (
+          values?.caseQuantity === "" ||
+          Number.isNaN(Number(values?.caseQuantity)) ||
+          Number(values?.caseQuantity) < 1
+        ) {
+          errors.push("Case Quantity must be at least 1");
+        }
+        if (values?.sellingUnit === SELLING_UNIT.CASE && !values?.caseType) {
+          errors.push("Case Type is required when Selling Unit is set to Case");
+        }
+        if (
+          values?.stockQuantity === "" ||
+          Number.isNaN(Number(values?.stockQuantity))
+        ) {
+          errors.push("Inventory Quantity is required");
+        } else {
+          const sq = Number(values?.stockQuantity);
+          if (values?.stockStatus === STOCK_STATUS.OUT_OF_STOCK && sq !== 0) {
+            errors.push(
+              "Inventory Quantity must be 0 if Stock Status is Out of stock",
+            );
+          } else if (values?.stockStatus === STOCK_STATUS.IN_STOCK && sq < 1) {
+            errors.push(
+              "Inventory Quantity must be at least 1 if Stock Status is In stock",
+            );
+          }
+        }
+        if (!values?.sellingUnit) errors.push("Selling Unit is required");
+        if (!values?.stockStatus) errors.push("Stock Status is required");
+      }
+
+      return errors;
+    },
+    [values, hasSubcategories],
+  );
+
   const goNext = () => {
-    if (!stepValid[step]) {
-      toast.error(
-        PRODUCT_FORM_VALIDATION_HINTS[step] ?? "Complete all required fields.",
-      );
+    const stepErrors = getStepValidationErrors(step);
+    if (stepErrors.length > 0) {
+      stepErrors.forEach((err) => toast.error(err));
       return;
     }
     setStep((s) => Math.min(s + 1, totalSteps - 1));
@@ -395,8 +514,11 @@ export function useProductForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) {
-      toast.error("Complete all required fields in every step.");
+
+    // Check all steps for detailed validation errors
+    const allErrors = [0, 1, 2].flatMap((idx) => getStepValidationErrors(idx));
+    if (allErrors.length > 0) {
+      allErrors.forEach((err) => toast.error(err));
       return;
     }
 

@@ -35,7 +35,9 @@ export const useFcmLifecycle = (user: User | null) => {
       isSyncing.current = true;
 
       try {
-        if (typeof window === "undefined") return;
+        if (typeof window === "undefined" || !("Notification" in window)) {
+          return;
+        }
 
         // Request permission if it hasn't been granted or denied yet
         if (Notification.permission === NOTIFICATION_STATUS.DEFAULT) {
@@ -102,15 +104,17 @@ export const useFcmLifecycle = (user: User | null) => {
     // 3. Listen for permission changes (Permissions API)
     let permissionStatus: PermissionStatus | undefined;
     const handlePermissionChange = () => {
-      if (Notification.permission === "granted") {
-        performSync();
-      } else {
-        if (lastSyncedToken) {
-          removeDevice(lastSyncedToken, {
-            onSettled: () => {
-              setFcmToken(null);
-            },
-          });
+      if (typeof window !== "undefined" && "Notification" in window) {
+        if (Notification.permission === "granted") {
+          performSync();
+        } else {
+          if (lastSyncedToken) {
+            removeDevice(lastSyncedToken, {
+              onSettled: () => {
+                setFcmToken(null);
+              },
+            });
+          }
         }
       }
     };
