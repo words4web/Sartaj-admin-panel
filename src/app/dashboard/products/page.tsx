@@ -7,6 +7,8 @@ import {
   useDeleteProduct,
   useToggleProductStatus,
 } from "@/services/product/product.hooks";
+import { useCategoryById } from "@/services/category/category.hooks";
+import { categoryApi } from "@/services/category/category.api";
 import { IProduct } from "@/types/product/product.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,7 @@ export default function ProductsPage() {
   const router = useRouter();
   const limit = 10;
   const [search, setSearch] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [page, setPage] = useState(1);
   const [confirmDelete, setConfirmDelete] = useState<IProduct | null>(null);
   const [confirmStatusChange, setConfirmStatusChange] =
@@ -45,8 +48,11 @@ export default function ProductsPage() {
 
   const debouncedSearch = useDebounce(search, 400);
 
+  const { data: parentCategory } = useCategoryById(categoryId);
+
   const { data, isLoading, isError, refetch } = useProductList({
     search: debouncedSearch || undefined,
+    category: categoryId || undefined,
     page,
     limit,
   });
@@ -74,6 +80,7 @@ export default function ProductsPage() {
 
   const resetFilters = useCallback(() => {
     setSearch("");
+    setCategoryId("");
     setPage(1);
   }, []);
 
@@ -259,6 +266,33 @@ export default function ProductsPage() {
           },
           placeholder: "Search by SKU or name…",
         }}
+        filters={[
+          {
+            key: "category",
+            label: "Category",
+            value: categoryId,
+            selectedLabel: parentCategory?.name?.en,
+            onChange: (val) => {
+              setCategoryId(val);
+              setPage(1);
+            },
+            fetchData: async ({ search, page, limit }) => {
+              const res = await categoryApi.getCategories({
+                search,
+                page,
+                limit,
+              });
+              return {
+                options: res?.categories?.map((c) => ({
+                  value: c._id,
+                  label: c?.name?.en || c?._id,
+                })),
+                hasMore: res?.categories?.length === limit,
+              };
+            },
+            queryKey: ["categories", "filter"],
+          },
+        ]}
         onReset={resetFilters}
       />
 
