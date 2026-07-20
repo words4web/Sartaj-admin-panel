@@ -29,6 +29,7 @@ export default function CategoryEditPage() {
 
   const initialValues: CategoryFormValues = {
     name: category?.name ?? EMPTY_TRANSLATION,
+    slug: category?.slug ?? "",
     description: category?.description ?? EMPTY_TRANSLATION,
     existingImage: category?.image ?? null,
   };
@@ -37,6 +38,7 @@ export default function CategoryEditPage() {
     updateMutation.mutate(
       {
         name: values.name,
+        slug: values.slug,
         description: values.description,
         image: values.image,
       },

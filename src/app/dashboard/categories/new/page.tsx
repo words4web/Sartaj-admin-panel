@@ -23,6 +23,7 @@ export default function CategoryCreatePage() {
     createMutation.mutate(
       {
         name: values.name,
+        slug: values.slug,
         description: values.description,
         image: values.image,
       },
