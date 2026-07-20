@@ -14,6 +14,8 @@ const buildCategoryFormData = (
   const formData = new FormData();
   if (data?.name !== undefined)
     formData.append("name", JSON.stringify(data.name));
+  if (data?.slug !== undefined)
+    formData.append("slug", String(data.slug));
   if (data?.description !== undefined)
     formData.append("description", JSON.stringify(data.description));
   if (data?.isActive !== undefined)

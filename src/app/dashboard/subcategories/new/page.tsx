@@ -18,6 +18,7 @@ export default function SubCategoryCreatePage() {
     createMutation.mutate(
       {
         name: values.name,
+        slug: values.slug,
         description: values.description,
         parent: values.parent,
       },
