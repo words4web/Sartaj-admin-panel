@@ -85,6 +85,7 @@ export interface ProductFilters {
   search?: string;
   page?: number;
   limit?: number;
+  category?: string;
 }
 
 export interface ProductListResponse {
