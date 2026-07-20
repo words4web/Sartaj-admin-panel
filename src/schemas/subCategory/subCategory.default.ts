@@ -5,6 +5,7 @@ export const getSubCategoryDefaultValues = (
   parentId: string,
 ): SubCategoryFormValues => ({
   name: EMPTY_TRANSLATION,
+  slug: "",
   description: EMPTY_TRANSLATION,
   parent: parentId,
 });

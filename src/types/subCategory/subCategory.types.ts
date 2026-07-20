@@ -4,6 +4,7 @@ import { ICategory } from "../category/category.types";
 export interface ISubCategory {
   _id: string;
   name: ITranslationMap;
+  slug: string;
   description: ITranslationMap;
   media?: string;
   parent: ICategory | string; // required for subcategory
@@ -15,6 +16,7 @@ export interface ISubCategory {
 
 export interface CreateSubCategoryPayload {
   name: ITranslationMap;
+  slug: string;
   description: ITranslationMap;
   media?: string;
   parent: string; // ObjectId
@@ -40,6 +42,7 @@ export interface SubCategoryFilters {
 // FORM PROPS TYPES
 export type SubCategoryFormValues = {
   name: ITranslationMap;
+  slug: string;
   description: ITranslationMap;
   parent: string;
 };

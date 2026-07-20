@@ -41,6 +41,7 @@ export default function SubCategoryEditPage() {
   const initialValues: SubCategoryFormValues = useMemo(
     () => ({
       name: subCategory?.name ?? EMPTY_TRANSLATION,
+      slug: subCategory?.slug ?? "",
       description: subCategory?.description ?? EMPTY_TRANSLATION,
       parent: parentId,
     }),
@@ -51,6 +52,7 @@ export default function SubCategoryEditPage() {
     updateMutation.mutate(
       {
         name: values.name,
+        slug: values.slug,
         description: values.description,
         parent: values.parent,
       },

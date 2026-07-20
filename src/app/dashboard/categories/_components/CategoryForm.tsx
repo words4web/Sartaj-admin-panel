@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { ImageIcon, X } from "lucide-react";
 import {
   CategoryFormProps,
@@ -20,6 +21,7 @@ import {
   isTranslationComplete,
 } from "@/utils/translation.utils";
 import { getStandardTranslationFields } from "@/constants/translation.constants";
+import { slugify } from "@/utils/product.util";
 
 const TRANSLATION_FIELDS = getStandardTranslationFields("Category Name");
 
@@ -40,6 +42,7 @@ export default function CategoryForm({
   const [errors, setErrors] = useState<{
     name?: string;
     description?: string;
+    slug?: string;
     image?: string;
   }>({});
   const [imagePreview, setImagePreview] = useState<string | null>(
@@ -70,14 +73,22 @@ export default function CategoryForm({
 
   const handleTranslationChange = useCallback(
     (field: string, lang: string, value: string) => {
-      setValues((v) =>
-        updateTranslationField(
+      setValues((v) => {
+        let next = updateTranslationField(
           v,
           field as keyof CategoryFormValues,
           lang,
           value,
-        ),
-      );
+        );
+        if (field === "name" && lang === "en") {
+          const currentSlug = v?.slug || "";
+          const expectedOldSlug = slugify(v?.name?.en || "");
+          if (currentSlug === "" || currentSlug === expectedOldSlug) {
+            next = { ...next, slug: slugify(value) };
+          }
+        }
+        return next;
+      });
     },
     [],
   );
@@ -87,9 +98,18 @@ export default function CategoryForm({
   const isValid = useMemo(() => {
     const nameOk = isTranslationComplete(values.name as ITranslationMap);
     const descOk = isTranslationComplete(values.description as ITranslationMap);
+    const slugOk =
+      values.slug?.trim()?.length > 0 &&
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug);
     const imageOk = requireImage ? !!imagePreview : true;
-    return nameOk && descOk && imageOk;
-  }, [values.name, values.description, imagePreview, requireImage]);
+    return nameOk && descOk && slugOk && imageOk;
+  }, [
+    values.name,
+    values.description,
+    values.slug,
+    imagePreview,
+    requireImage,
+  ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,11 +119,19 @@ export default function CategoryForm({
     const descMissing = !isTranslationComplete(
       values.description as ITranslationMap,
     );
+    const slugValue = values.slug?.trim() || "";
+    const slugValid = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slugValue);
 
     if (nameMissing)
       nextErrors.name = "Category name is required in all languages";
     if (descMissing)
       nextErrors.description = "Description is required in all languages";
+    if (!slugValue) {
+      nextErrors.slug = "Slug is required";
+    } else if (!slugValid) {
+      nextErrors.slug =
+        "Invalid slug format (only lowercase, numbers, and hyphens)";
+    }
     if (requireImage && !imagePreview)
       nextErrors.image = "Category image is required.";
 
@@ -117,6 +145,7 @@ export default function CategoryForm({
 
     await onSubmit({
       ...values,
+      slug: slugValue,
       name: {
         en: name.en?.trim() ?? "",
         hi: name.hi?.trim() ?? "",
@@ -153,6 +182,31 @@ export default function CategoryForm({
           description: errors.description,
         }}
       />
+
+      {/* Slug Input */}
+      <div className="space-y-2 max-w-lg">
+        <Label htmlFor="category-slug" className="font-bold">
+          Category Slug <span className="text-red-500">*</span>
+        </Label>
+        <Input
+          type="text"
+          id="category-slug"
+          placeholder="e.g. sauce-chutney"
+          value={values.slug}
+          onChange={(e) => {
+            const val = e.target.value?.toLowerCase()?.replace(/\s+/g, "-");
+            setValues((p) => ({ ...p, slug: val }));
+          }}
+          disabled={isSubmitting}
+        />
+        <p className="text-xs text-gray-500">
+          The slug is used in SEO-friendly URLs. It must contain only lowercase
+          letters, numbers, and hyphens.
+        </p>
+        {errors.slug && (
+          <p className="text-red-600 text-sm mt-1">{errors.slug}</p>
+        )}
+      </div>
 
       {/* Image Upload */}
       <div className="space-y-3">
