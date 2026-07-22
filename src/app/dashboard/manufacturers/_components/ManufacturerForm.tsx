@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { ImageIcon, X } from "lucide-react";
 import {
   TranslationInput,
@@ -12,6 +13,7 @@ import {
   ManufacturerFormProps,
   ManufacturerFormValues,
 } from "@/types/manufacturer/manufacturer.types";
+import { slugify } from "@/utils/product.util";
 
 export default function ManufacturerForm({
   initialValues,
@@ -20,7 +22,11 @@ export default function ManufacturerForm({
   onSubmit,
 }: ManufacturerFormProps) {
   const [values, setValues] = useState<ManufacturerFormValues>(initialValues);
-  const [errors, setErrors] = useState<{ name?: string; image?: string }>({});
+  const [errors, setErrors] = useState<{
+    name?: string;
+    slug?: string;
+    image?: string;
+  }>({});
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialValues?.existingImage || null,
   );
@@ -42,30 +48,56 @@ export default function ManufacturerForm({
     }
   };
 
-  const handleTranslationChange = (
-    field: string,
-    lang: LangCode,
-    value: string,
-  ) => {
-    setValues((prev) => ({
-      ...prev,
-      [field]: {
-        ...((prev as any)[field] || {}),
-        [lang]: value,
-      },
-    }));
-  };
+  const handleTranslationChange = useCallback(
+    (field: string, lang: LangCode, value: string) => {
+      setValues((prev) => {
+        const nextName = {
+          ...((prev as any)[field] || {}),
+          [lang]: value,
+        };
+        let next = {
+          ...prev,
+          [field]: nextName,
+        };
+
+        if (field === "name" && lang === "en") {
+          const currentSlug = prev?.slug || "";
+          const expectedOldSlug = slugify(prev?.name?.en || "");
+          if (currentSlug === "" || currentSlug === expectedOldSlug) {
+            next = { ...next, slug: slugify(value) };
+          }
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   const isValid = useMemo(() => {
-    return !!values?.name?.en?.trim() && !!imagePreview;
-  }, [values?.name?.en, imagePreview]);
+    return (
+      !!values?.name?.en?.trim() &&
+      !!values?.slug?.trim() &&
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug) &&
+      !!imagePreview
+    );
+  }, [values?.name?.en, values?.slug, imagePreview]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e?.preventDefault?.();
-    const nextErrors: { name?: string; image?: string } = {};
+    const nextErrors: { name?: string; slug?: string; image?: string } = {};
 
     if (!values?.name?.en?.trim()) {
       nextErrors.name = "English name is required.";
+    }
+
+    const slugValue = values.slug?.trim() || "";
+    const slugValid = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slugValue);
+
+    if (!slugValue) {
+      nextErrors.slug = "Slug is required.";
+    } else if (!slugValid) {
+      nextErrors.slug =
+        "Invalid slug format (only lowercase, numbers, and hyphens).";
     }
 
     if (!imagePreview) {
@@ -77,7 +109,10 @@ export default function ManufacturerForm({
       return;
     }
 
-    await onSubmit?.(values);
+    await onSubmit?.({
+      ...values,
+      slug: slugValue,
+    });
   };
 
   return (
@@ -97,6 +132,31 @@ export default function ManufacturerForm({
         onChange={handleTranslationChange}
         errors={errors}
       />
+
+      {/* Slug Input */}
+      <div className="space-y-2 max-w-lg">
+        <Label htmlFor="manufacturer-slug" className="font-bold">
+          Manufacturer Slug <span className="text-red-500">*</span>
+        </Label>
+        <Input
+          type="text"
+          id="manufacturer-slug"
+          placeholder="e.g. apple"
+          value={values.slug || ""}
+          onChange={(e) => {
+            const val = e.target.value?.toLowerCase()?.replace(/\s+/g, "-");
+            setValues((p) => ({ ...p, slug: val }));
+          }}
+          disabled={isSubmitting}
+        />
+        <p className="text-xs text-gray-500">
+          The slug is used in SEO-friendly URLs. It must contain only lowercase
+          letters, numbers, and hyphens.
+        </p>
+        {errors.slug && (
+          <p className="text-red-600 text-sm mt-1">{errors.slug}</p>
+        )}
+      </div>
 
       <div className="space-y-3">
         <Label>
@@ -144,8 +204,7 @@ export default function ManufacturerForm({
                 setImagePreview(null);
                 setValues((v) => ({ ...v, image: null, existingImage: null }));
               }}
-              disabled={!imagePreview || isSubmitting}
-            >
+              disabled={!imagePreview || isSubmitting}>
               <X className="w-4 h-4 mr-2" />
               Remove Image
             </Button>
