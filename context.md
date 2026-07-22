@@ -16,3 +16,10 @@
   - **Order detail page** (`order/[id]/page.tsx`): Added an emerald-themed "Free Checkout Gift" display card that appears when `order.giftProduct` is present. Shows the gift product's image, name (localized), and SKU.
   - **Order types** (`order.types.ts`): Added optional `giftProduct` subdocument (with `productId`, `name`, `sku`, `image`) to the admin `Order` interface.
   - **Important**: The `isGiftItem` field must be present in the backend Yup validation (`admin.product.validation.ts`) — without it the field is stripped before the service layer. This bug was fixed: `isGiftItem` is now declared in both `productBodyFields` (create) and `updateAdminProductSchema` (update).
+- **Shipping Rule Configuration**:
+  - Exposing the dynamic weight-based frozen shipping threshold from the app configuration database allows other portals to render active shipping thresholds accurately.
+- **Product Form Header Back Exit & Save Confirmation Modals**:
+  - Updated `PageHeader` component with an optional `onBackClick` callback to override default router transitions.
+  - Added reusable `ConfirmModal` triggers:
+    - Main Header Back button: Always prompts the user with a discard changes confirmation modal when exiting, irrespective of whether any fields have been modified. Managed at the page level (`new/page.tsx` and `edit/page.tsx`).
+    - Save/Update button: Confirms before submitting the product creation or update mutation to the backend. Managed inside `ProductForm`.
