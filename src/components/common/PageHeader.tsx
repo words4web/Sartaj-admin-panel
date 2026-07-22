@@ -17,6 +17,7 @@ interface PageHeaderProps {
   onDelete?: () => void;
   addLabel?: string;
   showBack?: boolean;
+  onBackClick?: () => void;
 }
 
 export function PageHeader({
@@ -31,6 +32,7 @@ export function PageHeader({
   onDelete,
   addLabel = "Add",
   showBack = true,
+  onBackClick,
 }: PageHeaderProps) {
   const router = useRouter();
 
@@ -41,7 +43,9 @@ export function PageHeader({
   }, [title]);
 
   const handleBack = () => {
-    if (backRoute) {
+    if (onBackClick) {
+      onBackClick();
+    } else if (backRoute) {
       router.push(backRoute);
     } else {
       router.back();

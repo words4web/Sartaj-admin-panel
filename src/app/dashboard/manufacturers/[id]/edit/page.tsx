@@ -33,6 +33,7 @@ export default function EditManufacturerPage() {
         id,
         data: {
           name: values?.name,
+          slug: values?.slug,
           image: values?.image,
         },
       });
@@ -64,6 +65,7 @@ export default function EditManufacturerPage() {
           <ManufacturerForm
             initialValues={{
               name: manufacturer?.name || EMPTY_TRANSLATION,
+              slug: manufacturer?.slug || "",
               image: null,
               existingImage: manufacturer?.image,
             }}

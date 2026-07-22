@@ -33,12 +33,12 @@ export function ProductFormCatalogSection({
           <PaginatedDropdown
             value={values.categoryId}
             selectedLabel={values.categoryLabel}
-            onValueChange={(categoryId) => {
+            onValueChange={(categoryId, categoryLabel) => {
               setValues((p) => ({
                 ...p,
                 categoryId,
                 subcategoryId: "",
-                categoryLabel: undefined,
+                categoryLabel,
                 subcategoryLabel: undefined,
               }));
               setHasSubcategories(null);
@@ -69,11 +69,11 @@ export function ProductFormCatalogSection({
           <PaginatedDropdown
             value={values.subcategoryId}
             selectedLabel={values.subcategoryLabel}
-            onValueChange={(subcategoryId) =>
+            onValueChange={(subcategoryId, subcategoryLabel) =>
               setValues((p) => ({
                 ...p,
                 subcategoryId,
-                subcategoryLabel: undefined,
+                subcategoryLabel,
               }))
             }
             disabled={!values.categoryId || hasSubcategories === false}
@@ -122,11 +122,11 @@ export function ProductFormCatalogSection({
           <PaginatedDropdown
             value={values.manufacturerId}
             selectedLabel={values.manufacturerLabel}
-            onValueChange={(manufacturerId) =>
+            onValueChange={(manufacturerId, manufacturerLabel) =>
               setValues((p) => ({
                 ...p,
                 manufacturerId,
-                manufacturerLabel: undefined,
+                manufacturerLabel,
               }))
             }
             queryKey={["manufacturers", "dropdown"]}

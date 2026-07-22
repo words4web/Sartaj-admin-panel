@@ -3,6 +3,7 @@ import { ITranslationMap } from "../api.types";
 export interface IManufacturer {
   _id: string;
   name: ITranslationMap;
+  slug: string;
   image: string;
   isDeleted: boolean;
   createdAt: string;
@@ -11,6 +12,7 @@ export interface IManufacturer {
 
 export interface CreateManufacturerPayload {
   name: ITranslationMap;
+  slug: string;
   image: File | null;
 }
 
@@ -33,6 +35,7 @@ export interface ManufacturerFilters {
 
 export type ManufacturerFormValues = {
   name: ITranslationMap;
+  slug: string;
   image?: File | null;
   existingImage?: string | null;
 };

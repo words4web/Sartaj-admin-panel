@@ -53,7 +53,6 @@ export default function ProductDetailPage() {
       <PageHeader
         title="Product details"
         description="Read-only catalog information"
-        backRoute={ROUTES.PRODUCTS.LIST}
         editRoute={
           product?._id ? ROUTES.PRODUCTS.EDIT(product?._id) : undefined
         }

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   useProductList,
   useDeleteProduct,
@@ -31,27 +31,85 @@ import {
   Loader2,
   Star,
 } from "lucide-react";
-import { useDebounce } from "@/hooks/useDebounce";
 import { ROUTES } from "@/constants/routes";
 import { FilterBar } from "@/components/common/FilterBar";
 import { Badge } from "@/components/ui/badge";
 
 export default function ProductsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const limit = 10;
-  const [search, setSearch] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [page, setPage] = useState(1);
+
+  // Extract filters from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const categoryId = searchParams.get("category") || "";
+  const urlSearch = searchParams.get("search") || "";
+
+  // Local state for instant typing responsive input
+  const [searchInput, setSearchInput] = useState(urlSearch);
+
+  // Sync local input with URL parameter changes (e.g. back button / reset)
+  useEffect(() => {
+    setSearchInput(urlSearch);
+  }, [urlSearch]);
+
+  const pathname = usePathname();
   const [confirmDelete, setConfirmDelete] = useState<IProduct | null>(null);
   const [confirmStatusChange, setConfirmStatusChange] =
     useState<IProduct | null>(null);
 
-  const debouncedSearch = useDebounce(search, 400);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Helper to update the router URL parameters
+  const updateParams = useCallback(
+    (updates: Record<string, string | number | null | undefined>) => {
+      const params = new URLSearchParams(window.location.search);
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+      router.push(`${pathname}?${params?.toString()}`);
+    },
+    [router, pathname],
+  );
+
+  const handleSearchChange = useCallback(
+    (val: string) => {
+      setSearchInput(val);
+
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      searchTimeoutRef.current = setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (val) {
+          params.set("search", val);
+        } else {
+          params.delete("search");
+        }
+        params.set("page", "1");
+        router.push(`${pathname}?${params.toString()}`);
+      }, 400);
+    },
+    [router, pathname],
+  );
 
   const { data: parentCategory } = useCategoryById(categoryId);
 
   const { data, isLoading, isError, refetch } = useProductList({
-    search: debouncedSearch || undefined,
+    search: urlSearch || undefined,
     category: categoryId || undefined,
     page,
     limit,
@@ -79,10 +137,12 @@ export default function ProductsPage() {
   }, [confirmStatusChange, toggleMutation]);
 
   const resetFilters = useCallback(() => {
-    setSearch("");
-    setCategoryId("");
-    setPage(1);
-  }, []);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    setSearchInput("");
+    router.push(pathname);
+  }, [router, pathname]);
 
   const columns: Column<IProduct>[] = useMemo(
     () => [
@@ -259,10 +319,9 @@ export default function ProductsPage() {
 
       <FilterBar
         search={{
-          value: search,
+          value: searchInput,
           onChange: (val) => {
-            setSearch(val);
-            setPage(1);
+            handleSearchChange(val);
           },
           placeholder: "Search by SKU or name…",
         }}
@@ -273,8 +332,7 @@ export default function ProductsPage() {
             value: categoryId,
             selectedLabel: parentCategory?.name?.en,
             onChange: (val) => {
-              setCategoryId(val);
-              setPage(1);
+              updateParams({ category: val, page: 1 });
             },
             fetchData: async ({ search, page, limit }) => {
               const res = await categoryApi.getCategories({
@@ -322,7 +380,7 @@ export default function ProductsPage() {
           <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={(val) => updateParams({ page: val })}
             isLoading={isLoading}
           />
         </div>
