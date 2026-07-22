@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, Ref } from "react";
 import { AlertCircle } from "lucide-react";
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -7,6 +7,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   helperText?: string;
   required?: boolean;
   prefix?: string;
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 export function FormInput({
@@ -16,6 +17,7 @@ export function FormInput({
   required,
   prefix,
   className,
+  inputRef,
   ...props
 }: FormInputProps) {
   return (
@@ -35,6 +37,7 @@ export function FormInput({
         )}
         <input
           {...props}
+          ref={inputRef}
           className={`
             w-full py-2.5 border border-gray-200 rounded-lg
             focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500

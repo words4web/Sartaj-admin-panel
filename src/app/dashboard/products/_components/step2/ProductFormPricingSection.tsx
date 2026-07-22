@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2 } from "lucide-react";
@@ -22,6 +23,8 @@ export function ProductFormPricingSection({
   toggleSuperCategory,
   setSuperPrice,
 }: ProductFormPricingSectionProps) {
+  const [justToggledId, setJustToggledId] = useState<string | null>(null);
+
   const handlePriceChange = (id: string, val: string) => {
     // Only allow digits and one decimal point
     const sanitized = val?.replace(/[^0-9.]/g, "");
@@ -66,9 +69,15 @@ export function ProductFormPricingSection({
                   <div className="relative flex items-center justify-center">
                     <Checkbox
                       checked={selected}
-                      onCheckedChange={(c) =>
-                        toggleSuperCategory(sc?._id, Boolean(c))
-                      }
+                      onCheckedChange={(c) => {
+                        const isChecked = Boolean(c);
+                        if (isChecked) {
+                          setJustToggledId(sc?._id);
+                        } else if (justToggledId === sc?._id) {
+                          setJustToggledId(null);
+                        }
+                        toggleSuperCategory(sc?._id, isChecked);
+                      }}
                       className="h-5 w-5 rounded-md border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                   </div>
@@ -90,6 +99,7 @@ export function ProductFormPricingSection({
                       <Input
                         type="text"
                         placeholder="0.00"
+                        autoFocus={justToggledId === sc?._id}
                         className={cn(
                           "h-10 pl-6 text-sm font-medium shadow-none border-gray-200 focus-visible:ring-1 focus-visible:ring-primary/30",
                           !price && "border-destructive/30 bg-destructive/5",

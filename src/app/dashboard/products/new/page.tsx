@@ -57,7 +57,7 @@ export default function NewProductPage() {
         destructive
         onConfirm={() => {
           setShowDiscardModal(false);
-          router.push(ROUTES.PRODUCTS.LIST);
+          router.back();
         }}
         onCancel={() => setShowDiscardModal(false)}
       />

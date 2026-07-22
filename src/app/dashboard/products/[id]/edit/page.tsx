@@ -33,7 +33,7 @@ export default function EditProductPage() {
     await updateMutation.mutateAsync(
       { id, data: payload },
       {
-        onSuccess: () => router.push(ROUTES.PRODUCTS.DETAIL(id)),
+        onSuccess: () => router.push(ROUTES.PRODUCTS.LIST),
       },
     );
   };
@@ -81,7 +81,7 @@ export default function EditProductPage() {
         destructive
         onConfirm={() => {
           setShowDiscardModal(false);
-          router.push(ROUTES.PRODUCTS.DETAIL(id));
+          router.back();
         }}
         onCancel={() => setShowDiscardModal(false)}
       />
