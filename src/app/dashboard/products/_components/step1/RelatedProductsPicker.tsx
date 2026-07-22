@@ -60,9 +60,8 @@ export function RelatedProductsPicker({
     <div className="space-y-3">
       <PaginatedDropdown
         value=""
-        onValueChange={(val) => {
-          // find the label from the last loaded options via selectedLabel trick
-          handleSelect(val, labels[val] ?? val);
+        onValueChange={(val, label) => {
+          handleSelect(val, label ?? labels[val] ?? val);
         }}
         fetchData={async (params) => {
           const result = await fetchProducts(params);

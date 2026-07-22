@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { FormInput } from "@/components/common/FormInput";
@@ -91,6 +91,21 @@ export function TranslationInput({
   errors = {},
 }: TranslationInputProps) {
   const [activeTab, setActiveTab] = useState<LangCode>("en");
+  const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const focusNameInput = useCallback((lang: LangCode) => {
+    // Small delay to ensure tab content renders
+    setTimeout(() => {
+      const input = inputRefs.current[lang];
+      if (input) {
+        input.focus();
+      }
+    }, 50);
+  }, []);
+
+  useEffect(() => {
+    focusNameInput(activeTab);
+  }, [activeTab, focusNameInput]);
 
   const handleChange = useCallback(
     (field: string, lang: LangCode, value: string) => {
@@ -163,6 +178,7 @@ export function TranslationInput({
               const val = values[field?.key]?.[lang?.id] ?? "";
               const placeholder =
                 field?.placeholder ?? `${field?.label} in ${lang?.label}`;
+              const isFirst = fields.indexOf(field) === 0;
 
               if (field?.multiline) {
                 return (
@@ -191,6 +207,13 @@ export function TranslationInput({
                     handleChange(field.key, lang.id, e.target.value)
                   }
                   placeholder={placeholder}
+                  inputRef={
+                    isFirst
+                      ? (el) => {
+                          inputRefs.current[lang?.id] = el;
+                        }
+                      : undefined
+                  }
                 />
               );
             })}

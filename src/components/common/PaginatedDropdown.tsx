@@ -18,7 +18,7 @@ export interface DropdownOption {
 
 export interface PaginatedDropdownProps {
   value?: string;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: string, label?: string) => void;
   fetchData: (params: {
     search: string;
     page: number;
@@ -174,7 +174,7 @@ export function PaginatedDropdown({
                       !value && "bg-accent/50",
                     )}
                     onClick={() => {
-                      onValueChange("");
+                      onValueChange("", "");
                       setOpen(false);
                     }}>
                     <Check
@@ -194,7 +194,7 @@ export function PaginatedDropdown({
                     <div
                       key={option?.value}
                       onClick={() => {
-                        onValueChange(option?.value);
+                        onValueChange(option?.value, option?.label);
                         setOpen(false);
                       }}
                       className={cn(

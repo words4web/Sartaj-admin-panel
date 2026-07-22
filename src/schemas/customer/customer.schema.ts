@@ -19,7 +19,7 @@ export const addressSchema = z.object({
   phone: z
     .string()
     .min(1, "Phone is required")
-    .regex(/^\+81\d{9,10}$/, "Invalid Japan phone number format"),
+    .regex(/^\+81\d{10}$/, "Invalid Japan phone number format"),
 });
 
 export const createCustomerSchema = z.object({
@@ -32,7 +32,7 @@ export const createCustomerSchema = z.object({
   mobileNumber: z
     .string()
     .min(1, "Mobile number is required")
-    .regex(/^\+81\d{9,10}$/, "Invalid Japan phone number format"),
+    .regex(/^\+81\d{10}$/, "Invalid Japan phone number format"),
   superCategory: z.string().min(1, "Super category is required"),
   priceList: z.string().optional(),
   addresses: z.array(addressSchema).min(1, "At least one address is required"),

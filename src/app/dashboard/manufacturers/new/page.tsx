@@ -17,6 +17,7 @@ export default function NewManufacturerPage() {
     await createMutation?.mutateAsync(
       {
         name: values?.name,
+        slug: values?.slug,
         image: values?.image!,
       },
       {
@@ -38,6 +39,7 @@ export default function NewManufacturerPage() {
         <ManufacturerForm
           initialValues={{
             name: EMPTY_TRANSLATION,
+            slug: "",
             image: null,
           }}
           isSubmitting={createMutation?.isPending}
