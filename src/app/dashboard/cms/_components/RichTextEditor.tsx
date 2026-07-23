@@ -24,7 +24,7 @@ const modules = {
     ["bold", "italic", "underline", "strike", "blockquote"],
     [{ list: "ordered" }, { list: "bullet" }],
     [{ color: [] }, { background: [] }],
-    ["link"],
+    ["link", "table"],
     ["clean"],
   ],
 };
@@ -40,6 +40,7 @@ const formats = [
   "color",
   "background",
   "link",
+  "table",
 ];
 
 export const RichTextEditor = ({

@@ -124,9 +124,254 @@ export const PRODUCT_BASIC_INFO_FIELDS: TranslationField[] = [
     key: "description",
     label: "Description",
     required: true,
+    richText: true,
     multiline: true,
     rows: 3,
     resizeVertical: true,
     placeholder: "Full description for catalogs",
+    disclaimer:
+      "Disclaimer: Please do not modify the default subheading names or structure. Only edit the placeholder text under them. Modifying headings will break the product detail section and collapsible features on the retailer website.",
   },
 ];
+
+export const DEFAULT_DESCRIPTION_TEMPLATES: Record<string, string> = {
+  en: `<p>[Enter product introduction here...]</p>
+<p><br></p>
+<p><strong>Flavour Profile</strong></p>
+<p>[Enter flavour profile and taste details here...]</p>
+<p><br></p>
+<p><strong>Product Highlights</strong></p>
+<ul>
+  <li>[Highlight item 1]</li>
+  <li>[Highlight item 2]</li>
+</ul>
+<p><br></p>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Diet Type</strong></td>
+      <td>Vegetarian</td>
+    </tr>
+    <tr>
+      <td><strong>Brand</strong></td>
+      <td>Sartaj</td>
+    </tr>
+    <tr>
+      <td><strong>Flavour</strong></td>
+      <td>South Asian</td>
+    </tr>
+    <tr>
+      <td><strong>Net Qty</strong></td>
+      <td>400 g</td>
+    </tr>
+    <tr>
+      <td><strong>Number of items</strong></td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p><br></p>
+<p><strong>Key Ingredients</strong></p>
+<ul>
+  <li>[Ingredient 1]</li>
+  <li>[Ingredient 2]</li>
+</ul>
+<p><br></p>
+<p><strong>Added Colours</strong></p>
+<p>[Yes/No, e.g. No artificial colours are added.]</p>
+<p><br></p>
+<p><strong>How to Use?</strong></p>
+<p>[Enter preparation or cooking instructions here...]</p>`,
+
+  ja: `<p>【ここに商品説明文を入力してください...】</p>
+<p><br></p>
+<p><strong>風味の特徴</strong></p>
+<p>【風味や味わいの詳細を入力してください...】</p>
+<p><br></p>
+<p><strong>製品の特徴</strong></p>
+<ul>
+  <li>【製品の特徴1】</li>
+  <li>【製品の特徴2】</li>
+</ul>
+<p><br></p>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>食事タイプ</strong></td>
+      <td>ベジタリアン</td>
+    </tr>
+    <tr>
+      <td><strong>ブランド</strong></td>
+      <td>Sartaj</td>
+    </tr>
+    <tr>
+      <td><strong>風味</strong></td>
+      <td>南アジア風</td>
+    </tr>
+    <tr>
+      <td><strong>内容量</strong></td>
+      <td>400 g</td>
+    </tr>
+    <tr>
+      <td><strong>数量</strong></td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p><br></p>
+<p><strong>主な原材料</strong></p>
+<ul>
+  <li>【原材料1】</li>
+  <li>【原材料2】</li>
+</ul>
+<p><br></p>
+<p><strong>着色料</strong></p>
+<p>【例：人工着色料は使用していません。】</p>
+<p><br></p>
+<p><strong>使用方法</strong></p>
+<p>【調理法や使用方法を入力してください...】</p>`,
+
+  hi: `<p>[यहाँ उत्पाद का परिचय दर्ज करें...]</p>
+<p><br></p>
+<p><strong>स्वाद प्रोफ़ाइल</strong></p>
+<p>[यहाँ स्वाद विवरण दर्ज करें...]</p>
+<p><br></p>
+<p><strong>उत्पाद मुख्य विशेषताएं</strong></p>
+<ul>
+  <li>[मुख्य विशेषता 1]</li>
+  <li>[मुख्य विशेषता 2]</li>
+</ul>
+<p><br></p>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>आहार प्रकार</strong></td>
+      <td>शाकाहारी</td>
+    </tr>
+    <tr>
+      <td><strong>ब्रांड</strong></td>
+      <td>Sartaj</td>
+    </tr>
+    <tr>
+      <td><strong>स्वाद</strong></td>
+      <td>दक्षिण एशियाई</td>
+    </tr>
+    <tr>
+      <td><strong>कुल मात्रा</strong></td>
+      <td>400 g</td>
+    </tr>
+    <tr>
+      <td><strong>आइटम संख्या</strong></td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p><br></p>
+<p><strong>मुख्य सामग्री</strong></p>
+<ul>
+  <li>[सामग्री 1]</li>
+  <li>[सामग्री 2]</li>
+</ul>
+<p><br></p>
+<p><strong>अतिरिक्त रंग</strong></p>
+<p>[उदा. कोई कृत्रिम रंग नहीं मिलाया गया है।]</p>
+<p><br></p>
+<p><strong>कैसे उपयोग करें?</strong></p>
+<p>[यहाँ उपयोग करने का तरीका दर्ज करें...]</p>`,
+
+  ne: `<p>[यहाँ उत्पादनको परिचय प्रविष्टि गर्नुहोस्...]</p>
+<p><br></p>
+<p><strong>स्वाद प्रोफाइल</strong></p>
+<p>[यहाँ स्वाद विवरण प्रविष्टि गर्नुहोस्...]</p>
+<p><br></p>
+<p><strong>उत्पादन हाइलाइटहरू</strong></p>
+<ul>
+  <li>[हाइलाइट १]</li>
+  <li>[हाइलाइट २]</li>
+</ul>
+<p><br></p>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>आहार प्रकार</strong></td>
+      <td>शाकाहारी</td>
+    </tr>
+    <tr>
+      <td><strong>ब्रान्ड</strong></td>
+      <td>Sartaj</td>
+    </tr>
+    <tr>
+      <td><strong>स्वाद</strong></td>
+      <td>दक्षिण एसियाली</td>
+    </tr>
+    <tr>
+      <td><strong>कुल मात्रा</strong></td>
+      <td>400 g</td>
+    </tr>
+    <tr>
+      <td><strong>सामग्री संख्या</strong></td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p><br></p>
+<p><strong>मुख्य सामग्रीहरू</strong></p>
+<ul>
+  <li>[सामग्री १]</li>
+  <li>[सामग्री २]</li>
+</ul>
+<p><br></p>
+<p><strong>थप रंगहरू</strong></p>
+<p>[उदा. कुनै कृत्रिम रंगहरू थपिएको छैन।]</p>
+<p><br></p>
+<p><strong>कसरी प्रयोग गर्ने?</strong></p>
+<p>[यहाँ प्रयोग गर्ने तरिका प्रविष्टि गर्नुहोस्...]</p>`,
+
+  bn: `<p>[এখানে পণ্যের বিবরণ লিখুন...]</p>
+<p><br></p>
+<p><strong>ফ্লেভার প্রোফাইল</strong></p>
+<p>[এখানে ফ্লেভার বিবরণ লিখুন...]</p>
+<p><br></p>
+<p><strong>পণ্য হাইলাইট</strong></p>
+<ul>
+  <li>[হাইলাইট ১]</li>
+  <li>[হাইলাইট ২]</li>
+</ul>
+<p><br></p>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>আহারের ধরণ</strong></td>
+      <td>নিরামিষ</td>
+    </tr>
+    <tr>
+      <td><strong>ব্র্যান্ড</strong></td>
+      <td>Sartaj</td>
+    </tr>
+    <tr>
+      <td><strong>ফ্লেভার</strong></td>
+      <td>দক্ষিণ এশীয়</td>
+    </tr>
+    <tr>
+      <td><strong>নিট ওজন</strong></td>
+      <td>400 g</td>
+    </tr>
+    <tr>
+      <td><strong>আইটেম সংখ্যা</strong></td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p><br></p>
+<p><strong>মূল উপাদান</strong></p>
+<ul>
+  <li>[উপাদান ১]</li>
+  <li>[উপাদান ২]</li>
+</ul>
+<p><br></p>
+<p><strong>যোগ করা রং</strong></p>
+<p>[উদাঃ কোন কৃত্রিম রং যোগ করা হয়নি।]</p>
+<p><br></p>
+<p><strong>কিভাবে ব্যবহার করবেন?</strong></p>
+<p>[এখানে ব্যবহারের নিয়ম লিখুন...]</p>`,
+};

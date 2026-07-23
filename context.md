@@ -34,3 +34,9 @@
   - Replaced local states `page` and `categoryId` with direct queries to `useSearchParams()`.
   - Added debounced query string sync for `searchInput` to reflect updates in the URL `?search=<term>&page=1` without lagging the typing response.
   - Intercepted all filter modifications (pagination clicks, category selection, filter resets) to perform navigation updates via `router.push`, persisting the exact filter state on refresh or backward navigation.
+- **Rich Text Product Descriptions**:
+  - Replaced plain textareas with a dynamic `RichTextEditor` wrapper using the `react-quill-new` library inside the localization form (`TranslationInput.tsx`).
+  - Added visual table creation/editing support by registering the `"table"` option inside the Quill modules and formats toolbar config (`RichTextEditor.tsx`).
+  - Configured localized description templates (`DEFAULT_DESCRIPTION_TEMPLATES` in [product.constants.ts](file:///home/mazahir/projects/work/sartaj_foods/Sartaj-admin-panel/src/constants/product.constants.ts)) holding clean placeholder layouts and translated headings for all five supported languages (English, Japanese, Hindi, Nepali, Bengali).
+  - Set the respective localized default HTML structure as the initial form state for each translation tab in `defaultForm()` ([productForm.state.ts](file:///home/mazahir/projects/work/sartaj_foods/Sartaj-admin-panel/src/app/dashboard/products/_components/productForm.state.ts)).
+  - Fixed state normalization checks in `useProductForm.ts` to ensure default templates are correctly preserved on page entrance.

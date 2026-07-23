@@ -37,14 +37,21 @@ export function useProductForm({
   onSubmit,
   productId,
 }: UseProductFormProps): UseProductFormReturn {
-  const [values, setValues] = useState<ProductFormValues>(() => ({
-    ...defaultForm(),
-    ...initialValues,
-    name: normalizeTranslation(initialValues?.name),
-    description: normalizeTranslation(initialValues?.description),
-    images: initialValues?.images || [],
-    newFiles: [],
-  }));
+  const [values, setValues] = useState<ProductFormValues>(() => {
+    const defaults = defaultForm();
+    return {
+      ...defaults,
+      ...initialValues,
+      name: initialValues?.name
+        ? normalizeTranslation(initialValues.name)
+        : defaults.name,
+      description: initialValues?.description
+        ? normalizeTranslation(initialValues.description)
+        : defaults.description,
+      images: initialValues?.images || [],
+      newFiles: [],
+    };
+  });
 
   const [step, setStep] = useState(0);
   const [newFilePreviews, setNewFilePreviews] = useState<string[]>([]);
