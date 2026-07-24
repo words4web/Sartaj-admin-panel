@@ -50,6 +50,7 @@ export interface IProduct {
   caseType?: ProductCaseType;
   productType: ProductType;
   tags: ProductTag[];
+  keywords: string[];
   stockQuantity: number;
   sellingUnit: SellingUnit;
   stockStatus: StockStatus;
@@ -113,6 +114,7 @@ export interface ProductFormValues {
   caseType: ProductCaseType | "";
   productType: ProductType | "";
   tags: ProductTag[];
+  keywords: string[];
   stockQuantity: string;
   sellingUnit: SellingUnit | "";
   stockStatus: StockStatus | "";
@@ -155,6 +157,7 @@ export interface CreateProductPayload {
   caseType?: ProductCaseType;
   productType: ProductType;
   tags: ProductTag[];
+  keywords: string[];
   stockQuantity: number;
   sellingUnit: SellingUnit;
   stockStatus: StockStatus;

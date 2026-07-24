@@ -166,6 +166,22 @@ export function useProductForm({
     }));
   }, []);
 
+  const addKeyword = useCallback((keyword: string) => {
+    const trimmed = keyword?.trim()?.toLowerCase();
+    if (!trimmed) return;
+    setValues((prev) => ({
+      ...prev,
+      keywords: [...new Set([...prev.keywords, trimmed])],
+    }));
+  }, []);
+
+  const removeKeyword = useCallback((keyword: string) => {
+    setValues((prev) => ({
+      ...prev,
+      keywords: prev?.keywords?.filter((k) => k !== keyword),
+    }));
+  }, []);
+
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawFiles = Array.from(e.target.files || []);
 
@@ -573,6 +589,7 @@ export function useProductForm({
       caseType: isUnit ? null : values.caseType || undefined,
       productType: values.productType,
       tags: values.tags,
+      keywords: values.keywords,
       stockQuantity: Number(values.stockQuantity),
       sellingUnit: values.sellingUnit,
       stockStatus: values.stockStatus,
@@ -629,6 +646,8 @@ export function useProductForm({
     toggleSuperCategory,
     setSuperPrice,
     toggleTag,
+    addKeyword,
+    removeKeyword,
     handleImage,
     removeImage,
     removeNewFile,

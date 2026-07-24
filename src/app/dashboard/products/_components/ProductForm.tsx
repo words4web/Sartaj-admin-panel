@@ -58,6 +58,8 @@ export default function ProductForm({
               values={form.values}
               setValues={form.setValues}
               toggleTag={form.toggleTag}
+              addKeyword={form.addKeyword}
+              removeKeyword={form.removeKeyword}
               imagePreviews={form.imagePreviews}
               handleImage={form.handleImage}
               removeImage={form.removeImage}

@@ -35,6 +35,7 @@ export const defaultForm = (): ProductFormValues => ({
   caseType: "",
   productType: PRODUCT_TYPE.DRY,
   tags: [],
+  keywords: [],
   stockQuantity: "1",
   sellingUnit: SELLING_UNIT.UNIT,
   stockStatus: STOCK_STATUS.IN_STOCK,
@@ -85,6 +86,7 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     caseType: p.caseType ?? "",
     productType: p.productType ?? PRODUCT_TYPE.DRY,
     tags: p.tags ?? [],
+    keywords: p.keywords ?? [],
     stockQuantity:
       p.stockStatus === STOCK_STATUS.OUT_OF_STOCK
         ? "0"
