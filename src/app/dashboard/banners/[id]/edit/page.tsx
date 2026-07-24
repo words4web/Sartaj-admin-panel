@@ -27,6 +27,7 @@ export default function EditBannerPage() {
           title: values?.title,
           link: values?.link,
           image: values?.image,
+          targetPlatform: values?.targetPlatform,
           isActive: values?.isActive,
         },
       });
@@ -58,6 +59,7 @@ export default function EditBannerPage() {
             initialValues={{
               title: banner?.title || EMPTY_TRANSLATION,
               link: banner?.link || "",
+              targetPlatform: banner?.targetPlatform || "both",
               isActive: banner?.isActive ?? true,
               existingImage: banner?.image,
             }}
