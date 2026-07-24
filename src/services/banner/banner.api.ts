@@ -10,8 +10,11 @@ import {
 
 const buildBannerFormData = (data: Partial<CreateBannerPayload>): FormData => {
   const formData = new FormData();
-  if (data.title !== undefined) formData.append("title", JSON.stringify(data.title));
+  if (data.title !== undefined)
+    formData.append("title", JSON.stringify(data.title));
   if (data.link !== undefined) formData.append("link", data.link);
+  if (data.targetPlatform !== undefined)
+    formData.append("targetPlatform", data.targetPlatform);
   if (data.isActive !== undefined)
     formData.append("isActive", String(data.isActive));
   if (data.image) {

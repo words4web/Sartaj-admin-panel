@@ -124,6 +124,33 @@ export default function BannersPage() {
         ),
       },
       {
+        key: "targetPlatform",
+        label: "Platform",
+        render: (_: any, row: IBanner) => {
+          const platform = row?.targetPlatform || "both";
+          const labels: Record<string, string> = {
+            both: "Both",
+            web: "Web Only",
+            mobile: "App Only",
+          };
+          const variants: Record<
+            string,
+            "outline" | "default" | "secondary" | "success" | "destructive"
+          > = {
+            both: "outline",
+            web: "default",
+            mobile: "secondary",
+          };
+          return (
+            <Badge
+              variant={variants[platform] || "outline"}
+              className="capitalize">
+              {labels[platform] || platform}
+            </Badge>
+          );
+        },
+      },
+      {
         key: "createdAt",
         label: "Created",
         render: (_: any, row: IBanner) => (

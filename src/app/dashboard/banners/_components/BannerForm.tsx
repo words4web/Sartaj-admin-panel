@@ -7,6 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ImageIcon, X } from "lucide-react";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   TranslationInput,
   LangCode,
 } from "@/components/common/TranslationInput";
@@ -104,6 +111,24 @@ export default function BannerForm({
         placeholder="e.g. /products/shoes"
       />
 
+      <div className="space-y-2">
+        <Label htmlFor="target-platform">Target Platform</Label>
+        <Select
+          value={values?.targetPlatform || "both"}
+          onValueChange={(val: any) =>
+            setValues((v) => ({ ...v, targetPlatform: val }))
+          }>
+          <SelectTrigger className="w-full max-w-[400px] h-10 bg-white border-gray-200">
+            <SelectValue placeholder="Select Target Platform" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="both">Both Website & Mobile App</SelectItem>
+            <SelectItem value="web">Website only</SelectItem>
+            <SelectItem value="mobile">Mobile App only</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="flex items-center space-x-2">
         <Switch
           id="is-active"
@@ -161,8 +186,7 @@ export default function BannerForm({
                 setImagePreview(null);
                 setValues((v) => ({ ...v, image: null, existingImage: null }));
               }}
-              disabled={!imagePreview || isSubmitting}
-            >
+              disabled={!imagePreview || isSubmitting}>
               <X className="w-4 h-4 mr-2" />
               Remove Image
             </Button>

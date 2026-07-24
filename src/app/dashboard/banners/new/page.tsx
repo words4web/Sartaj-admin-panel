@@ -18,6 +18,7 @@ export default function NewBannerPage() {
       {
         title: values?.title || undefined,
         link: values?.link || undefined,
+        targetPlatform: values?.targetPlatform || "both",
         isActive: values?.isActive,
         image: values?.image!,
       },
@@ -41,6 +42,7 @@ export default function NewBannerPage() {
           initialValues={{
             title: EMPTY_TRANSLATION,
             link: "",
+            targetPlatform: "both",
             isActive: true,
             image: null,
           }}
