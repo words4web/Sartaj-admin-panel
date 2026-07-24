@@ -37,14 +37,21 @@ export function useProductForm({
   onSubmit,
   productId,
 }: UseProductFormProps): UseProductFormReturn {
-  const [values, setValues] = useState<ProductFormValues>(() => ({
-    ...defaultForm(),
-    ...initialValues,
-    name: normalizeTranslation(initialValues?.name),
-    description: normalizeTranslation(initialValues?.description),
-    images: initialValues?.images || [],
-    newFiles: [],
-  }));
+  const [values, setValues] = useState<ProductFormValues>(() => {
+    const defaults = defaultForm();
+    return {
+      ...defaults,
+      ...initialValues,
+      name: initialValues?.name
+        ? normalizeTranslation(initialValues.name)
+        : defaults.name,
+      description: initialValues?.description
+        ? normalizeTranslation(initialValues.description)
+        : defaults.description,
+      images: initialValues?.images || [],
+      newFiles: [],
+    };
+  });
 
   const [step, setStep] = useState(0);
   const [newFilePreviews, setNewFilePreviews] = useState<string[]>([]);
@@ -156,6 +163,22 @@ export function useProductForm({
       tags: checked
         ? [...new Set([...prev.tags, tag])]
         : prev.tags?.filter((t) => t !== tag),
+    }));
+  }, []);
+
+  const addKeyword = useCallback((keyword: string) => {
+    const trimmed = keyword?.trim()?.toLowerCase();
+    if (!trimmed) return;
+    setValues((prev) => ({
+      ...prev,
+      keywords: [...new Set([...prev.keywords, trimmed])],
+    }));
+  }, []);
+
+  const removeKeyword = useCallback((keyword: string) => {
+    setValues((prev) => ({
+      ...prev,
+      keywords: prev?.keywords?.filter((k) => k !== keyword),
     }));
   }, []);
 
@@ -566,6 +589,7 @@ export function useProductForm({
       caseType: isUnit ? null : values.caseType || undefined,
       productType: values.productType,
       tags: values.tags,
+      keywords: values.keywords,
       stockQuantity: Number(values.stockQuantity),
       sellingUnit: values.sellingUnit,
       stockStatus: values.stockStatus,
@@ -622,6 +646,8 @@ export function useProductForm({
     toggleSuperCategory,
     setSuperPrice,
     toggleTag,
+    addKeyword,
+    removeKeyword,
     handleImage,
     removeImage,
     removeNewFile,

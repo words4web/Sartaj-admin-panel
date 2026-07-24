@@ -37,7 +37,6 @@ export default function EditManufacturerPage() {
           image: values?.image,
         },
       });
-      toast.success("Manufacturer updated successfully");
       router.push(ROUTES.MANUFACTURERS.LIST);
     } catch (error) {
       toast.error("Failed to update manufacturer");

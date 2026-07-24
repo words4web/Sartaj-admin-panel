@@ -3,6 +3,83 @@
 import { ITranslationMap } from "@/types/api.types";
 import { SUPPORTED_LANGUAGES, LangCode } from "./TranslationInput";
 
+const LOCALIZED_SUBHEADINGS: Record<string, string[]> = {
+  en: [
+    "Flavour Profile",
+    "Product Highlights",
+    "Key Ingredients",
+    "Added Colours",
+    "No Added Colours",
+    "How to Use",
+  ],
+  ja: [
+    "風味プロファイル",
+    "風味",
+    "味の特徴",
+    "製品ハイライト",
+    "商品の特徴",
+    "原材料",
+    "主な原材料",
+    "着色料",
+    "着色料不使用",
+    "無着色",
+    "使用方法",
+    "使い方",
+    "召し上がり方",
+    "お召し上がり方",
+  ],
+  hi: [
+    "स्वाद प्रोफ़ाइल",
+    "उत्पाद मुख्य विशेषताएं",
+    "मुख्य सामग्री",
+    "अतिरिक्त रंग",
+    "कोई अतिरिक्त रंग नहीं",
+    "कैसे उपयोग करें",
+    "उपयोग करने का तरीका",
+  ],
+  ne: [
+    "स्वाद प्रोफाइल",
+    "उत्पादन हाइलाइटहरू",
+    "मुख्य सामग्रीहरू",
+    "थप रंगहरू",
+    "कुनै थप रंगहरू छैनन्",
+    "कसरी प्रयोग गर्ने",
+  ],
+  bn: [
+    "ফ্লেভার প্রোফাইল",
+    "পণ্য হাইলেট",
+    "মূল উপাদান",
+    "যোগ করা রং",
+    "কোন যোগ করা রং নেই",
+    "কিভাবে ব্যবহার করবেন",
+  ],
+};
+
+function getIntroDescription(description: string, langCode: string): string {
+  if (!description) return "";
+  const cleanHtml = description
+    ?.replace(/&nbsp;/g, " ")
+    ?.replace(/\u00a0/g, " ");
+
+  const currentLocale = langCode || "en";
+  const localeHeaders =
+    LOCALIZED_SUBHEADINGS[currentLocale] || LOCALIZED_SUBHEADINGS?.en;
+  const allHeaders = Array.from(
+    new Set([...localeHeaders, ...LOCALIZED_SUBHEADINGS?.en]),
+  );
+
+  const escapedHeaders = allHeaders
+    ?.map((h) => h?.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"))
+    ?.join("|");
+  const regex = new RegExp(
+    `(<(?:p|h3)[^>]*>(?:<strong>)?\\s*(?:${escapedHeaders})\\s*(?::|：|\\?|\\？)?\\s*(?:</strong>)?</(?:p|h3)>)`,
+    "gi",
+  );
+
+  const parts = cleanHtml?.split(regex);
+  return parts[0] || "";
+}
+
 // ─── Row definitions ──────────────────────────────────────────────────────────
 
 export interface TranslationDisplayField {
@@ -99,8 +176,25 @@ export function TranslationDisplay({
                     {field?.label}
                   </p>
                   <div className={primaryBoxClass(field?.key)}>
-                    {val || (
-                      <span className="text-gray-400 italic">Not provided</span>
+                    {field?.key === "description" ? (
+                      val ? (
+                        <div
+                          className="text-gray-800 text-sm leading-relaxed"
+                          dangerouslySetInnerHTML={{
+                            __html: getIntroDescription(val, primaryLang),
+                          }}
+                        />
+                      ) : (
+                        <span className="text-gray-400 italic">
+                          Not provided
+                        </span>
+                      )
+                    ) : (
+                      val || (
+                        <span className="text-gray-400 italic">
+                          Not provided
+                        </span>
+                      )
                     )}
                   </div>
                 </div>
@@ -139,15 +233,30 @@ export function TranslationDisplay({
                       <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">
                         {field?.label}
                       </p>
-                      <p
-                        className={gridTextClass(field?.key)}
-                        title={isLong(field?.key) ? undefined : val}>
-                        {val || (
+                      {field?.key === "description" ? (
+                        val ? (
+                          <div
+                            className={gridTextClass(field?.key)}
+                            dangerouslySetInnerHTML={{
+                              __html: getIntroDescription(val, lang?.id),
+                            }}
+                          />
+                        ) : (
                           <span className="text-gray-300 italic text-xs">
                             —
                           </span>
-                        )}
-                      </p>
+                        )
+                      ) : (
+                        <p
+                          className={gridTextClass(field?.key)}
+                          title={isLong(field?.key) ? undefined : val}>
+                          {val || (
+                            <span className="text-gray-300 italic text-xs">
+                              —
+                            </span>
+                          )}
+                        </p>
+                      )}
                     </div>
                   );
                 })}

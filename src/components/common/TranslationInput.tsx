@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { FormInput } from "@/components/common/FormInput";
 import { FormTextarea } from "@/components/common/FormTextarea";
 import { ITranslationMap } from "@/types/api.types";
+import { RichTextEditor } from "@/app/dashboard/cms/_components/RichTextEditor";
 
 export const LANG_CODES = ["en", "hi", "ne", "ja", "bn"] as const;
 export type LangCode = (typeof LANG_CODES)[number];
@@ -39,6 +40,8 @@ export interface TranslationField {
   label: string;
   /** If true, shows a textarea instead of an input */
   multiline?: boolean;
+  /** If true, shows a rich text editor instead of an input or textarea */
+  richText?: boolean;
   /** Row count for a textarea */
   rows?: number;
   /** Taller textarea with vertical resize (long descriptions) */
@@ -47,6 +50,8 @@ export interface TranslationField {
   required?: boolean;
   /** Placeholder for the field */
   placeholder?: string;
+  /** Optional warning/disclaimer text shown above the input */
+  disclaimer?: string;
 }
 
 // ─── Props
@@ -80,7 +85,7 @@ interface TranslationInputProps {
  *   values={{ name: values.name, description: values.description }}
  *   onChange={(field, lang, val) => setValues(v => ({ ...v, [field]: { ...v[field], [lang]: val } }))}
  *   errors={errors}
- * />
+ *   />
  */
 export function TranslationInput({
   title = "Localization",
@@ -179,6 +184,31 @@ export function TranslationInput({
               const placeholder =
                 field?.placeholder ?? `${field?.label} in ${lang?.label}`;
               const isFirst = fields.indexOf(field) === 0;
+
+              if (field?.richText) {
+                return (
+                  <div key={field.key} className="space-y-1.5">
+                    <Label className="text-sm font-medium text-gray-700">
+                      {field.label}{" "}
+                      {field.required && (
+                        <span className="text-red-500">*</span>
+                      )}
+                    </Label>
+                    {field.disclaimer && (
+                      <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2.5 leading-relaxed font-semibold">
+                        ⚠️ {field?.disclaimer}
+                      </div>
+                    )}
+                    <RichTextEditor
+                      value={val}
+                      onChange={(value) =>
+                        handleChange(field.key, lang.id, value)
+                      }
+                      placeholder={placeholder}
+                    />
+                  </div>
+                );
+              }
 
               if (field?.multiline) {
                 return (
