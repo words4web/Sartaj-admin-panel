@@ -4,6 +4,7 @@ import {
   PRODUCT_TYPE,
   SELLING_UNIT,
   STOCK_STATUS,
+  DEFAULT_DESCRIPTION_TEMPLATES,
 } from "@/constants/product.constants";
 import { extractId } from "@/utils/common.utils";
 import {
@@ -17,7 +18,13 @@ export const defaultForm = (): ProductFormValues => ({
   sku: "",
   slug: "",
   name: { ...EMPTY_TRANSLATION },
-  description: { ...EMPTY_TRANSLATION },
+  description: {
+    en: DEFAULT_DESCRIPTION_TEMPLATES.en,
+    hi: DEFAULT_DESCRIPTION_TEMPLATES.hi,
+    ne: DEFAULT_DESCRIPTION_TEMPLATES.ne,
+    ja: DEFAULT_DESCRIPTION_TEMPLATES.ja,
+    bn: DEFAULT_DESCRIPTION_TEMPLATES.bn,
+  },
   categoryId: "",
   subcategoryId: "",
   manufacturerId: "",
@@ -28,6 +35,7 @@ export const defaultForm = (): ProductFormValues => ({
   caseType: "",
   productType: PRODUCT_TYPE.DRY,
   tags: [],
+  keywords: [],
   stockQuantity: "1",
   sellingUnit: SELLING_UNIT.UNIT,
   stockStatus: STOCK_STATUS.IN_STOCK,
@@ -78,6 +86,7 @@ export function mapProductToFormValues(p: IProduct): ProductFormValues {
     caseType: p.caseType ?? "",
     productType: p.productType ?? PRODUCT_TYPE.DRY,
     tags: p.tags ?? [],
+    keywords: p.keywords ?? [],
     stockQuantity:
       p.stockStatus === STOCK_STATUS.OUT_OF_STOCK
         ? "0"
