@@ -167,11 +167,41 @@ export function useProductForm({
   }, []);
 
   const addKeyword = useCallback((keyword: string) => {
-    const trimmed = keyword?.trim()?.toLowerCase();
-    if (!trimmed) return;
+    const trimmedInput = keyword?.trim();
+    if (!trimmedInput) return;
+
+    let keywordsToAdd: string[] = [];
+
+    // Check if it looks like a JSON array
+    if (trimmedInput?.startsWith("[") && trimmedInput?.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(trimmedInput);
+        if (Array.isArray(parsed)) {
+          keywordsToAdd = parsed
+            ?.map((k) => String(k)?.trim()?.toLowerCase())
+            ?.filter(Boolean);
+        }
+      } catch (e) {
+        // Fallback: clean brackets/quotes and split by comma or newline
+        const clean = trimmedInput?.replace(/[\[\]"]/g, "");
+        keywordsToAdd = clean
+          ?.split(/[,\n]/)
+          ?.map((k) => k?.trim()?.toLowerCase())
+          ?.filter(Boolean);
+      }
+    } else {
+      // Split by comma or newline to support list pasting
+      keywordsToAdd = trimmedInput
+        ?.split(/[,\n]/)
+        ?.map((k) => k?.trim()?.toLowerCase())
+        ?.filter(Boolean);
+    }
+
+    if (keywordsToAdd?.length === 0) return;
+
     setValues((prev) => ({
       ...prev,
-      keywords: [...new Set([...prev.keywords, trimmed])],
+      keywords: [...new Set([...prev.keywords, ...keywordsToAdd])],
     }));
   }, []);
 
