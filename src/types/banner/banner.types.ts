@@ -5,6 +5,7 @@ export interface IBanner {
   title: ITranslationMap;
   image: string;
   link?: string;
+  targetPlatform: "web" | "mobile" | "both";
   isActive: boolean;
   isDeleted: boolean;
   createdAt: string;
@@ -15,6 +16,7 @@ export interface CreateBannerPayload {
   title: ITranslationMap;
   image: File | null;
   link?: string;
+  targetPlatform?: "web" | "mobile" | "both";
   isActive?: boolean;
 }
 
@@ -38,6 +40,7 @@ export interface BannerFilters {
 export type BannerFormValues = {
   title: ITranslationMap;
   link?: string;
+  targetPlatform: "web" | "mobile" | "both";
   image?: File | null;
   existingImage?: string | null;
   isActive: boolean;

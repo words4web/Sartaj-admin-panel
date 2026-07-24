@@ -69,6 +69,20 @@ export default function BannerDetailsPage() {
                       {banner?.link || "No link provided"}
                     </p>
                   </div>
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2">
+                      Target Platform
+                    </p>
+                    <p className="text-sm font-medium text-purple-600 break-all bg-purple-50 px-3 py-2 rounded-lg border border-purple-100 capitalize">
+                      {banner?.targetPlatform === "both"
+                        ? "Both Website & Mobile App"
+                        : banner?.targetPlatform === "web"
+                          ? "Website Only"
+                          : banner?.targetPlatform === "mobile"
+                            ? "Mobile App Only"
+                            : banner?.targetPlatform || "Both"}
+                    </p>
+                  </div>
                 </div>
               </div>
 
