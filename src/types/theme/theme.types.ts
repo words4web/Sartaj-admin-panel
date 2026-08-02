@@ -218,6 +218,18 @@ export const THEME_METADATA: Record<string, IThemeMetadata> = {
       border: "oklch(0.93 0.02 50)",
     },
   },
+  gurupurnima: {
+    label: "Guru Purnima",
+    description: "Spiritual saffron and sandalwood tones",
+    cssVars: {
+      primary: "oklch(0.48 0.18 30)",
+      secondary: "oklch(0.94 0.07 80)",
+      accent: "oklch(0.94 0.07 80)",
+      background: "oklch(0.985 0.02 85)",
+      foreground: "oklch(0.15 0.03 55)",
+      border: "oklch(0.89 0.04 80)",
+    },
+  },
 };
 
 /** Swatch gradient stop colors for each theme — mirrors frontend themeSwatchColors */
@@ -238,4 +250,5 @@ export const THEME_SWATCH_COLORS: Record<string, [string, string]> = {
   nordic: ["#1d4ed8", "#38bdf8"],
   terracotta: ["#9a3412", "#fed7aa"],
   peachy: ["#f97316", "#86efac"],
+  gurupurnima: ["#8a1a12", "#f8eed1"],
 };
