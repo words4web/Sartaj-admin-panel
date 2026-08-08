@@ -87,6 +87,7 @@ export interface ProductFilters {
   page?: number;
   limit?: number;
   category?: string;
+  manufacturer?: string;
 }
 
 export interface ProductListResponse {
