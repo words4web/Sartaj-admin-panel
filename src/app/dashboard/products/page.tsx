@@ -9,6 +9,8 @@ import {
 } from "@/services/product/product.hooks";
 import { useCategoryById } from "@/services/category/category.hooks";
 import { categoryApi } from "@/services/category/category.api";
+import { useManufacturer } from "@/services/manufacturer/manufacturer.hooks";
+import { manufacturerApi } from "@/services/manufacturer/manufacturer.api";
 import { IProduct } from "@/types/product/product.types";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { Button } from "@/components/ui/button";
@@ -43,6 +45,7 @@ export default function ProductsPage() {
   // Extract filters from URL
   const page = Number(searchParams.get("page")) || 1;
   const categoryId = searchParams.get("category") || "";
+  const manufacturerId = searchParams.get("manufacturer") || "";
   const urlSearch = searchParams.get("search") || "";
 
   // Local state for instant typing responsive input
@@ -107,10 +110,12 @@ export default function ProductsPage() {
   );
 
   const { data: parentCategory } = useCategoryById(categoryId);
+  const { data: parentManufacturer } = useManufacturer(manufacturerId);
 
   const { data, isLoading, isError, refetch } = useProductList({
     search: urlSearch || undefined,
     category: categoryId || undefined,
+    manufacturer: manufacturerId || undefined,
     page,
     limit,
   });
@@ -349,6 +354,30 @@ export default function ProductsPage() {
               };
             },
             queryKey: ["categories", "filter"],
+          },
+          {
+            key: "manufacturer",
+            label: "Manufacturer",
+            value: manufacturerId,
+            selectedLabel: parentManufacturer?.name?.en,
+            onChange: (val) => {
+              updateParams({ manufacturer: val, page: 1 });
+            },
+            fetchData: async ({ search, page, limit }) => {
+              const res = await manufacturerApi.getManufacturers({
+                search,
+                page,
+                limit,
+              });
+              return {
+                options: res?.manufacturers?.map((m) => ({
+                  value: m._id,
+                  label: m?.name?.en || m?._id,
+                })),
+                hasMore: res?.manufacturers?.length === limit,
+              };
+            },
+            queryKey: ["manufacturers", "filter"],
           },
         ]}
         onReset={resetFilters}
