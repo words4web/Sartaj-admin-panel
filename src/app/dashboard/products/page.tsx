@@ -74,7 +74,7 @@ export default function ProductsPage() {
   // Helper to update the router URL parameters
   const updateParams = useCallback(
     (updates: Record<string, string | number | null | undefined>) => {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(searchParams.toString());
       Object.entries(updates).forEach(([key, value]) => {
         if (value === null || value === undefined || value === "") {
           params.delete(key);
@@ -84,7 +84,7 @@ export default function ProductsPage() {
       });
       router.push(`${pathname}?${params?.toString()}`);
     },
-    [router, pathname],
+    [router, pathname, searchParams],
   );
 
   const handleSearchChange = useCallback(
@@ -96,7 +96,7 @@ export default function ProductsPage() {
       }
 
       searchTimeoutRef.current = setTimeout(() => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(searchParams.toString());
         if (val) {
           params.set("search", val);
         } else {
@@ -106,7 +106,7 @@ export default function ProductsPage() {
         router.push(`${pathname}?${params.toString()}`);
       }, 400);
     },
-    [router, pathname],
+    [router, pathname, searchParams],
   );
 
   const { data: parentCategory } = useCategoryById(categoryId);
@@ -335,7 +335,7 @@ export default function ProductsPage() {
             key: "category",
             label: "Category",
             value: categoryId,
-            selectedLabel: parentCategory?.name?.en,
+            selectedLabel: categoryId ? parentCategory?.name?.en : undefined,
             onChange: (val) => {
               updateParams({ category: val, page: 1 });
             },
@@ -359,7 +359,9 @@ export default function ProductsPage() {
             key: "manufacturer",
             label: "Manufacturer",
             value: manufacturerId,
-            selectedLabel: parentManufacturer?.name?.en,
+            selectedLabel: manufacturerId
+              ? parentManufacturer?.name?.en
+              : undefined,
             onChange: (val) => {
               updateParams({ manufacturer: val, page: 1 });
             },

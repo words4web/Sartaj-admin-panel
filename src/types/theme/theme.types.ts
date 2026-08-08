@@ -230,6 +230,19 @@ export const THEME_METADATA: Record<string, IThemeMetadata> = {
       border: "oklch(0.89 0.04 80)",
     },
   },
+  independence: {
+    label: "Independence Day",
+    description: "Vibrant celebratory saffron, white, and green theme",
+    cssVars: {
+      primary: "oklch(0.68 0.22 45)",
+      secondary: "oklch(0.97 0.01 140)",
+      accent: "oklch(0.48 0.18 140)",
+      background: "oklch(0.995 0.005 55)",
+      foreground: "oklch(0.18 0.02 260)",
+      border: "oklch(0.92 0.02 140)",
+    },
+    particles: { enabled: true },
+  },
 };
 
 /** Swatch gradient stop colors for each theme — mirrors frontend themeSwatchColors */
@@ -251,4 +264,5 @@ export const THEME_SWATCH_COLORS: Record<string, [string, string]> = {
   terracotta: ["#9a3412", "#fed7aa"],
   peachy: ["#f97316", "#86efac"],
   gurupurnima: ["#8a1a12", "#f8eed1"],
+  independence: ["#FF9933", "#128807"],
 };
