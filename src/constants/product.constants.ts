@@ -130,7 +130,7 @@ export const PRODUCT_BASIC_INFO_FIELDS: TranslationField[] = [
     resizeVertical: true,
     placeholder: "Full description for catalogs",
     disclaimer:
-      "Disclaimer: Please do not modify the default subheading names or structure. Only edit the placeholder text under them. Modifying headings will break the product detail section and collapsible features on the retailer website.",
+      "Important: Please do not delete or rename the default bold headings in the template: Flavour Profile, Product Highlights, Diet Type, Brand, Flavour, Net Qty, Number of items, Key Ingredients, Added Colors, How to Use?. Only edit the placeholder text underneath them. Modifying these headings will break the product details layout on the website.",
   },
 ];
 
@@ -374,4 +374,71 @@ export const DEFAULT_DESCRIPTION_TEMPLATES: Record<string, string> = {
 <p><br></p>
 <p><strong>কিভাবে ব্যবহার করবেন?</strong></p>
 <p>[এখানে ব্যবহারের নিয়ম লিখুন...]</p>`,
+};
+
+export const RAKHI_DESCRIPTION_TEMPLATES: Record<string, string> = {
+  en: `<p>[Enter Rakhi product introduction here. Describe the occasion, materials, craftsmanship, and how special it makes the bond.]</p>
+<p><br></p>
+<p><strong>Product Highlights</strong></p>
+<ul>
+  <li>[Highlight 1, e.g. Gold-tone motif centerpiece]</li>
+  <li>[Highlight 2, e.g. Sparkling stone embellishments]</li>
+  <li>[Highlight 3, e.g. Soft, adjustable thread for comfortable all-day wear]</li>
+  <li>[Highlight 4, e.g. Beautiful clear gift box included]</li>
+</ul>
+<p><br></p>
+<p><strong>Why You'll Love It:</strong></p>
+<p>[Explain why this Rakhi is unique, its symbolic significance, and why it makes a perfect ready-to-gift item.]</p>`,
+
+  ja: `<p>【ラキ製品の紹介文をここに入力してください。デザイン、素材、職人技、絆の美しさなどを説明します。】</p>
+<p><br></p>
+<p><strong>製品の特徴</strong></p>
+<ul>
+  <li>【特徴1、例：ゴールドトーンのモチーフ】</li>
+  <li>【特徴2、例：輝くストーンのディテール】</li>
+  <li>【特徴3、例：一日中快適に着用できる調節可能な紐】</li>
+  <li>【特徴4、例：美しいギフトボックス付き】</li>
+</ul>
+<p><br></p>
+<p><strong>おすすめポイント</strong></p>
+<p>【このラキがユニークな理由や、ギフトとして最適な理由をここに入力してください。】</p>`,
+
+  hi: `<p>[यहाँ राखी उत्पाद परिचय दर्ज करें। अवसर, सामग्री, शिल्प कौशल और भाई-बहन के सुंदर रिश्ते के बारे में लिखें।]</p>
+<p><br></p>
+<p><strong>उत्पाद मुख्य विशेषताएं</strong></p>
+<ul>
+  <li>[विशेषता 1, जैसे: गोल्ड-टोन डिज़ाइन]</li>
+  <li>[विशेषता 2, जैसे: चमकदार पत्थरों की नक्काशी]</li>
+  <li>[विशेषता 3, जैसे: आरामदायक और समायोज्य धागा]</li>
+  <li>[विशेषता 4, जैसे: आकर्षक उपहार बॉक्स शामिल]</li>
+</ul>
+<p><br></p>
+<p><strong>आपको यह क्यों पसंद आएगा:</strong></p>
+<p>[यह राखी क्यों विशेष और अनूठी है, इसका कारण यहाँ दर्ज करें।]</p>`,
+
+  ne: `<p>[यहाँ राखी उत्पादन परिचय प्रविष्ट गर्नुहोस्। अवसर, सामग्री, शिल्पकला र भाई-बहिनीको सुन्दर सम्बन्धको बारेमा लेख्नुहोस्।]</p>
+<p><br></p>
+<p><strong>उत्पादन हाइलाइटहरू</strong></p>
+<ul>
+  <li>[हाइलाइट १, जस्तै: गोल्ड-टोन डिजाइन]</li>
+  <li>[हाइलाइट २, जस्तै: चमकदार ढुङ्गाको काम]</li>
+  <li>[हाइलाइट ३, जस्तै: नरम, समायोज्य धागो]</li>
+  <li>[हाइलाइट ४, जस्तै: सुन्दर उपहार बक्स समावेश]</li>
+</ul>
+<p><br></p>
+<p><strong>तपाईंलाई यो किन मन पर्नेछ:</strong></p>
+<p>[यो राखी किन विशेष र अद्वितीय छ, यसको कारण यहाँ प्रविष्ट गर्नुहोस्।]</p>`,
+
+  bn: `<p>[এখানে রাখি পণ্যের বিবরণ লিখুন। উপলক্ষ, উপাদান, কারুশিল্প এবং সুন্দর সম্পর্কের কথা লিখুন।]</p>
+<p><br></p>
+<p><strong>পণ্য হাইলাইট</strong></p>
+<ul>
+  <li>[হাইলাইট ১, যেমন: গোল্ড-টোন ডিজাইন]</li>
+  <li>[হাইলাইট ২, যেমন: জমকালো পাথরের কাজ]</li>
+  <li>[হাইলাইট ৩, যেমন: নরম ও সামঞ্জস্যপূর্ণ সুতো]</li>
+  <li>[হাইলাইট ৪, যেমন: সুন্দর উপহার বাক্স অন্তর্ভুক্ত]</li>
+</ul>
+<p><br></p>
+<p><strong>আপনি এটি কেন পছন্দ করবেন:</strong></p>
+<p>[এই রাখি কেন বিশেষ এবং অনন্য, তার কারণ এখানে লিখুন।]</p>`,
 };

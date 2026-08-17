@@ -5,16 +5,20 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { TranslationInput } from "@/components/common/TranslationInput";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { ProductFormHint } from "../ProductFormHint";
 import { ImageIcon, X, Tag, Layers } from "lucide-react";
 import {
   PRODUCT_BADGE_OPTIONS,
   PRODUCT_TAGS,
   PRODUCT_BASIC_INFO_FIELDS,
+  DEFAULT_DESCRIPTION_TEMPLATES,
+  RAKHI_DESCRIPTION_TEMPLATES,
 } from "@/constants/product.constants";
 import { ProductFormBasicTabProps } from "./ProductFormBasicTab.types";
 import { RelatedProductsPicker } from "./RelatedProductsPicker";
 import { slugify } from "@/utils/product.util";
+import { ProductAutofillDropdown } from "./ProductAutofillDropdown";
 
 import {
   PropertySection,
@@ -35,9 +39,76 @@ export function ProductFormBasicTab({
   productId,
 }: ProductFormBasicTabProps) {
   const [keywordInput, setKeywordInput] = useState("");
+  const [activeTemplate, setActiveTemplate] = useState("food");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingTemplate, setPendingTemplate] = useState<string | null>(null);
+
+  const handleTemplateSelect = (templateType: string) => {
+    setPendingTemplate(templateType);
+    setIsConfirmOpen(true);
+  };
+
+  const confirmTemplateChange = () => {
+    if (!pendingTemplate) return;
+    const templates =
+      pendingTemplate === "rakhi"
+        ? RAKHI_DESCRIPTION_TEMPLATES
+        : DEFAULT_DESCRIPTION_TEMPLATES;
+
+    setValues((prev) => ({
+      ...prev,
+      description: {
+        en: templates.en,
+        hi: templates.hi,
+        ne: templates.ne,
+        ja: templates.ja,
+        bn: templates.bn,
+      },
+    }));
+    setActiveTemplate(pendingTemplate);
+    setIsConfirmOpen(false);
+    setPendingTemplate(null);
+  };
+
+  const cancelTemplateChange = () => {
+    setIsConfirmOpen(false);
+    setPendingTemplate(null);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Name & Description */}
+      <ConfirmModal
+        open={isConfirmOpen}
+        title="Change Description Template?"
+        description="Are you sure you want to change the template? This will overwrite the current description in all languages."
+        confirmLabel="Overwrite"
+        cancelLabel="Keep Current"
+        onConfirm={confirmTemplateChange}
+        onCancel={cancelTemplateChange}
+      />
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50/50 shadow-sm">
+        <div>
+          <h4 className="text-sm font-semibold text-gray-900">
+            Description Template
+          </h4>
+          <p className="text-xs text-gray-500">
+            Select a layout template to pre-populate the product description
+            fields.
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <ProductAutofillDropdown setValues={setValues} />
+          <select
+            onChange={(e) => handleTemplateSelect(e.target.value)}
+            value={pendingTemplate || activeTemplate}
+            className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 cursor-pointer shadow-sm text-gray-700 min-w-[200px]">
+            <option value="food">Food Product Template</option>
+            <option value="rakhi">Rakhi / Gift Product Template</option>
+          </select>
+        </div>
+      </div>
+
       <TranslationInput
         title="Name & description"
         description="All languages required before proceeding."
@@ -218,7 +289,7 @@ export function ProductFormBasicTab({
 
               {/* Keyword chips */}
               {values?.keywords?.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 max-h-[130px] overflow-y-auto p-2 border border-gray-100 rounded-lg bg-gray-50/50 shadow-inner">
                   {values?.keywords?.map((kw) => (
                     <span
                       key={kw}

@@ -195,7 +195,7 @@ export function TranslationInput({
                       )}
                     </Label>
                     {field.disclaimer && (
-                      <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2.5 leading-relaxed font-semibold">
+                      <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 leading-relaxed font-semibold">
                         ⚠️ {field?.disclaimer}
                       </div>
                     )}
