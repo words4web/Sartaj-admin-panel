@@ -107,6 +107,15 @@ export const API_ROUTES = {
     TOGGLE_STATUS: (id: string) => `${API_ADMIN_BASE}/coupon/${id}/status`,
   },
 
+  // Bundles
+  BUNDLES: {
+    LIST: `${API_ADMIN_BASE}/bundles`,
+    CREATE: `${API_ADMIN_BASE}/bundles/create`,
+    DETAIL: (id: string) => `${API_ADMIN_BASE}/bundles/${id}`,
+    UPDATE: (id: string) => `${API_ADMIN_BASE}/bundles/${id}`,
+    DELETE: (id: string) => `${API_ADMIN_BASE}/bundles/${id}`,
+  },
+
   // Price lists (customer-specific product overrides)
   PRICE_LIST: {
     LIST: `${API_ADMIN_BASE}/price-list`,

@@ -37,6 +37,11 @@ export const ROUTES = {
     EDIT: (id: string) => `/dashboard/coupons/${id}/edit`,
     NEW: "/dashboard/coupons/new",
   },
+  BUNDLES: {
+    LIST: "/dashboard/bundles",
+    NEW: "/dashboard/bundles/new",
+    EDIT: (id: string) => `/dashboard/bundles/${id}/edit`,
+  },
   PRICE_LISTS: {
     LIST: "/dashboard/price-lists",
     EDIT: (id: string) => `/dashboard/price-lists/${id}/edit`,
