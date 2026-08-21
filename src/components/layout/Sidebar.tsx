@@ -19,6 +19,9 @@ import {
   Truck,
   ListOrdered,
   Palette,
+  Boxes,
+  Sliders,
+  ShoppingBag,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/utils/common.utils";
@@ -73,14 +76,19 @@ const MENU_ITEMS = [
     href: ROUTES.PRICE_LISTS.LIST,
   },
   {
-    icon: Truck,
+    icon: ShoppingBag,
     label: "Orders",
     href: ROUTES.ORDERS.LIST,
   },
   {
-    icon: Truck,
+    icon: Sliders,
     label: "Order Config",
     href: ROUTES.ORDER_CONFIG,
+  },
+  {
+    icon: Boxes,
+    label: "Bundles",
+    href: ROUTES.BUNDLES.LIST,
   },
   {
     icon: FileText,
