@@ -132,6 +132,8 @@ export interface Order {
   deliveryDate?: string | null;
   deliverySlot?: string | null;
   deliveryTerms?: string | null;
+  cancelledBy?: string | null;
+  cancelReason?: string | null;
   editHistory?: OrderEditHistoryEntry[];
   createdAt: string;
   updatedAt: string;

@@ -43,7 +43,6 @@ export default function OrderDetailsPage() {
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
   const [deliveryTermsInput, setDeliveryTermsInput] = useState("");
 
-  // Sync state when order data is loaded
   useEffect(() => {
     if (order) {
       setStatus(order?.status);
@@ -124,6 +123,45 @@ export default function OrderDetailsPage() {
         </div>
       ) : (
         <div className="space-y-8 mt-2">
+          {order?.status === "cancelled" && (
+            <div className="bg-rose-50/75 border border-rose-200/85 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center shrink-0">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-rose-900 flex items-center gap-2">
+                    Order Cancelled
+                    {order?.cancelledBy && (
+                      <span className="bg-rose-100 text-rose-800 text-[10px] uppercase font-black px-2 py-0.5 rounded-md tracking-wider">
+                        By {order.cancelledBy}
+                      </span>
+                    )}
+                  </h4>
+                  {order?.cancelReason && (
+                    <p className="text-xs text-rose-700 font-medium mt-1">
+                      Reason:{" "}
+                      <span className="italic font-bold">
+                        "{order.cancelReason}"
+                      </span>
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {(order?.deliveryDate || order?.deliverySlot) && (
             <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
               <div className="flex items-center gap-3.5">
@@ -177,7 +215,6 @@ export default function OrderDetailsPage() {
             </div>
           )}
 
-          {/* Top Summary Cards Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <CustomerInfoCard order={order} />
 
@@ -195,11 +232,9 @@ export default function OrderDetailsPage() {
             <PaymentBreakdownCard order={order} />
           </div>
 
-          {/* Main Content Area */}
           <div className="space-y-8">
             <OrderItemsList items={order?.items} />
 
-            {/* Free Gift Product */}
             {order?.giftProduct && (
               <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-6 transition-all hover:shadow-md">
                 <div className="mb-4 border-b border-emerald-100/50 pb-4 flex items-center justify-between">
@@ -245,7 +280,6 @@ export default function OrderDetailsPage() {
               </div>
             )}
 
-            {/* Delivery Terms Card */}
             <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 transition-all hover:shadow-md">
               <div className="mb-4 border-b border-gray-100 pb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
