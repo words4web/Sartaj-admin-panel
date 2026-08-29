@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { DataTable, Column } from "@/components/common/DataTable";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -22,9 +22,25 @@ import { formatYen } from "@/utils/common.utils";
 
 export default function OrdersPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const limit = 10;
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<OrderStatus | "all">("all");
+
+  const page = Number(searchParams?.get("page")) || 1;
+  const status = (searchParams?.get("status") as OrderStatus | "all") || "all";
+
+  const setPage = (newPage: number) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    params.set("page", newPage?.toString());
+    router.push(`${pathname}?${params?.toString()}`);
+  };
+
+  const setStatus = (newStatus: string) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    params.set("status", newStatus);
+    params.set("page", "1");
+    router.push(`${pathname}?${params?.toString()}`);
+  };
 
   const {
     data: response,
@@ -97,14 +113,12 @@ export default function OrdersPage() {
             value: status,
             onChange: (val) => {
               setStatus(val as OrderStatus | "all");
-              setPage(1);
             },
             options: ORDER_STATUS_OPTIONS,
           },
         ]}
         onReset={() => {
           setStatus("all");
-          setPage(1);
         }}
       />
 
