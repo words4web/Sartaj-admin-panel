@@ -23,7 +23,10 @@ export interface DashboardStats {
     status: string;
     paymentStatus: string;
     createdAt: string;
-    customerName: string;
+    customer?: {
+      _id: string;
+      fullName: string;
+    };
   }[];
   revenueByDay: {
     date: string;
