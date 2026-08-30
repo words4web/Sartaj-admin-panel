@@ -31,10 +31,10 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "orders" | "analytics"
   >("overview");
-  const [activePreset, setActivePreset] = useState<number>(0);
+  const [activePreset, setActivePreset] = useState<number>(1);
   const [dateRange, setDateRange] = useState<
     { from?: string; to?: string } | undefined
-  >(undefined);
+  >(() => getDateRange(0));
 
   const { data, isLoading, isError, error, refetch } =
     useDashboardQuery(dateRange);
