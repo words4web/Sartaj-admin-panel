@@ -75,7 +75,7 @@ export function RecentOrdersCard({ recentOrders }: RecentOrdersCardProps) {
                   #{order?.orderId}
                 </td>
                 <td className="py-3.5 text-gray-600 font-medium text-sm">
-                  {order?.customerName || "—"}
+                  {order?.customer?.fullName || "—"}
                 </td>
                 <td className="py-3.5 text-gray-400 text-xs hidden sm:table-cell">
                   {format(new Date(order?.createdAt), "MMM d, yyyy")}
