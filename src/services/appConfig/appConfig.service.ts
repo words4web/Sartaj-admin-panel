@@ -26,8 +26,14 @@ export interface IWalletConfig {
   rewardPercentage: number;
 }
 
+export interface ILoyaltyConfig {
+  qualificationThreshold: number;
+  isDoublePointsWeekendActive: boolean;
+}
+
 export interface IAppConfig {
   wallet?: IWalletConfig;
+  loyalty?: ILoyaltyConfig;
   minOrderValues: {
     superCategoryId: string | any;
     superCategoryName: string;
