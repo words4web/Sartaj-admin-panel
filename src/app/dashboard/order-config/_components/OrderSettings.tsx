@@ -10,12 +10,21 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useForm, FormProvider } from "react-hook-form";
 import { useEffect } from "react";
-import { Save, Package, Truck, MapPin, Percent, Coins } from "lucide-react";
+import {
+  Save,
+  Package,
+  Truck,
+  MapPin,
+  Percent,
+  Coins,
+  Crown,
+} from "lucide-react";
 import { MOVTab } from "./MOVTab";
 import { ShippingRulesTab } from "./ShippingRulesTab";
 import { SpecialAreasTab } from "./SpecialAreasTab";
 import { TaxConfigTab } from "./TaxConfigTab";
 import { WalletTab } from "./WalletTab";
+import { LoyaltyTab } from "./LoyaltyTab";
 import { TAX_CATEGORY, TAX_TYPE } from "@/services/appConfig/appConfig.service";
 
 const orderTabs = [
@@ -43,6 +52,11 @@ const orderTabs = [
     value: "wallet",
     label: "Wallet",
     icon: Coins,
+  },
+  {
+    value: "loyalty",
+    label: "Loyalty Program",
+    icon: Crown,
   },
 ];
 
@@ -80,6 +94,10 @@ export default function OrderSettings() {
         { category: TAX_CATEGORY.CUSTOM, value: 1 },
       ],
       wallet: { rewardPercentage: 0 },
+      loyalty: {
+        qualificationThreshold: 50000,
+        isDoublePointsWeekendActive: false,
+      },
     },
   });
   const {
@@ -93,24 +111,27 @@ export default function OrderSettings() {
       reset({
         ...config,
         wallet: config?.wallet || { rewardPercentage: 0 },
+        loyalty: config?.loyalty || {
+          qualificationThreshold: 50000,
+          isDoublePointsWeekendActive: false,
+        },
       });
     }
   }, [config, reset]);
 
   const onSubmit = (data: any) => {
-    // Transform data to ensure database compatibility
     const transformedData = {
       ...data,
       minOrderValues: data?.minOrderValues?.map((item: any) => ({
         ...item,
-        // Extract ID if superCategoryId is populated
+
         superCategoryId: item?.superCategoryId?._id || item?.superCategoryId,
-        // Remove empty _id so MongoDB can generate a new one
+
         _id: item?._id === "" ? undefined : item?._id,
       })),
       specialAreas: data?.specialAreas?.map((item: any) => ({
         ...item,
-        // Remove empty _id so MongoDB can generate a new one
+
         _id: item?._id === "" ? undefined : item?._id,
       })),
     };
@@ -128,16 +149,16 @@ export default function OrderSettings() {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-20">
         <Tabs defaultValue="mov" className="w-full">
-          {/* Sticky Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 sticky top-0 z-20 bg-white/95 backdrop-blur-md py-4 border-b border-gray-200">
-            <TabsList className="bg-gray-100 p-1 rounded-lg h-auto">
+          <div className="flex flex-col sm:flex-row items-end justify-between gap-4 mb-8 sticky top-0 z-20 bg-white/95 backdrop-blur-md py-4 border-b border-gray-200">
+            <TabsList className="bg-gray-100 p-1.5 rounded-xl h-auto grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-1.5 w-full xl:w-auto">
               {orderTabs &&
                 orderTabs?.map((tab) => (
                   <TabsTrigger
                     key={tab?.value}
                     value={tab?.value}
-                    className="gap-2 px-4 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all text-sm font-medium">
-                    <tab.icon className="w-4 h-4" /> {tab?.label}
+                    className="gap-2 px-3 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all text-xs sm:text-sm font-medium justify-start border border-transparent data-[state=active]:border-gray-200 cursor-pointer min-w-0">
+                    <tab.icon className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{tab?.label}</span>
                   </TabsTrigger>
                 ))}
             </TabsList>
@@ -176,6 +197,12 @@ export default function OrderSettings() {
             value="wallet"
             className="mt-0 focus-visible:outline-none">
             <WalletTab />
+          </TabsContent>
+
+          <TabsContent
+            value="loyalty"
+            className="mt-0 focus-visible:outline-none">
+            <LoyaltyTab />
           </TabsContent>
         </Tabs>
       </form>
