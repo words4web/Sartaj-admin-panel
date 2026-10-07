@@ -22,6 +22,15 @@ export const API_ROUTES = {
       `${API_ADMIN_BASE}/customer/get-customer-wallet/${id}`,
   },
 
+  // Loyalty / VIP
+  LOYALTY: {
+    MEMBERS: `${API_ADMIN_BASE}/loyalty/members`,
+    CUSTOMER_LOYALTY: (customerId: string) =>
+      `${API_ADMIN_BASE}/loyalty/customer/${customerId}`,
+    UPDATE_HAMPER: (id: string) =>
+      `${API_ADMIN_BASE}/loyalty/members/${id}/hamper`,
+  },
+
   // Super Categories
   SUPER_CATEGORIES: {
     LIST: `${API_ADMIN_BASE}/system/super-categories`,

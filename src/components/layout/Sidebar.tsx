@@ -22,6 +22,7 @@ import {
   Boxes,
   Sliders,
   ShoppingBag,
+  Crown,
 } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 import { cn } from "@/utils/common.utils";
@@ -39,6 +40,11 @@ const MENU_ITEMS = [
     icon: Users,
     label: "Customers",
     href: ROUTES.CUSTOMERS.LIST,
+  },
+  {
+    icon: Crown,
+    label: "VIP Program",
+    href: ROUTES.LOYALTY.LIST,
   },
   {
     icon: LayoutGrid,
