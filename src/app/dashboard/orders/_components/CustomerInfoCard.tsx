@@ -1,12 +1,15 @@
 "use client";
-import { User, Truck, ArrowUpRight } from "lucide-react";
+import { User, Truck, ArrowUpRight, Crown } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/constants/routes";
 import { resolveCustomerName } from "../../../../utils/order.utils";
 import { getPrefectureName } from "@/constants/prefectures";
 import { CustomerInfoCardProps } from "@/types/order/order.types";
 
-export function CustomerInfoCard({ order }: CustomerInfoCardProps) {
+export function CustomerInfoCard({
+  order,
+  isVip,
+}: CustomerInfoCardProps & { isVip?: boolean }) {
   const customer = order?.customer;
   const customerName = resolveCustomerName(order);
   const address = customer?.addresses?.find(
@@ -15,11 +18,19 @@ export function CustomerInfoCard({ order }: CustomerInfoCardProps) {
 
   return (
     <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 flex flex-col transition-all hover:shadow-md h-full">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-          <User className="w-5 h-5" />
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+            <User className="w-5 h-5" />
+          </div>
+          <h3 className="text-lg font-bold text-gray-900">Customer Details</h3>
         </div>
-        <h3 className="text-lg font-bold text-gray-900">Customer Details</h3>
+        {isVip && (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">
+            <Crown className="w-3.5 h-3.5 text-purple-600 fill-purple-500" />
+            VIP Member
+          </span>
+        )}
       </div>
 
       <div className="space-y-4 flex-grow">
