@@ -18,9 +18,12 @@ import { OrderNotesCard } from "../_components/OrderNotesCard";
 import { UpdateTrackingModal } from "../_components/UpdateTrackingModal";
 import { EditHistoryCard } from "../_components/EditHistoryCard";
 import { Button } from "@/components/ui/button";
-import { Eye, Truck, Edit } from "lucide-react";
+import { Eye, Truck, Edit, Gift, Crown } from "lucide-react";
 import { CommonLoader } from "@/components/ui/common-loader";
 import { CommonError } from "@/components/ui/common-error";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { useCustomerLoyalty } from "@/services/loyalty/loyalty.queries";
+import { useMarkHamperSent } from "@/services/loyalty/loyalty.mutations";
 import { dateUtils } from "@/utils/common.utils";
 
 const slotMap: Record<string, string> = {
@@ -39,9 +42,20 @@ export default function OrderDetailsPage() {
   const updateTracking = useUpdateOrderTracking();
   const updateDeliveryTerms = useUpdateOrderDeliveryTerms();
 
+  const customerId = order?.customer?._id ? String(order?.customer?._id) : "";
+  const { data: customerLoyalty, refetch: refetchLoyalty } =
+    useCustomerLoyalty(customerId);
+  const markHamperMutation = useMarkHamperSent();
+
   const [status, setStatus] = useState<OrderStatus | "">("");
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
   const [deliveryTermsInput, setDeliveryTermsInput] = useState("");
+  const [isHamperModalOpen, setIsHamperModalOpen] = useState(false);
+
+  const isVip = Boolean(customerLoyalty?.isActive);
+  const isHamperPending = Boolean(
+    customerLoyalty?.isActive && !customerLoyalty?.hamperSent,
+  );
 
   useEffect(() => {
     if (order) {
@@ -123,6 +137,43 @@ export default function OrderDetailsPage() {
         </div>
       ) : (
         <div className="space-y-8 mt-2">
+          {isHamperPending && (
+            <div className="bg-gradient-to-r from-amber-50 via-amber-100/50 to-orange-50 border-2 border-amber-300 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm animate-in fade-in duration-300">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20">
+                  <Gift className="w-6 h-6 animate-bounce" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-black text-amber-950 flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-amber-600 fill-amber-500" />
+                    VIP Welcome Hamper Required!
+                    <span className="bg-amber-200/90 text-amber-900 text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full tracking-wider border border-amber-300">
+                      Pending 1-Time Gift
+                    </span>
+                  </h4>
+                  <p className="text-xs text-amber-800 font-medium mt-1 leading-relaxed">
+                    This customer unlocked VIP status and has not received their
+                    1-time welcome gift hamper yet.{" "}
+                    <strong className="font-bold text-amber-950">
+                      Please include the welcome hamper in this package!
+                    </strong>
+                  </p>
+                </div>
+              </div>
+
+              {customerLoyalty?._id && (
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    onClick={() => setIsHamperModalOpen(true)}
+                    className="h-10 px-4 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-sm flex items-center gap-2 cursor-pointer">
+                    <Gift className="w-4 h-4" />
+                    Mark Hamper Dispatched
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
           {order?.status === "cancelled" && (
             <div className="bg-rose-50/75 border border-rose-200/85 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
               <div className="flex items-center gap-3.5">
@@ -216,7 +267,7 @@ export default function OrderDetailsPage() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <CustomerInfoCard order={order} />
+            <CustomerInfoCard order={order} isVip={isVip} />
 
             <OrderStatusUpdater
               order={order}
@@ -336,6 +387,26 @@ export default function OrderDetailsPage() {
         currentTrackingNumber={order?.trackOrder}
         onUpdate={handleUpdateTracking}
         isLoading={updateTracking.isPending}
+      />
+
+      <ConfirmModal
+        open={isHamperModalOpen}
+        title="Mark Welcome Hamper Dispatched"
+        description="Are you sure you want to mark the VIP Welcome Hamper as dispatched for this customer? This is a 1-time gift and this action cannot be undone."
+        confirmLabel="Confirm Dispatch"
+        cancelLabel="Cancel"
+        isLoading={markHamperMutation.isPending}
+        onCancel={() => setIsHamperModalOpen(false)}
+        onConfirm={() => {
+          if (customerLoyalty?._id) {
+            markHamperMutation.mutate(customerLoyalty._id, {
+              onSuccess: () => {
+                setIsHamperModalOpen(false);
+                refetchLoyalty();
+              },
+            });
+          }
+        }}
       />
     </div>
   );

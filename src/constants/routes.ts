@@ -13,6 +13,9 @@ export const ROUTES = {
     NEW: "/dashboard/customers/new",
     WALLET: (id: string) => `/dashboard/customers/${id}/wallet`,
   },
+  LOYALTY: {
+    LIST: "/dashboard/loyalty",
+  },
   CATEGORIES: {
     LIST: "/dashboard/categories",
     DETAIL: (id: string) => `/dashboard/categories/${id}`,
