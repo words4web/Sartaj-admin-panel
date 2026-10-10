@@ -24,7 +24,7 @@ export const productApi = {
       products: response?.data ?? [],
       total: response?.meta?.total ?? 0,
       page: response?.meta?.page ?? 1,
-      limit: response?.meta?.limit ?? 10,
+      limit: response?.meta?.limit ?? 50,
     };
   },
 

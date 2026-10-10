@@ -88,6 +88,7 @@ export interface ProductFilters {
   limit?: number;
   category?: string;
   manufacturer?: string;
+  stockLevel?: string;
 }
 
 export interface ProductListResponse {
