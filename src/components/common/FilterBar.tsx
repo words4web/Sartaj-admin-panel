@@ -134,10 +134,14 @@ export function FilterBar({
                 }
                 disabled={filter?.disabled}>
                 <SelectTrigger className="h-10 w-full focus:ring-2 focus:ring-blue-500/30 text-sm">
-                  <SelectValue placeholder={filter?.placeholder || "All"} />
+                  <SelectValue
+                    placeholder={filter?.placeholder || `All ${filter?.label}`}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All {filter?.label}</SelectItem>
+                  <SelectItem value="all">
+                    {filter?.placeholder || `All ${filter?.label}`}
+                  </SelectItem>
                   {filter?.options?.map((option) => (
                     <SelectItem key={option?.value} value={option?.value}>
                       {option?.label}

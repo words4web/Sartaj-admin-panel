@@ -40,12 +40,13 @@ import { Badge } from "@/components/ui/badge";
 export default function ProductsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const limit = 10;
 
   // Extract filters from URL
+  const limit = Number(searchParams.get("limit")) || 50;
   const page = Number(searchParams.get("page")) || 1;
   const categoryId = searchParams.get("category") || "";
   const manufacturerId = searchParams.get("manufacturer") || "";
+  const stockLevel = searchParams.get("stockLevel") || "";
   const urlSearch = searchParams.get("search") || "";
 
   // Local state for instant typing responsive input
@@ -116,6 +117,7 @@ export default function ProductsPage() {
     search: urlSearch || undefined,
     category: categoryId || undefined,
     manufacturer: manufacturerId || undefined,
+    stockLevel: stockLevel || undefined,
     page,
     limit,
   });
@@ -381,6 +383,22 @@ export default function ProductsPage() {
             },
             queryKey: ["manufacturers", "filter"],
           },
+          {
+            key: "stockLevel",
+            label: "Stock Level",
+            placeholder: "All Stock Levels",
+            value: stockLevel || "all",
+            onChange: (val) => {
+              updateParams({ stockLevel: val, page: 1 });
+            },
+            options: [
+              { value: "out_of_stock", label: "Out of Stock (0)" },
+              { value: "1_10", label: "Critical Stock (1 – 10)" },
+              { value: "11_30", label: "Low Stock (11 – 30)" },
+              { value: "31_50", label: "Moderate Stock (31 – 50)" },
+              { value: "gt_50", label: "High Stock (> 50)" },
+            ],
+          },
         ]}
         onReset={resetFilters}
       />
@@ -402,7 +420,7 @@ export default function ProductsPage() {
         )}
       </div>
 
-      {totalPages > 1 && (
+      {total > 0 && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
           <p className="text-sm text-gray-500 text-center sm:text-left">
             Showing <span className="font-medium">{products?.length}</span> of{" "}
@@ -411,6 +429,13 @@ export default function ProductsPage() {
           <Pagination
             currentPage={page}
             totalPages={totalPages}
+            pageSize={limit}
+            onPageSizeChange={(newLimit) =>
+              updateParams({
+                limit: newLimit === 50 ? null : newLimit,
+                page: 1,
+              })
+            }
             onPageChange={(val) => updateParams({ page: val })}
             isLoading={isLoading}
           />
