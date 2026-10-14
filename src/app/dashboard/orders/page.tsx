@@ -24,22 +24,34 @@ export default function OrdersPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const limit = 10;
 
+  const limit = Number(searchParams?.get("limit")) || 50;
   const page = Number(searchParams?.get("page")) || 1;
   const status = (searchParams?.get("status") as OrderStatus | "all") || "all";
 
-  const setPage = (newPage: number) => {
+  const updateParams = (
+    updates: Record<string, string | number | null | undefined>,
+  ) => {
     const params = new URLSearchParams(searchParams?.toString());
-    params.set("page", newPage?.toString());
+    Object.entries(updates)?.forEach(([key, value]) => {
+      if (value === null || value === undefined || value === "") {
+        params.delete(key);
+      } else {
+        params.set(key, String(value));
+      }
+    });
     router.push(`${pathname}?${params?.toString()}`);
   };
 
+  const setPage = (newPage: number) => {
+    updateParams({ page: newPage });
+  };
+
   const setStatus = (newStatus: string) => {
-    const params = new URLSearchParams(searchParams?.toString());
-    params.set("status", newStatus);
-    params.set("page", "1");
-    router.push(`${pathname}?${params?.toString()}`);
+    updateParams({
+      status: newStatus === "all" ? null : newStatus,
+      page: 1,
+    });
   };
 
   const {
@@ -118,7 +130,7 @@ export default function OrdersPage() {
           },
         ]}
         onReset={() => {
-          setStatus("all");
+          router.push(pathname);
         }}
       />
 
@@ -136,15 +148,23 @@ export default function OrdersPage() {
         />
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between gap-4 mt-6">
-          <p className="text-sm text-gray-500">
+      {total > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
+          <p className="text-sm text-gray-500 text-center sm:text-left">
             Showing <span className="font-medium">{orders?.length}</span> of{" "}
             <span className="font-medium">{total}</span> orders
           </p>
           <Pagination
             currentPage={page}
             totalPages={totalPages}
+            pageSize={limit}
+            pageSizeOptions={[10, 20, 50]}
+            onPageSizeChange={(newLimit) =>
+              updateParams({
+                limit: newLimit === 50 ? null : newLimit,
+                page: 1,
+              })
+            }
             onPageChange={setPage}
             isLoading={isLoading}
           />
