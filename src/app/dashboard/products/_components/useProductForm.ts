@@ -620,7 +620,10 @@ export function useProductForm({
       productType: values.productType,
       tags: values.tags,
       keywords: values.keywords,
-      stockQuantity: Number(values.stockQuantity),
+      stockQuantity:
+        values.stockStatus === STOCK_STATUS.OUT_OF_STOCK
+          ? 0
+          : Number(values.stockQuantity),
       sellingUnit: values.sellingUnit,
       stockStatus: values.stockStatus,
       isActive: values.isActive,

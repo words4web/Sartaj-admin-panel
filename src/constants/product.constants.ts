@@ -34,6 +34,35 @@ export const STOCK_STATUS = {
 } as const;
 export type StockStatus = (typeof STOCK_STATUS)[keyof typeof STOCK_STATUS];
 
+export const isProductOutOfStock = (
+  product?: {
+    stockStatus?: string | null;
+    stockQuantity?: number | null;
+    isActive?: boolean | null;
+  } | null,
+): boolean => {
+  if (!product) return true;
+  if (product.isActive === false) return true;
+
+  const normalizedStatus = product.stockStatus?.trim().toLowerCase();
+  if (
+    normalizedStatus === STOCK_STATUS.OUT_OF_STOCK ||
+    normalizedStatus === "out of stock"
+  ) {
+    return true;
+  }
+
+  if (
+    product.stockQuantity !== undefined &&
+    product.stockQuantity !== null &&
+    product.stockQuantity <= 0
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const PRODUCT_TAG = {
   VEG: "veg",
   HALAL: "halal",
