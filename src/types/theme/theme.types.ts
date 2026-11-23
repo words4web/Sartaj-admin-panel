@@ -243,6 +243,19 @@ export const THEME_METADATA: Record<string, IThemeMetadata> = {
     },
     particles: { enabled: true },
   },
+  blackfriday: {
+    label: "Black Friday",
+    description: "Bold deep charcoal & energetic neon orange sale theme",
+    cssVars: {
+      primary: "#ff6a00",
+      secondary: "#1f242d",
+      accent: "#2a303c",
+      background: "#0d1117",
+      foreground: "#f3f4f6",
+      border: "#30363d",
+    },
+    particles: { enabled: false },
+  },
 };
 
 /** Swatch gradient stop colors for each theme — mirrors frontend themeSwatchColors */
@@ -265,4 +278,5 @@ export const THEME_SWATCH_COLORS: Record<string, [string, string]> = {
   peachy: ["#f97316", "#86efac"],
   gurupurnima: ["#8a1a12", "#f8eed1"],
   independence: ["#FF9933", "#128807"],
+  blackfriday: ["#ff6a00", "#161b22"],
 };
